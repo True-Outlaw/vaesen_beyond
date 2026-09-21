@@ -75,16 +75,19 @@ The following roadmap synthesizes the current system assessment and outlines upc
     3. Memento solace restoration
     4. Auto-generating a new Expedition Log in Castle Gyllencreutz archives.
 
-### Phase 3: Party & Investigator Management 🟢
-- [ ] **Investigator Deletion & Retirement**:
-  - Expose `deleteCharacter(id)` in the party management UI to retire or delete dead investigators.
-- [ ] **Character JSON Portability**:
-  - Expose `exportCharacterJson` to copy investigator data to clipboard or export to a file.
-  - Expose `importCharacterFromJson` to import shared character sheets from other players or backup files.
-- [ ] **Character Builder Point Allocation Enforcement**:
-  - Add point-budget validation banners on Step 5 (preventing enrollment if attribute or skill points are overspent or underspent according to Age Category).
-- [ ] **Portrait Picker**:
-  - Allow custom portrait selection during investigator creation from bundled high-resolution Gothic portraits.
+### Phase 3: Party & Investigator Management ✅
+- [x] **Investigator Deletion & Retirement**:
+  - Full Society roster management with active investigator switching, retiring down to 0, and clean Scandinavian Gothic empty state with restore capabilities.
+- [x] **Character JSON Portability**:
+  - Export investigator JSON directly to clipboard from Party Management or the main app bar menu.
+  - Full modal import workflow with instant clipboard paste and duplicate ID collision protection.
+- [x] **Character Builder Point Allocation Enforcement**:
+  - Full point-budget validation enforced across all steps of investigator creation (Attributes: 15 Young / 14 Middle-aged / 13 Old; Skills: 10 Young / 12 Middle-aged / 14 Old).
+  - Prevents overspending and blocks step progression or enrollment until points are balanced.
+- [x] **Gothic Portrait Picker & Custom Image Upload**:
+  - Visual circular portrait picker during Step 1 (Identity) selecting from high-res bundled Scandinavian portraits (Astrid, Birger, Elias, Johan).
+  - Cross-platform custom portrait upload (**Windows, Android, iOS, Web**) powered by `file_picker`.
+  - Built-in engine-level image optimization (512px downsampling via `dart:ui.instantiateImageCodec`) storing self-contained Base64 Data URIs (`data:image/png;base64,...`) for 100% offline portability and cross-device JSON export/import compatibility.
 
 ### Phase 4: Lore & Society Compendium Expansion 📜
 - [ ] **The Vaesen Bestiary**:

@@ -498,10 +498,8 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
   }
 
   void _executeRoll(dynamic character) {
-    if (character == null) return;
-
     // Spend active advantage if checked and present
-    if (_useAdvantage) {
+    if (_useAdvantage && character != null) {
       final activeAdv = character.activeAdvantage;
       if (activeAdv != null) {
         widget.playViewModel.spendAdvantage(activeAdv.id);

@@ -16,6 +16,13 @@ class BuilderViewModel extends ChangeNotifier {
   String _name = '';
   String get name => _name;
 
+  String _portraitAsset = 'assets/images/portraits/astrid.jpg';
+  String get portraitAsset => _portraitAsset;
+
+  String? _customPortraitDataUri;
+  String? get customPortraitDataUri => _customPortraitDataUri;
+  bool get hasCustomPortrait => _customPortraitDataUri != null && _customPortraitDataUri!.isNotEmpty;
+
   Archetype _archetype = ArchetypesData.allArchetypes.first;
   Archetype get archetype => _archetype;
 
@@ -122,6 +129,23 @@ class BuilderViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setPortraitAsset(String asset) {
+    _portraitAsset = asset;
+    notifyListeners();
+  }
+
+  void setCustomPortrait(String dataUri) {
+    _customPortraitDataUri = dataUri;
+    _portraitAsset = dataUri;
+    notifyListeners();
+  }
+
+  void clearCustomPortrait() {
+    _customPortraitDataUri = null;
+    _applyDefaultArchetypePortrait(_archetype);
+    notifyListeners();
+  }
+
   void setArchetype(Archetype arc) {
     _archetype = arc;
     _selectedTalents = [
@@ -133,7 +157,27 @@ class BuilderViewModel extends ChangeNotifier {
     _equipment = arc.startingGear
         .map((g) => EquipmentItem(id: UniqueKey().toString(), name: g))
         .toList();
+
+    // Preserve custom portrait if uploaded, otherwise set archetype default
+    if (_customPortraitDataUri == null) {
+      _applyDefaultArchetypePortrait(arc);
+    }
     notifyListeners();
+  }
+
+  void _applyDefaultArchetypePortrait(Archetype arc) {
+    final lower = arc.name.toLowerCase();
+    if (lower.contains('doctor') || lower.contains('academic') || lower.contains('writer')) {
+      _portraitAsset = 'assets/images/portraits/astrid.jpg';
+    } else if (lower.contains('officer') || lower.contains('private detective') || lower.contains('guard')) {
+      _portraitAsset = 'assets/images/portraits/birger.jpg';
+    } else if (lower.contains('occultist') || lower.contains('priest')) {
+      _portraitAsset = 'assets/images/portraits/elias.jpg';
+    } else if (lower.contains('hunter') || lower.contains('servant') || lower.contains('vagabond')) {
+      _portraitAsset = 'assets/images/portraits/johan.jpg';
+    } else {
+      _portraitAsset = 'assets/images/portraits/astrid.jpg';
+    }
   }
 
   void setAgeCategory(AgeCategory cat) {
@@ -168,12 +212,20 @@ class BuilderViewModel extends ChangeNotifier {
   }
 
   void setAttribute(AttributeType type, int val) {
+    final current = _attributes[type] ?? 2;
+    if (val > current && remainingAttributePoints <= 0) {
+      return;
+    }
     final maxAllowed = (type == _archetype.mainAttribute) ? 5 : 4;
     _attributes[type] = val.clamp(2, maxAllowed);
     notifyListeners();
   }
 
   void setSkill(SkillType type, int val) {
+    final current = _skills[type] ?? 0;
+    if (val > current && remainingSkillPoints <= 0) {
+      return;
+    }
     final maxAllowed = (type == _archetype.mainSkill) ? 3 : 2;
     _skills[type] = val.clamp(0, maxAllowed);
     notifyListeners();
@@ -202,6 +254,72 @@ class BuilderViewModel extends ChangeNotifier {
   int get remainingSkillPoints =>
       _ageCategory.skillPoints - totalSkillPointsSpent;
 
+  bool get isNameValid => _name.trim().isNotEmpty;
+  bool get isAttributeBudgetValid => remainingAttributePoints == 0;
+  bool get isSkillBudgetValid => remainingSkillPoints == 0;
+  bool get isTalentValid => _selectedTalents.isNotEmpty;
+  bool get canEnroll =>
+      isNameValid && isAttributeBudgetValid && isSkillBudgetValid && isTalentValid;
+
+  /// Returns an error message if the current step is not valid to advance from,
+  /// or null if the step is valid.
+  String? getStepValidationError(int step) {
+    switch (step) {
+      case 0:
+        if (!isNameValid) return 'Please enter an Investigator name to proceed.';
+        return null;
+      case 1:
+        return null;
+      case 2:
+        if (remainingAttributePoints > 0) {
+          return 'You must allocate all $remainingAttributePoints remaining Attribute points.';
+        }
+        if (remainingAttributePoints < 0) {
+          return 'You have overspent Attribute points by ${-remainingAttributePoints}. Reduce points to balance.';
+        }
+        if (remainingSkillPoints > 0) {
+          return 'You must allocate all $remainingSkillPoints remaining Skill points.';
+        }
+        if (remainingSkillPoints < 0) {
+          return 'You have overspent Skill points by ${-remainingSkillPoints}. Reduce points to balance.';
+        }
+        return null;
+      case 3:
+        if (!isTalentValid) return 'Please choose at least 1 starting Talent.';
+        return null;
+      case 4:
+        return null;
+      case 5:
+        if (!isNameValid) return 'Investigator name is required (Step 1).';
+        if (!isAttributeBudgetValid) {
+          return remainingAttributePoints > 0
+              ? 'Attribute points must be fully allocated ($remainingAttributePoints remaining).'
+              : 'Attribute points overspent by ${-remainingAttributePoints}.';
+        }
+        if (!isSkillBudgetValid) {
+          return remainingSkillPoints > 0
+              ? 'Skill points must be fully allocated ($remainingSkillPoints remaining).'
+              : 'Skill points overspent by ${-remainingSkillPoints}.';
+        }
+        if (!isTalentValid) return 'A starting Talent is required (Step 4).';
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  /// Returns the first validation error in any step from 0 up to [upToStep],
+  /// or null if all steps up to [upToStep] are valid.
+  String? getFirstValidationErrorUpTo(int upToStep) {
+    for (int s = 0; s <= upToStep; s++) {
+      final err = getStepValidationError(s);
+      if (err != null) return err;
+    }
+    return null;
+  }
+
+  bool isStepValid(int step) => getStepValidationError(step) == null;
+
   Character buildCharacter() {
     return Character(
       id: 'char_${DateTime.now().millisecondsSinceEpoch}',
@@ -209,6 +327,7 @@ class BuilderViewModel extends ChangeNotifier {
       archetypeName: _archetype.name,
       ageCategory: _ageCategory,
       actualAge: _actualAge,
+      portraitAsset: _portraitAsset,
       motivation: _motivation,
       trauma: _trauma,
       darkSecret: _darkSecret,

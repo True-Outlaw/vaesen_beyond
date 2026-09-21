@@ -25,6 +25,11 @@ class LocalStorageService {
     return prefs.getString(_kActiveCharacterIdKey);
   }
 
+  Future<void> clearActiveCharacterId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kActiveCharacterIdKey);
+  }
+
   Future<void> saveCastleJson(String jsonStr) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kCastleStateKey, jsonStr);

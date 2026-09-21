@@ -1,6 +1,8 @@
-import 'dart:io';
+import 'dart:io' as io;
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/domain/models/condition.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
@@ -37,7 +39,7 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
       vsync: this,
       duration: const Duration(milliseconds: 1400),
     );
-    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+    if (!kIsWeb && !io.Platform.environment.containsKey('FLUTTER_TEST')) {
       _pulseController.repeat(reverse: true);
     }
     _pulseAnimation = CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut);
@@ -47,21 +49,6 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
   void dispose() {
     _pulseController.dispose();
     super.dispose();
-  }
-
-  String _getPortraitAsset(Character character) {
-    final lower = character.archetypeName.toLowerCase();
-    if (lower.contains('doctor')) return 'assets/images/portraits/astrid.jpg';
-    if (lower.contains('officer')) return 'assets/images/portraits/birger.jpg';
-    if (lower.contains('occultist')) return 'assets/images/portraits/elias.jpg';
-    if (lower.contains('hunter')) return 'assets/images/portraits/johan.jpg';
-    final portraits = [
-      'assets/images/portraits/astrid.jpg',
-      'assets/images/portraits/birger.jpg',
-      'assets/images/portraits/elias.jpg',
-      'assets/images/portraits/johan.jpg',
-    ];
-    return portraits[character.id.hashCode.abs() % portraits.length];
   }
 
   int _getEquippedArmorProtection(Character character) {
@@ -215,39 +202,29 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
                             isBroken: isBroken,
                             pulseValue: isBroken ? _pulseAnimation.value : 0.0,
                           ),
-                          child: Container(
-                            width: 76,
-                            height: 76,
+                          child: Padding(
                             padding: const EdgeInsets.all(7),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
+                            child: GothicPortrait(
+                              portraitAsset: activeCharacter.effectivePortraitAsset,
+                              width: 90,
+                              height: 90,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isBroken
+                                    ? AppColors.crimson.withAlpha((180 + (75 * _pulseAnimation.value)).toInt())
+                                    : AppColors.gold.withAlpha(160),
+                                width: 1.8,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
                                   color: isBroken
-                                      ? AppColors.crimson.withAlpha((180 + (75 * _pulseAnimation.value)).toInt())
-                                      : AppColors.gold.withAlpha(160),
-                                  width: 1.8,
+                                      ? AppColors.crimson.withAlpha(120)
+                                      : Colors.black.withAlpha(140),
+                                  blurRadius: isBroken ? 12 : 6,
+                                  spreadRadius: isBroken ? 2 : 0,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: isBroken
-                                        ? AppColors.crimson.withAlpha(120)
-                                        : Colors.black.withAlpha(140),
-                                    blurRadius: isBroken ? 12 : 6,
-                                    spreadRadius: isBroken ? 2 : 0,
-                                  ),
-                                ],
-                              ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  _getPortraitAsset(activeCharacter),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, _, _) => Container(
-                                    color: AppColors.surfaceLight,
-                                    child: const Icon(Icons.person, color: AppColors.gold, size: 32),
-                                  ),
-                                ),
-                              ),
+                              ],
+                              fallbackInitial: activeCharacter.name,
                             ),
                           ),
                         );

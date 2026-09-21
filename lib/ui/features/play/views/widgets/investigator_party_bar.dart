@@ -3,9 +3,11 @@ import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/party_management_dialog.dart';
 
 class InvestigatorPartyBar extends StatelessWidget {
   final PlayViewModel viewModel;
@@ -16,21 +18,6 @@ class InvestigatorPartyBar extends StatelessWidget {
     required this.viewModel,
     required this.diceViewModel,
   });
-
-  String _getPortraitAsset(Character character) {
-    final lower = character.archetypeName.toLowerCase();
-    if (lower.contains('doctor')) return 'assets/images/portraits/astrid.jpg';
-    if (lower.contains('officer')) return 'assets/images/portraits/birger.jpg';
-    if (lower.contains('occultist')) return 'assets/images/portraits/elias.jpg';
-    if (lower.contains('hunter')) return 'assets/images/portraits/johan.jpg';
-    final portraits = [
-      'assets/images/portraits/astrid.jpg',
-      'assets/images/portraits/birger.jpg',
-      'assets/images/portraits/elias.jpg',
-      'assets/images/portraits/johan.jpg',
-    ];
-    return portraits[character.id.hashCode.abs() % portraits.length];
-  }
 
   void _rollInitiative(BuildContext context, Character character) {
     final agilityPool = character.getEffectiveSkill(SkillType.agility);
@@ -85,42 +72,29 @@ class InvestigatorPartyBar extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
+                        GothicPortrait(
+                          portraitAsset: char.effectivePortraitAsset,
                           width: 32,
                           height: 32,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isBroken
-                                  ? AppColors.crimson
-                                  : isActive
-                                      ? AppColors.goldBright
-                                      : AppColors.goldDim.withAlpha(90),
-                              width: isActive ? 2.0 : 1.0,
-                            ),
-                            boxShadow: isActive
-                                ? [
-                                    BoxShadow(
-                                      color: AppColors.gold.withAlpha(120),
-                                      blurRadius: 6,
-                                      spreadRadius: 1,
-                                    ),
-                                  ]
-                                : null,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isBroken
+                                ? AppColors.crimson
+                                : isActive
+                                    ? AppColors.goldBright
+                                    : AppColors.goldDim.withAlpha(90),
+                            width: isActive ? 2.0 : 1.0,
                           ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              _getPortraitAsset(char),
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) => Container(
-                                color: AppColors.surfaceLight,
-                                child: Text(
-                                  char.name.isNotEmpty ? char.name[0] : '?',
-                                  style: const TextStyle(color: AppColors.gold, fontSize: 12),
-                                ),
-                              ),
-                            ),
-                          ),
+                          boxShadow: isActive
+                              ? [
+                                  BoxShadow(
+                                    color: AppColors.gold.withAlpha(120),
+                                    blurRadius: 6,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
+                          fallbackInitial: char.name,
                         ),
                         const SizedBox(height: 2),
                         Container(
@@ -144,6 +118,16 @@ class InvestigatorPartyBar extends StatelessWidget {
               ),
             ),
           ),
+
+          // Manage Society Roster Button
+          IconButton(
+            icon: const Icon(Icons.manage_accounts_outlined, color: AppColors.gold, size: 20),
+            tooltip: 'Society Roster & Party Management',
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            onPressed: () => showPartyManagementDialog(context, viewModel),
+          ),
+          const SizedBox(width: 4),
 
           // Initiative Roller Pill (Right side)
           GestureDetector(

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:vaesen_beyond/data/repositories/character_repository.dart';
+import 'package:vaesen_beyond/data/seed/pregen_characters.dart';
 import 'package:vaesen_beyond/domain/models/advantage.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/castle.dart';
@@ -46,6 +47,9 @@ class PlayViewModel extends ChangeNotifier {
     } else if (_characters.isNotEmpty) {
       _activeCharacter = _characters.first;
       await _repository.setActiveCharacterId(_activeCharacter!.id);
+    } else {
+      _activeCharacter = null;
+      await _repository.clearActiveCharacterId();
     }
 
     _castle = await _repository.loadCastleState();
@@ -79,9 +83,47 @@ class PlayViewModel extends ChangeNotifier {
       _activeCharacter = _characters.isNotEmpty ? _characters.first : null;
       if (_activeCharacter != null) {
         await _repository.setActiveCharacterId(_activeCharacter!.id);
+      } else {
+        await _repository.clearActiveCharacterId();
       }
     }
     notifyListeners();
+  }
+
+  /// Reloads standard pregenerated characters into the Society roster.
+  Future<void> loadPregenCharacters() async {
+    final pregens = PregenCharacters.characters;
+    for (final p in pregens) {
+      if (!_characters.any((c) => c.id == p.id)) {
+        _characters.add(p);
+      }
+    }
+    if (_activeCharacter == null && _characters.isNotEmpty) {
+      _activeCharacter = _characters.first;
+      await _repository.setActiveCharacterId(_activeCharacter!.id);
+    }
+    await _repository.saveAllCharacters(_characters);
+    notifyListeners();
+  }
+
+  /// Exports an investigator's data as formatted JSON string.
+  String? exportCharacterJson([String? characterId]) {
+    final id = characterId ?? _activeCharacter?.id;
+    if (id == null) return null;
+    final char = _characters.firstWhere((c) => c.id == id, orElse: () => _activeCharacter!);
+    return _repository.exportCharacterJson(char);
+  }
+
+  /// Imports an investigator from JSON string and activates them.
+  Future<Character> importCharacterFromJson(String jsonStr) async {
+    final imported = _repository.importCharacterFromJson(jsonStr);
+    // If an investigator with the same ID already exists, generate a fresh unique ID
+    final finalChar = _characters.any((c) => c.id == imported.id)
+        ? imported.copyWith(id: 'char_${DateTime.now().millisecondsSinceEpoch}')
+        : imported;
+    await updateCharacter(finalChar);
+    await switchCharacter(finalChar.id);
+    return finalChar;
   }
 
   Future<void> toggleCondition({

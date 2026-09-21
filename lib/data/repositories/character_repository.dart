@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:vaesen_beyond/data/datasources/local_storage_service.dart';
 import 'package:vaesen_beyond/data/seed/castle_data.dart';
-import 'package:vaesen_beyond/data/seed/pregen_characters.dart';
 import 'package:vaesen_beyond/domain/models/castle.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 
@@ -14,22 +13,16 @@ class CharacterRepository {
   Future<List<Character>> loadCharacters() async {
     final jsonStr = await _storage.getCharactersJson();
     if (jsonStr == null || jsonStr.trim().isEmpty) {
-      final initialList = PregenCharacters.characters;
-      await saveAllCharacters(initialList);
-      return initialList;
+      return [];
     }
 
     try {
       final decoded = jsonDecode(jsonStr) as List<dynamic>;
-      final list = decoded
+      return decoded
           .map((item) => Character.fromJson(item as Map<String, dynamic>))
           .toList();
-      if (list.isEmpty) {
-        return PregenCharacters.characters;
-      }
-      return list;
     } catch (_) {
-      return PregenCharacters.characters;
+      return [];
     }
   }
 
@@ -62,6 +55,10 @@ class CharacterRepository {
 
   Future<void> setActiveCharacterId(String id) async {
     await _storage.saveActiveCharacterId(id);
+  }
+
+  Future<void> clearActiveCharacterId() async {
+    await _storage.clearActiveCharacterId();
   }
 
   Future<CastleState> loadCastleState() async {

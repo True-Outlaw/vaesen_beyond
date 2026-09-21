@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
+import 'package:vaesen_beyond/ui/features/builder/views/character_builder_screen.dart';
 import 'package:vaesen_beyond/ui/features/castle/views/castle_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/act_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/advancement_card.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/inventory_card.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/party_management_dialog.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/prep_and_lore_card.dart';
 
 class PlayScreen extends StatefulWidget {
@@ -59,40 +62,27 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
         }
 
         final character = widget.viewModel.activeCharacter;
-        if (character == null) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('No Investigators Found', style: AppTypography.titleLarge),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => widget.viewModel.initialize(),
-                    child: const Text('RELOAD ARCHIVES'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
 
         return Scaffold(
           body: IndexedStack(
             index: _currentNavIndex,
             children: [
               // 0: TABLE (Castle Gyllencreutz & Mystery Headquarters)
-              _buildTableView(character),
+              CastleScreen(viewModel: widget.viewModel),
 
               // 1: ACT (The Scandinavian Gothic Combat Cockpit)
-              ActScreen(
-                character: character,
-                playViewModel: widget.viewModel,
-                diceViewModel: widget.diceViewModel,
-              ),
+              character != null
+                  ? ActScreen(
+                      character: character,
+                      playViewModel: widget.viewModel,
+                      diceViewModel: widget.diceViewModel,
+                    )
+                  : _buildEmptyStateView(context),
 
               // 2: SHEET (Comprehensive Investigator Dossier)
-              _buildSheetView(character),
+              character != null
+                  ? _buildSheetView(character)
+                  : _buildEmptyStateView(context),
             ],
           ),
 
@@ -134,24 +124,146 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
     );
   }
 
-  String _getPortraitAsset(Character character) {
-    final lower = character.archetypeName.toLowerCase();
-    if (lower.contains('doctor')) return 'assets/images/portraits/astrid.jpg';
-    if (lower.contains('officer')) return 'assets/images/portraits/birger.jpg';
-    if (lower.contains('occultist')) return 'assets/images/portraits/elias.jpg';
-    if (lower.contains('hunter')) return 'assets/images/portraits/johan.jpg';
-    final portraits = [
-      'assets/images/portraits/astrid.jpg',
-      'assets/images/portraits/birger.jpg',
-      'assets/images/portraits/elias.jpg',
-      'assets/images/portraits/johan.jpg',
-    ];
-    return portraits[character.id.hashCode.abs() % portraits.length];
-  }
-
-  // ── TABLE View: Castle Gyllencreutz & Mystery Headquarters ────────────────
-  Widget _buildTableView(Character character) {
-    return CastleScreen(viewModel: widget.viewModel);
+  Widget _buildEmptyStateView(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.gold, width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(200),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                ),
+                BoxShadow(
+                  color: AppColors.gold.withAlpha(25),
+                  blurRadius: 14,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.gold.withAlpha(25),
+                    border: Border.all(color: AppColors.gold, width: 1.5),
+                  ),
+                  child: const Icon(
+                    Icons.shield_outlined,
+                    color: AppColors.goldBright,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'SOCIETY ARCHIVES',
+                  style: AppTypography.displayMedium.copyWith(
+                    fontSize: 18,
+                    color: AppColors.goldBright,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'NO INVESTIGATORS REGISTERED',
+                  style: AppTypography.labelSmall.copyWith(
+                    color: AppColors.goldDim,
+                    letterSpacing: 1.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'The halls of Castle Gyllencreutz stand silent. Enroll your first investigator into the order, import an existing dossier, or restore the standard pregenerated roster to begin.',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textMuted,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CharacterBuilderScreen(
+                            playViewModel: widget.viewModel,
+                            onFinished: () => Navigator.pop(context),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.person_add, size: 16, color: Colors.black),
+                    label: const Text(
+                      'CREATE NEW INVESTIGATOR',
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.goldBright,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => showPartyManagementDialog(context, widget.viewModel),
+                    icon: const Icon(Icons.file_download_outlined, size: 16, color: AppColors.gold),
+                    label: const Text(
+                      'IMPORT DOSSIER (JSON)',
+                      style: TextStyle(color: AppColors.gold, fontSize: 12),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.gold),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await widget.viewModel.loadPregenCharacters();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Standard pregenerated investigators restored.')),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.restart_alt, size: 16, color: AppColors.textMuted),
+                    label: const Text(
+                      'RESTORE SAMPLE INVESTIGATORS',
+                      style: TextStyle(color: AppColors.textMuted, fontSize: 11),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   // ── SHEET View: Full Investigator Dossier & Inventory ────────────────────
@@ -329,30 +441,20 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
       ),
       child: Row(
         children: [
-          Container(
+          GothicPortrait(
+            portraitAsset: character.effectivePortraitAsset,
             width: 44,
             height: 44,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.gold, width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(120),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ClipOval(
-              child: Image.asset(
-                _getPortraitAsset(character),
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(
-                  color: AppColors.surfaceLight,
-                  child: const Icon(Icons.person, color: AppColors.gold, size: 24),
-                ),
+            shape: BoxShape.circle,
+            border: Border.all(color: AppColors.gold, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(120),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
               ),
-            ),
+            ],
+            fallbackInitial: character.name,
           ),
           const SizedBox(width: 12),
           Expanded(

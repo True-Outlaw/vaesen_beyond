@@ -33,6 +33,7 @@ void main() {
     testWidgets('InvestigatorPartyBar renders party and triggers initiative roll', (WidgetTester tester) async {
       final playVm = PlayViewModel();
       await playVm.initialize();
+      await playVm.loadPregenCharacters();
       final diceVm = DiceRollerViewModel();
 
       await tester.pumpWidget(createTestHarness(
@@ -57,6 +58,7 @@ void main() {
     testWidgets('ConditionArcHud renders condition tracks, armor shield and allows roll', (WidgetTester tester) async {
       final playVm = PlayViewModel();
       await playVm.initialize();
+      await playVm.loadPregenCharacters();
       final diceVm = DiceRollerViewModel();
       final character = playVm.activeCharacter!;
 
@@ -86,6 +88,7 @@ void main() {
     testWidgets('TactileWeaponCards renders equipped weapons and Solace ribbon', (WidgetTester tester) async {
       final playVm = PlayViewModel();
       await playVm.initialize();
+      await playVm.loadPregenCharacters();
       final diceVm = DiceRollerViewModel();
       final character = playVm.activeCharacter!;
 
@@ -114,6 +117,7 @@ void main() {
     testWidgets('CombatActionDial renders and center Talisman opens dice tray', (WidgetTester tester) async {
       final playVm = PlayViewModel();
       await playVm.initialize();
+      await playVm.loadPregenCharacters();
       final diceVm = DiceRollerViewModel();
       final character = playVm.activeCharacter!;
 
@@ -139,6 +143,7 @@ void main() {
     testWidgets('ConditionArcHud and bottom sheet checkboxes update in real-time', (WidgetTester tester) async {
       final playVm = PlayViewModel();
       await playVm.initialize();
+      await playVm.loadPregenCharacters();
       final diceVm = DiceRollerViewModel();
       final character = playVm.activeCharacter!;
 

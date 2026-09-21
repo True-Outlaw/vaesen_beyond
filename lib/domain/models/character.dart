@@ -36,6 +36,7 @@ class Character {
   final String darkSecret;
   final String memento;
   final bool isMementoUsed;
+  final String? portraitAsset;
 
   final Map<AttributeType, int> attributes;
   final Map<SkillType, int> skills;
@@ -58,20 +59,21 @@ class Character {
     required this.id,
     required this.name,
     required this.archetypeName,
-    this.ageCategory = AgeCategory.middleAged,
-    this.actualAge = 35,
+    required this.ageCategory,
+    required this.actualAge,
     this.motivation = '',
     this.trauma = '',
     this.darkSecret = '',
     this.memento = '',
     this.isMementoUsed = false,
+    this.portraitAsset = '',
     required this.attributes,
     required this.skills,
-    this.conditions = const ConditionsState(),
-    this.talents = const [],
-    this.weapons = const [],
-    this.armor = const [],
-    this.equipment = const [],
+    required this.conditions,
+    required this.talents,
+    required this.weapons,
+    required this.armor,
+    required this.equipment,
     this.advantages = const [],
     this.resources = 3,
     this.capital = 1,
@@ -80,6 +82,23 @@ class Character {
     this.activeInjuries = const [],
     this.notes = '',
   });
+
+  String get effectivePortraitAsset {
+    final asset = portraitAsset;
+    if (asset != null && asset.isNotEmpty) return asset;
+    final lower = archetypeName.toLowerCase();
+    if (lower.contains('doctor')) return 'assets/images/portraits/astrid.jpg';
+    if (lower.contains('officer')) return 'assets/images/portraits/birger.jpg';
+    if (lower.contains('occultist')) return 'assets/images/portraits/elias.jpg';
+    if (lower.contains('hunter')) return 'assets/images/portraits/johan.jpg';
+    const portraits = [
+      'assets/images/portraits/astrid.jpg',
+      'assets/images/portraits/birger.jpg',
+      'assets/images/portraits/elias.jpg',
+      'assets/images/portraits/johan.jpg',
+    ];
+    return portraits[id.hashCode.abs() % portraits.length];
+  }
 
   Advantage? get activeAdvantage {
     for (final a in advantages) {
@@ -160,6 +179,7 @@ class Character {
     String? darkSecret,
     String? memento,
     bool? isMementoUsed,
+    String? portraitAsset,
     Map<AttributeType, int>? attributes,
     Map<SkillType, int>? skills,
     ConditionsState? conditions,
@@ -186,6 +206,7 @@ class Character {
       darkSecret: darkSecret ?? this.darkSecret,
       memento: memento ?? this.memento,
       isMementoUsed: isMementoUsed ?? this.isMementoUsed,
+      portraitAsset: portraitAsset ?? this.portraitAsset,
       attributes: attributes ?? this.attributes,
       skills: skills ?? this.skills,
       conditions: conditions ?? this.conditions,
@@ -214,6 +235,7 @@ class Character {
         'darkSecret': darkSecret,
         'memento': memento,
         'isMementoUsed': isMementoUsed,
+        'portraitAsset': portraitAsset,
         'attributes': attributes.map((k, v) => MapEntry(k.name, v)),
         'skills': skills.map((k, v) => MapEntry(k.name, v)),
         'conditions': conditions.toJson(),
@@ -245,6 +267,7 @@ class Character {
       darkSecret: json['darkSecret'] as String? ?? '',
       memento: json['memento'] as String? ?? '',
       isMementoUsed: json['isMementoUsed'] as bool? ?? false,
+      portraitAsset: json['portraitAsset'] as String? ?? '',
       attributes: (json['attributes'] as Map<String, dynamic>? ?? {}).map(
         (k, v) => MapEntry(
           AttributeType.values.firstWhere((a) => a.name == k),

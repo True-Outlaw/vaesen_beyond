@@ -2,30 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/solace_dialog.dart';
-
-/// Derives a portrait asset path from the character's archetype name.
-String _portraitAsset(Character character) {
-  final lower = character.archetypeName.toLowerCase();
-  if (lower.contains('doctor') || lower.contains('physician') || lower.contains('astrid')) {
-    return 'assets/images/portraits/astrid.jpg';
-  } else if (lower.contains('detective') || lower.contains('officer') || lower.contains('johan')) {
-    return 'assets/images/portraits/johan.jpg';
-  } else if (lower.contains('occult') || lower.contains('scholar') || lower.contains('elias')) {
-    return 'assets/images/portraits/elias.jpg';
-  } else if (lower.contains('hunter') || lower.contains('woodsman') || lower.contains('birger')) {
-    return 'assets/images/portraits/birger.jpg';
-  }
-  // Fallback: cycle through portraits by ID hash
-  final portraits = [
-    'assets/images/portraits/astrid.jpg',
-    'assets/images/portraits/johan.jpg',
-    'assets/images/portraits/elias.jpg',
-    'assets/images/portraits/birger.jpg',
-  ];
-  return portraits[character.id.hashCode.abs() % portraits.length];
-}
 
 class IdentityHeader extends StatelessWidget {
   final Character character;
@@ -154,37 +133,21 @@ class _PortraitFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final asset = _portraitAsset(character);
-
-    return Container(
+    return GothicPortrait(
+      portraitAsset: character.effectivePortraitAsset,
       width: 60,
       height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.gold, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.gold.withAlpha(40),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(6.5),
-        child: Image.asset(
-          asset,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => Container(
-            color: AppColors.surfaceLight,
-            alignment: Alignment.center,
-            child: Text(
-              character.name.isNotEmpty ? character.name[0].toUpperCase() : 'V',
-              style: AppTypography.statHero.copyWith(fontSize: 24),
-            ),
-          ),
+      shape: BoxShape.rectangle,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: AppColors.gold, width: 1.5),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.gold.withAlpha(40),
+          blurRadius: 10,
+          spreadRadius: 1,
         ),
-      ),
+      ],
+      fallbackInitial: character.name,
     );
   }
 }

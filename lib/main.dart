@@ -7,7 +7,9 @@ import 'package:vaesen_beyond/ui/features/builder/views/character_builder_screen
 import 'package:vaesen_beyond/ui/features/compendium/views/compendium_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
+import 'package:flutter/services.dart';
 import 'package:vaesen_beyond/ui/features/play/views/play_screen.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/party_management_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,7 +83,9 @@ class MainNavigationScreen extends StatelessWidget {
             icon: const Icon(Icons.more_vert, color: AppColors.gold),
             color: AppColors.surface,
             onSelected: (val) {
-              if (val == 'new_char') {
+              if (val == 'roster') {
+                showPartyManagementDialog(context, playVm);
+              } else if (val == 'new_char') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -91,9 +95,39 @@ class MainNavigationScreen extends StatelessWidget {
                     ),
                   ),
                 );
+              } else if (val == 'export') {
+                final jsonStr = playVm.exportCharacterJson();
+                if (jsonStr != null) {
+                  Clipboard.setData(ClipboardData(text: jsonStr));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: AppColors.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: const BorderSide(color: AppColors.gold),
+                      ),
+                      content: Text(
+                        '${playVm.activeCharacter?.name ?? "Investigator"} exported! JSON copied to clipboard.',
+                        style: const TextStyle(color: AppColors.goldBright, fontSize: 12),
+                      ),
+                    ),
+                  );
+                }
+              } else if (val == 'import') {
+                showPartyManagementDialog(context, playVm);
               }
             },
             itemBuilder: (_) => [
+              PopupMenuItem(
+                value: 'roster',
+                child: Row(
+                  children: [
+                    const Icon(Icons.groups_outlined, size: 16, color: AppColors.goldBright),
+                    const SizedBox(width: 8),
+                    Text('Society Roster & Party', style: AppTypography.titleSmall),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'new_char',
                 child: Row(
@@ -101,6 +135,26 @@ class MainNavigationScreen extends StatelessWidget {
                     const Icon(Icons.person_add, size: 16, color: AppColors.goldBright),
                     const SizedBox(width: 8),
                     Text('Create New Investigator', style: AppTypography.titleSmall),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'export',
+                child: Row(
+                  children: [
+                    const Icon(Icons.file_upload_outlined, size: 16, color: AppColors.gold),
+                    const SizedBox(width: 8),
+                    Text('Export Active (JSON)', style: AppTypography.titleSmall),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'import',
+                child: Row(
+                  children: [
+                    const Icon(Icons.file_download_outlined, size: 16, color: AppColors.gold),
+                    const SizedBox(width: 8),
+                    Text('Import Investigator (JSON)', style: AppTypography.titleSmall),
                   ],
                 ),
               ),

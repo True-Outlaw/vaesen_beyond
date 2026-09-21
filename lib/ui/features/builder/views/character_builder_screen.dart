@@ -5,7 +5,9 @@ import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/portrait_image_service.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
+import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/core/widgets/pip_counter.dart';
 import 'package:vaesen_beyond/ui/features/builder/view_models/builder_view_model.dart';
@@ -27,6 +29,20 @@ class CharacterBuilderScreen extends StatefulWidget {
 
 class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
   final BuilderViewModel _builderVm = BuilderViewModel();
+
+  static const _availablePortraits = [
+    ('assets/images/portraits/astrid.jpg', 'Astrid', 'Doctor / Scholar'),
+    ('assets/images/portraits/birger.jpg', 'Birger', 'Officer / Guard'),
+    ('assets/images/portraits/elias.jpg', 'Elias', 'Occultist / Priest'),
+    ('assets/images/portraits/johan.jpg', 'Johan', 'Hunter / Tracker'),
+  ];
+
+  Future<void> _handleUploadPortrait() async {
+    final dataUri = await PortraitImageService.pickAndProcessCustomPortrait();
+    if (dataUri != null && mounted) {
+      _builderVm.setCustomPortrait(dataUri);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,22 +90,50 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                       const SizedBox.shrink(),
                     if (_builderVm.currentStep < 5)
                       ElevatedButton(
-                        onPressed: _builderVm.nextStep,
+                        onPressed: () {
+                          final error = _builderVm.getFirstValidationErrorUpTo(_builderVm.currentStep);
+                          if (error != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: AppColors.crimsonDark,
+                                content: Text(error, style: const TextStyle(color: Colors.white)),
+                                duration: const Duration(seconds: 3),
+                              ),
+                            );
+                            return;
+                          }
+                          _builderVm.nextStep();
+                        },
                         child: const Text('NEXT STEP'),
                       )
                     else
                       ElevatedButton.icon(
-                        onPressed: () async {
-                          final newChar = _builderVm.buildCharacter();
-                          await widget.playViewModel.updateCharacter(newChar);
-                          await widget.playViewModel.switchCharacter(newChar.id);
-                          widget.onFinished();
-                        },
-                        icon: const Icon(Icons.check, color: AppColors.goldBright),
+                        onPressed: _builderVm.canEnroll
+                            ? () async {
+                                final newChar = _builderVm.buildCharacter();
+                                await widget.playViewModel.updateCharacter(newChar);
+                                await widget.playViewModel.switchCharacter(newChar.id);
+                                widget.onFinished();
+                              }
+                            : () {
+                                final err = _builderVm.getFirstValidationErrorUpTo(5);
+                                if (err != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: AppColors.crimsonDark,
+                                      content: Text(err, style: const TextStyle(color: Colors.white)),
+                                    ),
+                                  );
+                                }
+                              },
+                        icon: Icon(
+                          _builderVm.canEnroll ? Icons.check : Icons.lock_outline,
+                          color: _builderVm.canEnroll ? AppColors.goldBright : AppColors.textMuted,
+                        ),
                         label: const Text('ENROLL INVESTIGATOR'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.crimson,
-                          foregroundColor: Colors.white,
+                          backgroundColor: _builderVm.canEnroll ? AppColors.crimson : AppColors.surfaceOverlay,
+                          foregroundColor: _builderVm.canEnroll ? Colors.white : AppColors.textMuted,
                         ),
                       ),
                   ],
@@ -115,7 +159,26 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
           final isPassed = index < _builderVm.currentStep;
 
           return InkWell(
-            onTap: () => _builderVm.setStep(index),
+            onTap: () {
+              if (index <= _builderVm.currentStep) {
+                _builderVm.setStep(index);
+              } else {
+                for (int s = 0; s < index; s++) {
+                  final err = _builderVm.getStepValidationError(s);
+                  if (err != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: AppColors.crimsonDark,
+                        content: Text(err, style: const TextStyle(color: Colors.white)),
+                      ),
+                    );
+                    _builderVm.setStep(s);
+                    return;
+                  }
+                }
+                _builderVm.setStep(index);
+              }
+            },
             child: Row(
               children: [
                 CircleAvatar(
@@ -187,6 +250,158 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
           ),
           onChanged: _builderVm.setName,
         ),
+
+        const SizedBox(height: 18),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('SELECT GOTHIC PORTRAIT', style: AppTypography.titleSmall),
+            if (_builderVm.hasCustomPortrait)
+              TextButton.icon(
+                onPressed: _handleUploadPortrait,
+                icon: const Icon(Icons.refresh, size: 14, color: AppColors.gold),
+                label: const Text('REPLACE', style: TextStyle(fontSize: 11, color: AppColors.gold)),
+                style: TextButton.styleFrom(padding: EdgeInsets.zero, visualDensity: VisualDensity.compact),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 94,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                ..._availablePortraits.map((p) {
+                  final isSelected = _builderVm.portraitAsset == p.$1;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 14),
+                    child: GestureDetector(
+                      onTap: () => _builderVm.setPortraitAsset(p.$1),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 58,
+                            height: 58,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected ? AppColors.goldBright : AppColors.border,
+                                width: isSelected ? 2.5 : 1.0,
+                              ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColors.gold.withAlpha(140),
+                                        blurRadius: 8,
+                                        spreadRadius: 2,
+                                      ),
+                                    ]
+                                  : null,
+                          ),
+                          child: ClipOval(
+                            child: Image.asset(p.$1, fit: BoxFit.cover),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          p.$2,
+                          style: TextStyle(
+                            color: isSelected ? AppColors.goldBright : AppColors.textMuted,
+                            fontSize: 11,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              if (_builderVm.hasCustomPortrait) ...[
+                Padding(
+                  padding: const EdgeInsets.only(right: 14),
+                  child: GestureDetector(
+                    onTap: () => _builderVm.setPortraitAsset(_builderVm.customPortraitDataUri!),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GothicPortrait(
+                          portraitAsset: _builderVm.customPortraitDataUri!,
+                          width: 58,
+                          height: 58,
+                          border: Border.all(
+                            color: _builderVm.portraitAsset == _builderVm.customPortraitDataUri
+                                ? AppColors.goldBright
+                                : AppColors.border,
+                            width: _builderVm.portraitAsset == _builderVm.customPortraitDataUri ? 2.5 : 1.0,
+                          ),
+                          boxShadow: _builderVm.portraitAsset == _builderVm.customPortraitDataUri
+                              ? [
+                                  BoxShadow(
+                                    color: AppColors.gold.withAlpha(140),
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Custom',
+                          style: TextStyle(
+                            color: _builderVm.portraitAsset == _builderVm.customPortraitDataUri
+                                ? AppColors.goldBright
+                                : AppColors.textMuted,
+                            fontSize: 11,
+                            fontWeight: _builderVm.portraitAsset == _builderVm.customPortraitDataUri
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              GestureDetector(
+                onTap: _handleUploadPortrait,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 58,
+                      height: 58,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.surfaceLight,
+                        border: Border.all(
+                          color: AppColors.gold.withAlpha(140),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.add_photo_alternate_outlined,
+                        color: AppColors.gold,
+                        size: 26,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Upload',
+                      style: TextStyle(
+                        color: AppColors.gold,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
 
         const SizedBox(height: 18),
         Text('SELECT ARCHETYPE', style: AppTypography.titleSmall),
@@ -347,9 +562,9 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                   children: [
                     Text('ATTRIBUTE POINTS', style: AppTypography.titleSmall.copyWith(fontSize: 10)),
                     Text(
-                      '$remAttr Remaining',
+                      remAttr == 0 ? 'Balanced ✓' : (remAttr > 0 ? '$remAttr Unspent' : '${-remAttr} Overspent ⚠️'),
                       style: AppTypography.titleMedium.copyWith(
-                        color: remAttr == 0 ? AppColors.gold : AppColors.goldBright,
+                        color: remAttr == 0 ? AppColors.gold : (remAttr > 0 ? AppColors.goldBright : AppColors.crimsonLight),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -370,7 +585,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                   children: [
                     Text('SKILL POINTS', style: AppTypography.titleSmall.copyWith(fontSize: 10)),
                     Text(
-                      '$remSkill Remaining',
+                      remSkill == 0 ? 'Balanced ✓' : (remSkill > 0 ? '$remSkill Unspent' : '${-remSkill} Overspent ⚠️'),
                       style: AppTypography.titleMedium.copyWith(
                         color: remSkill == 0 ? AppColors.gold : AppColors.crimsonLight,
                         fontWeight: FontWeight.bold,
@@ -382,6 +597,32 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
             ),
           ],
         ),
+
+        if (remAttr != 0 || remSkill != 0) ...[
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.crimson.withAlpha(25),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: AppColors.crimsonLight.withAlpha(120)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.warning_amber_rounded, color: AppColors.crimsonLight, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Budget must balance exactly to 0 before proceeding.\n'
+                    '${remAttr != 0 ? (remAttr > 0 ? "Spend $remAttr more Attribute pts. " : "Remove ${-remAttr} Attribute pts. ") : ""}'
+                    '${remSkill != 0 ? (remSkill > 0 ? "Spend $remSkill more Skill pts." : "Remove ${-remSkill} Skill pts.") : ""}',
+                    style: const TextStyle(fontSize: 11, color: AppColors.crimsonLight),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
 
         const SizedBox(height: 16),
         Text('ATTRIBUTES', style: AppTypography.titleSmall),
@@ -544,18 +785,112 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
       children: [
         Text('Final Step: Review & Enroll', style: AppTypography.titleLarge),
         const SizedBox(height: 12),
+
+        // Budget validation banner
+        if (!_builderVm.canEnroll)
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.crimson.withAlpha(30),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.crimsonLight),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.error_outline, color: AppColors.crimsonLight, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      'ENROLLMENT REQUIREMENTS INCOMPLETE',
+                      style: AppTypography.titleSmall.copyWith(color: AppColors.crimsonLight, fontSize: 11),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                if (!_builderVm.isNameValid)
+                  const Text('• Investigator Name is required (Step 1)', style: TextStyle(color: Colors.white, fontSize: 11)),
+                if (!_builderVm.isAttributeBudgetValid)
+                  Text(
+                    '• Attributes: ${_builderVm.totalAttributePointsSpent}/${_builderVm.ageCategory.attributePoints} pts (${_builderVm.remainingAttributePoints > 0 ? "${_builderVm.remainingAttributePoints} unspent" : "${-_builderVm.remainingAttributePoints} overspent"})',
+                    style: const TextStyle(color: Colors.white, fontSize: 11),
+                  ),
+                if (!_builderVm.isSkillBudgetValid)
+                  Text(
+                    '• Skills: ${_builderVm.totalSkillPointsSpent}/${_builderVm.ageCategory.skillPoints} pts (${_builderVm.remainingSkillPoints > 0 ? "${_builderVm.remainingSkillPoints} unspent" : "${-_builderVm.remainingSkillPoints} overspent"})',
+                    style: const TextStyle(color: Colors.white, fontSize: 11),
+                  ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () => _builderVm.setStep(!_builderVm.isNameValid ? 0 : 2),
+                    icon: const Icon(Icons.build, size: 13, color: AppColors.goldBright),
+                    label: Text(
+                      !_builderVm.isNameValid ? 'GO TO STEP 1 (NAME)' : 'GO TO STEP 3 (STATS)',
+                      style: const TextStyle(color: AppColors.goldBright, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.gold.withAlpha(20),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.gold),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.check_circle_outline, color: AppColors.goldBright, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Point Budgets Balanced: Attributes (${_builderVm.totalAttributePointsSpent}/${_builderVm.ageCategory.attributePoints}) • Skills (${_builderVm.totalSkillPointsSpent}/${_builderVm.ageCategory.skillPoints}) ✓',
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.goldBright, fontSize: 11),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
         GothicCard(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                _builderVm.name.isNotEmpty ? _builderVm.name : 'Unknown Investigator',
-                style: AppTypography.displayMedium.copyWith(color: AppColors.goldBright),
-              ),
-              Text(
-                '${arc.name} • ${_builderVm.actualAge} years old • ${_builderVm.ageCategory.label}',
-                style: AppTypography.bodySmall.copyWith(color: AppColors.gold),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GothicPortrait(
+                    portraitAsset: _builderVm.portraitAsset,
+                    width: 60,
+                    height: 60,
+                    border: Border.all(color: AppColors.gold, width: 1.5),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _builderVm.name.isNotEmpty ? _builderVm.name : 'Unknown Investigator',
+                          style: AppTypography.displayMedium.copyWith(color: AppColors.goldBright, fontSize: 18),
+                        ),
+                        Text(
+                          '${arc.name} • ${_builderVm.actualAge} years old • ${_builderVm.ageCategory.label}',
+                          style: AppTypography.bodySmall.copyWith(color: AppColors.gold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const OrnateDivider(height: 16),
               Text('STARTING GEAR PACK', style: AppTypography.titleSmall.copyWith(fontSize: 12)),

@@ -32,9 +32,31 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
+  testWidgets('PlayScreen displays Gothic empty state when no investigators are registered', (WidgetTester tester) async {
+    final playVm = PlayViewModel();
+    await playVm.initialize();
+    final diceVm = DiceRollerViewModel();
+
+    await tester.pumpWidget(createTestApp(
+      PlayScreen(viewModel: playVm, diceViewModel: diceVm),
+      playVm,
+      diceVm,
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('SOCIETY ARCHIVES'), findsOneWidget);
+    expect(find.text('NO INVESTIGATORS REGISTERED'), findsOneWidget);
+    expect(find.text('CREATE NEW INVESTIGATOR'), findsOneWidget);
+    expect(find.text('RESTORE SAMPLE INVESTIGATORS'), findsOneWidget);
+    expect(find.text('TABLE'), findsOneWidget);
+    expect(find.text('ACT'), findsOneWidget);
+    expect(find.text('SHEET'), findsOneWidget);
+  });
+
   testWidgets('PlayScreen displays investigator identity, attributes, and conditions', (WidgetTester tester) async {
     final playVm = PlayViewModel();
     await playVm.initialize();
+    await playVm.loadPregenCharacters();
     final diceVm = DiceRollerViewModel();
 
     await tester.pumpWidget(createTestApp(
@@ -88,6 +110,7 @@ void main() {
   testWidgets('PlayScreen Add Gear bottom sheet opens and displays weapons compendium', (WidgetTester tester) async {
     final playVm = PlayViewModel();
     await playVm.initialize();
+    await playVm.loadPregenCharacters();
     final diceVm = DiceRollerViewModel();
 
     await tester.pumpWidget(createTestApp(
@@ -123,6 +146,7 @@ void main() {
   testWidgets('PlayScreen condition toggle updates penalty and broken status via ConditionArcHud', (WidgetTester tester) async {
     final playVm = PlayViewModel();
     await playVm.initialize();
+    await playVm.loadPregenCharacters();
     final diceVm = DiceRollerViewModel();
 
     await tester.pumpWidget(createTestApp(
