@@ -94,7 +94,7 @@ class ConditionsCard extends StatelessWidget {
                       ElevatedButton.icon(
                         onPressed: () => showDialog(
                           context: context,
-                          builder: (_) => FearTestDialog(character: activeChar),
+                          builder: (_) => FearTestDialog(character: activeChar, viewModel: viewModel),
                         ),
                         icon: const Icon(Icons.visibility, size: 14, color: AppColors.goldBright),
                         label: const Text('FEAR TEST'),

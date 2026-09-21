@@ -135,6 +135,7 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
         context: context,
         builder: (_) => FearTestDialog(
           character: widget.character,
+          viewModel: widget.playViewModel,
         ),
       );
       return;

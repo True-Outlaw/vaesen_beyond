@@ -207,16 +207,38 @@ class PlayViewModel extends ChangeNotifier {
     await updateCharacter(_activeCharacter!.copyWith(activeInjuries: newInjuries));
   }
 
-  Future<void> toggleFacility(String facilityId) async {
+  /// Toggles a facility. Returns [true] if successful, [false] if insufficient
+  /// development points to build.
+  Future<bool> toggleFacility(String facilityId) async {
+    final fac = _castle.facilities.firstWhere((f) => f.id == facilityId);
+    final willBuild = !fac.isBuilt;
+
+    // Enforce dev-point economy on build
+    if (willBuild && _castle.developmentPoints < fac.devCost) {
+      return false;
+    }
+
+    final newPoints = willBuild
+        ? _castle.developmentPoints - fac.devCost
+        : _castle.developmentPoints + fac.devCost;
+
     final updatedList = _castle.facilities.map((f) {
-      if (f.id == facilityId) {
-        final willBuild = !f.isBuilt;
-        return f.copyWith(isBuilt: willBuild);
-      }
+      if (f.id == facilityId) return f.copyWith(isBuilt: willBuild);
       return f;
     }).toList();
 
-    _castle = _castle.copyWith(facilities: updatedList);
+    _castle = _castle.copyWith(
+      facilities: updatedList,
+      developmentPoints: newPoints,
+    );
+    await _repository.saveCastleState(_castle);
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> adjustDevelopmentPoints(int delta) async {
+    final newPoints = (_castle.developmentPoints + delta).clamp(0, 99);
+    _castle = _castle.copyWith(developmentPoints: newPoints);
     await _repository.saveCastleState(_castle);
     notifyListeners();
   }
@@ -412,5 +434,141 @@ class PlayViewModel extends ChangeNotifier {
       advantages: [],
     );
     await updateCharacter(updated);
+  }
+
+  // ── FEAR TEST RESULT APPLICATION ────────────────────────────────────────
+  /// Applies [count] mental conditions in severity order (Angry → Frightened
+  /// → Hopeless), skipping any that are already active.
+  Future<void> applyFearConditions(int count) async {
+    if (_activeCharacter == null || count <= 0) return;
+    final cond = _activeCharacter!.conditions;
+    bool angry = cond.angry;
+    bool frightened = cond.frightened;
+    bool hopeless = cond.hopeless;
+
+    int remaining = count;
+    if (remaining > 0 && !angry) {
+      angry = true;
+      remaining--;
+    }
+    if (remaining > 0 && !frightened) {
+      frightened = true;
+      remaining--;
+    }
+    if (remaining > 0 && !hopeless) {
+      hopeless = true;
+      remaining--;
+    }
+
+    await toggleCondition(
+      angry: angry,
+      frightened: frightened,
+      hopeless: hopeless,
+    );
+  }
+
+  // ── DOSSIER & JOURNAL ───────────────────────────────────────────────────
+
+  /// Updates narrative text fields on the active character.
+  Future<void> updateDossier({
+    String? motivation,
+    String? trauma,
+    String? darkSecret,
+    String? memento,
+  }) async {
+    if (_activeCharacter == null) return;
+    await updateCharacter(_activeCharacter!.copyWith(
+      motivation: motivation ?? _activeCharacter!.motivation,
+      trauma: trauma ?? _activeCharacter!.trauma,
+      darkSecret: darkSecret ?? _activeCharacter!.darkSecret,
+      memento: memento ?? _activeCharacter!.memento,
+    ));
+  }
+
+  static const _journalSep = '\n---\n';
+
+  List<String> getJournalEntries() {
+    if (_activeCharacter == null) return [];
+    final raw = _activeCharacter!.notes;
+    if (raw.isEmpty) return [];
+    return raw.split(_journalSep).where((e) => e.trim().isNotEmpty).toList();
+  }
+
+  Future<void> addJournalEntry(String text) async {
+    if (_activeCharacter == null || text.trim().isEmpty) return;
+    final entries = getJournalEntries();
+    entries.add(text.trim());
+    final newNotes = entries.join(_journalSep);
+    await updateCharacter(_activeCharacter!.copyWith(notes: newNotes));
+  }
+
+  Future<void> removeJournalEntry(int index) async {
+    if (_activeCharacter == null) return;
+    final entries = getJournalEntries();
+    if (index < 0 || index >= entries.length) return;
+    entries.removeAt(index);
+    final newNotes = entries.join(_journalSep);
+    await updateCharacter(_activeCharacter!.copyWith(notes: newNotes));
+  }
+
+  // ── GEAR EDITING ────────────────────────────────────────────────────────
+
+  Future<void> updateWeapon(Weapon weapon) async {
+    if (_activeCharacter == null) return;
+    final list = _activeCharacter!.weapons.map((w) => w.id == weapon.id ? weapon : w).toList();
+    await updateCharacter(_activeCharacter!.copyWith(weapons: list));
+  }
+
+  Future<void> updateArmor(Armor armor) async {
+    if (_activeCharacter == null) return;
+    final list = _activeCharacter!.armor.map((a) => a.id == armor.id ? armor : a).toList();
+    await updateCharacter(_activeCharacter!.copyWith(armor: list));
+  }
+
+  Future<void> updateEquipmentItem(EquipmentItem item) async {
+    if (_activeCharacter == null) return;
+    final list = _activeCharacter!.equipment.map((e) => e.id == item.id ? item : e).toList();
+    await updateCharacter(_activeCharacter!.copyWith(equipment: list));
+  }
+
+  // ── CONCLUDE MYSTERY ────────────────────────────────────────────────────
+
+  /// One-shot end-of-mystery commit: awards XP, dev points, optionally
+  /// restores the memento, and appends an auto-generated expedition log entry.
+  Future<void> concludeMystery({
+    required int xpEarned,
+    required int devPointsEarned,
+    required bool restoreMemento,
+    String? logEntry,
+  }) async {
+    if (_activeCharacter == null) return;
+
+    // 1. XP
+    final newXp = (_activeCharacter!.experiencePoints + xpEarned).clamp(0, 999);
+
+    // 2. Memento
+    final newMementoUsed = restoreMemento ? false : _activeCharacter!.isMementoUsed;
+
+    // 3. Expedition log
+    final now = DateTime.now();
+    final dateStr = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    final autoEntry = logEntry != null && logEntry.isNotEmpty
+        ? '[$dateStr – Mystery Concluded] $logEntry'
+        : '[$dateStr – Mystery Concluded] +$xpEarned XP · +$devPointsEarned Dev Pts${restoreMemento ? " · Memento restored" : ""}';
+
+    final entries = getJournalEntries();
+    entries.add(autoEntry);
+    final newNotes = entries.join(_journalSep);
+
+    await updateCharacter(_activeCharacter!.copyWith(
+      experiencePoints: newXp,
+      isMementoUsed: newMementoUsed,
+      notes: newNotes,
+    ));
+
+    // 4. Dev points (castle state)
+    if (devPointsEarned > 0) {
+      await adjustDevelopmentPoints(devPointsEarned);
+    }
   }
 }

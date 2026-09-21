@@ -139,199 +139,243 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
         final mntPenalty = conditions.mentalPenalty;
         final armorProt = _getEquippedArmorProtection(activeCharacter);
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Left: Archetype & Name identity pod
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      activeCharacter.name,
-                      style: AppTypography.titleSmall.copyWith(
-                        color: AppColors.goldBright,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
-                        fontSize: 13,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
+        // Lethal injuries — untreated
+        final lethalInjuries = activeCharacter.activeInjuries
+            .where((i) => i.injury.isLethal && !i.isTreated)
+            .toList();
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Left: Archetype & Name identity pod
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.surfaceLight,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: AppColors.gold.withAlpha(60), width: 0.6),
+                        Text(
+                          activeCharacter.name,
+                          style: AppTypography.titleSmall.copyWith(
+                            color: AppColors.goldBright,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                            fontSize: 13,
                           ),
-                          child: Text(
-                            activeCharacter.archetypeName.toUpperCase(),
-                            style: AppTypography.labelSmall.copyWith(
-                              color: AppColors.gold,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceLight,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: AppColors.gold.withAlpha(60), width: 0.6),
+                              ),
+                              child: Text(
+                                activeCharacter.archetypeName.toUpperCase(),
+                                style: AppTypography.labelSmall.copyWith(
+                                  color: AppColors.gold,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'AGE ${activeCharacter.actualAge}',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.textMuted,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Center: Circular Portrait with 6-segment Condition Arc Ring
+                  GestureDetector(
+                    onTap: _openConditionsSheet,
+                    child: AnimatedBuilder(
+                      animation: _pulseAnimation,
+                      builder: (context, child) {
+                        return CustomPaint(
+                          painter: _ConditionArcPainter(
+                            conditions: conditions,
+                            isBroken: isBroken,
+                            pulseValue: isBroken ? _pulseAnimation.value : 0.0,
+                          ),
+                          child: Container(
+                            width: 76,
+                            height: 76,
+                            padding: const EdgeInsets.all(7),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isBroken
+                                      ? AppColors.crimson.withAlpha((180 + (75 * _pulseAnimation.value)).toInt())
+                                      : AppColors.gold.withAlpha(160),
+                                  width: 1.8,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: isBroken
+                                        ? AppColors.crimson.withAlpha(120)
+                                        : Colors.black.withAlpha(140),
+                                    blurRadius: isBroken ? 12 : 6,
+                                    spreadRadius: isBroken ? 2 : 0,
+                                  ),
+                                ],
+                              ),
+                              child: ClipOval(
+                                child: Image.asset(
+                                  _getPortraitAsset(activeCharacter),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, _, _) => Container(
+                                    color: AppColors.surfaceLight,
+                                    child: const Icon(Icons.person, color: AppColors.gold, size: 32),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // Right: Armor Shield & Active Condition Banner
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Floating Armor Shield (Tap to roll armor protection)
+                        GestureDetector(
+                          onTap: _rollArmor,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(100),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.shield_outlined, color: AppColors.goldBright, size: 14),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '$armorProt ARMOR',
+                                  style: AppTypography.statValue.copyWith(
+                                    fontSize: 10,
+                                    color: AppColors.goldBright,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'AGE ${activeCharacter.actualAge}',
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textMuted,
-                            fontSize: 10,
+                        const SizedBox(height: 4),
+
+                        // Active Condition Status Badge (Tap to manage conditions)
+                        GestureDetector(
+                          onTap: _openConditionsSheet,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: isBroken
+                                  ? AppColors.crimsonDark
+                                  : (physPenalty > 0 || mntPenalty > 0)
+                                      ? AppColors.surfaceOverlay
+                                      : AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: isBroken
+                                    ? AppColors.crimson
+                                    : (physPenalty > 0 || mntPenalty > 0)
+                                        ? AppColors.crimson.withAlpha(160)
+                                        : AppColors.border,
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Text(
+                              isBroken
+                                  ? 'BROKEN'
+                                  : (physPenalty > 0 || mntPenalty > 0)
+                                      ? '-${physPenalty + mntPenalty} PENALTY'
+                                      : 'UNHARMED',
+                              style: AppTypography.labelSmall.copyWith(
+                                fontSize: 9,
+                                color: isBroken
+                                    ? Colors.white
+                                    : (physPenalty > 0 || mntPenalty > 0)
+                                        ? AppColors.crimsonBright
+                                        : AppColors.textMuted,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
 
-              // Center: Circular Portrait with 6-segment Condition Arc Ring
-              GestureDetector(
-                onTap: _openConditionsSheet,
-                child: AnimatedBuilder(
-                  animation: _pulseAnimation,
-                  builder: (context, child) {
-                    return CustomPaint(
-                      painter: _ConditionArcPainter(
-                        conditions: conditions,
-                        isBroken: isBroken,
-                        pulseValue: isBroken ? _pulseAnimation.value : 0.0,
-                      ),
-                      child: Container(
-                        width: 76,
-                        height: 76,
-                        padding: const EdgeInsets.all(7),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isBroken
-                                  ? AppColors.crimson.withAlpha((180 + (75 * _pulseAnimation.value)).toInt())
-                                  : AppColors.gold.withAlpha(160),
-                              width: 1.8,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isBroken
-                                    ? AppColors.crimson.withAlpha(120)
-                                    : Colors.black.withAlpha(140),
-                                blurRadius: isBroken ? 12 : 6,
-                                spreadRadius: isBroken ? 2 : 0,
-                              ),
-                            ],
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              _getPortraitAsset(activeCharacter),
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) => Container(
-                                color: AppColors.surfaceLight,
-                                child: const Icon(Icons.person, color: AppColors.gold, size: 32),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+            // ── Lethal Injury Alert Banner ──────────────────────────────────
+            if (lethalInjuries.isNotEmpty)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.lethal.withAlpha(28),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: AppColors.lethal.withAlpha(180), width: 1.0),
                 ),
-              ),
-
-              // Right: Armor Shield & Active Condition Banner
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
+                child: Row(
                   children: [
-                    // Floating Armor Shield (Tap to roll armor protection)
-                    GestureDetector(
-                      onTap: _rollArmor,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(100),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
+                    const Icon(Icons.warning_rounded, color: AppColors.lethal, size: 14),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        lethalInjuries.length == 1
+                            ? 'LETHAL: ${lethalInjuries.first.injury.name} — treat within ${lethalInjuries.first.injury.timeLimit}'
+                            : '${lethalInjuries.length} LETHAL INJURIES — immediate treatment required!',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.lethal,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.shield_outlined, color: AppColors.goldBright, size: 14),
-                            const SizedBox(width: 4),
-                            Text(
-                              '$armorProt ARMOR',
-                              style: AppTypography.statValue.copyWith(
-                                fontSize: 10,
-                                color: AppColors.goldBright,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-
-                    // Active Condition Status Badge (Tap to manage conditions)
-                    GestureDetector(
-                      onTap: _openConditionsSheet,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: isBroken
-                              ? AppColors.crimsonDark
-                              : (physPenalty > 0 || mntPenalty > 0)
-                                  ? AppColors.surfaceOverlay
-                                  : AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: isBroken
-                                ? AppColors.crimson
-                                : (physPenalty > 0 || mntPenalty > 0)
-                                    ? AppColors.crimson.withAlpha(160)
-                                    : AppColors.border,
-                            width: 0.8,
-                          ),
-                        ),
-                        child: Text(
-                          isBroken
-                              ? 'BROKEN'
-                              : (physPenalty > 0 || mntPenalty > 0)
-                                  ? '-${physPenalty + mntPenalty} PENALTY'
-                                  : 'UNHARMED',
-                          style: AppTypography.labelSmall.copyWith(
-                            fontSize: 9,
-                            color: isBroken
-                                ? Colors.white
-                                : (physPenalty > 0 || mntPenalty > 0)
-                                    ? AppColors.crimsonBright
-                                    : AppColors.textMuted,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+          ],
         );
       },
     );

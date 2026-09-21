@@ -7,6 +7,7 @@ import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_mode
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/add_item_sheet.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/edit_gear_sheet.dart';
 
 class InventoryCard extends StatelessWidget {
   final Character character;
@@ -373,6 +374,12 @@ class InventoryCard extends StatelessWidget {
                             );
                           },
                         ),
+                        // Edit weapon
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),
+                          tooltip: 'Edit Weapon',
+                          onPressed: () => showEditWeaponSheet(context, w, playViewModel),
+                        ),
                         // Drop
                         IconButton(
                           icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),
@@ -479,6 +486,11 @@ class InventoryCard extends StatelessWidget {
                           onPressed: () => playViewModel.toggleEquipArmor(a.id),
                         ),
                         IconButton(
+                          icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),
+                          tooltip: 'Edit Armor',
+                          onPressed: () => showEditArmorSheet(context, a, playViewModel),
+                        ),
+                        IconButton(
                           icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),
                           tooltip: 'Drop Armor',
                           onPressed: () => playViewModel.removeArmor(a.id),
@@ -572,6 +584,11 @@ class InventoryCard extends StatelessWidget {
                               onPressed: () => playViewModel.updateEquipmentQuantity(eq.id, 1),
                             ),
                           ],
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),
+                          tooltip: 'Edit Item',
+                          onPressed: () => showEditEquipmentSheet(context, eq, playViewModel),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),

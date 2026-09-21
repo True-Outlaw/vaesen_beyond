@@ -5,6 +5,8 @@ import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/conclude_mystery_dialog.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/dossier_sheet.dart';
 
 class PrepAndLoreCard extends StatelessWidget {
   final Character character;
@@ -48,8 +50,28 @@ class PrepAndLoreCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(width: 6),
+                  ElevatedButton.icon(
+                    onPressed: () => showConcludeMysteryDialog(
+                      context,
+                      viewModel: playViewModel,
+                      character: character,
+                    ),
+                    icon: const Icon(Icons.auto_stories, size: 12, color: AppColors.goldBright),
+                    label: const Text('CONCLUDE', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.crimsonDark,
+                      foregroundColor: AppColors.goldBright,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      visualDensity: VisualDensity.compact,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        side: const BorderSide(color: AppColors.gold, width: 0.8),
+                      ),
+                    ),
+                  ),
                   if (activeAdv == null) ...[
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     ElevatedButton.icon(
                       onPressed: () => _openPreparationModal(context),
                       icon: const Icon(Icons.add, size: 13, color: AppColors.goldBright),
@@ -191,10 +213,31 @@ class PrepAndLoreCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(Icons.menu_book, color: AppColors.gold, size: 18),
-                  const SizedBox(width: 8),
-                  Text('INVESTIGATOR DOSSIER', style: AppTypography.titleMedium),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.menu_book, color: AppColors.gold, size: 18),
+                      const SizedBox(width: 8),
+                      Text('INVESTIGATOR DOSSIER', style: AppTypography.titleMedium),
+                    ],
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () => showDossierSheet(context, character, playViewModel),
+                    icon: const Icon(Icons.edit_note, size: 13, color: AppColors.goldBright),
+                    label: const Text('VIEW DOSSIER', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.surfaceOverlay,
+                      foregroundColor: AppColors.goldBright,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      visualDensity: VisualDensity.compact,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        side: const BorderSide(color: AppColors.gold, width: 0.8),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -257,10 +300,83 @@ class PrepAndLoreCard extends StatelessWidget {
                 ),
               ),
 
-              if (character.notes.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                _buildLoreField('FIELD NOTES', character.notes),
-              ],
+              const SizedBox(height: 12),
+              // Field Notes preview
+              Builder(
+                builder: (context) {
+                  final journalEntries = playViewModel.getJournalEntries();
+                  return Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: AppColors.border, width: 0.8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.edit_note, color: AppColors.gold, size: 14),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'FIELD NOTES & EXPEDITION LOG',
+                                  style: AppTypography.labelSmall.copyWith(
+                                    color: AppColors.goldDim,
+                                    fontSize: 9,
+                                    letterSpacing: 0.6,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            GestureDetector(
+                              onTap: () => showDossierSheet(context, character, playViewModel),
+                              child: Text(
+                                'OPEN JOURNAL (${journalEntries.length}) →',
+                                style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        if (journalEntries.isEmpty)
+                          Text(
+                            'No field notes recorded yet. Tap "OPEN JOURNAL" or "VIEW DOSSIER" to write notes.',
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
+                          )
+                        else
+                          ...journalEntries.reversed.take(3).map((note) {
+                            final isAuto = note.contains('Mystery Concluded');
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('• ', style: TextStyle(color: isAuto ? AppColors.gold : AppColors.goldDim)),
+                                  Expanded(
+                                    child: Text(
+                                      note,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTypography.bodySmall.copyWith(
+                                        fontSize: 11,
+                                        color: isAuto ? AppColors.goldBright : AppColors.textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),

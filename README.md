@@ -51,24 +51,24 @@
 
 The following roadmap synthesizes the current system assessment and outlines upcoming milestones for gameplay integrity, narrative depth, and compendium expansion.
 
-### Phase 1: Gameplay Integrity & Rules Automation 🔴
-- [ ] **Castle Development Points Economy**:
+### Phase 1: Gameplay Integrity & Rules Automation ✅
+- [x] **Castle Development Points Economy**:
   - Enforce development point balance when building facilities (`devCost`).
   - Deduct development points upon construction and refund when dismantling.
   - Add interactive point adjustment steppers (`[-] PTS [+]`).
-- [ ] **Fear Test Condition Integration**:
+- [x] **Fear Test Condition Integration**:
   - Connect `FearTestDialog` directly to `PlayViewModel`.
   - Add a one-tap `"APPLY CONDITIONS"` button to automatically inflict suffered mental conditions upon failing a fear test.
-- [ ] **Lethal Critical Injury Alert Banner**:
+- [x] **Lethal Critical Injury Alert Banner**:
   - Surface active lethal injuries directly on the `ACT` cockpit HUD with prominent countdown timers (e.g. *"LETHAL: Treat within 1 hour"*).
 
-### Phase 2: Player Agency & Narrative Folio 🟡
-- [ ] **Editable Investigator Dossier & Journal**:
+### Phase 2: Player Agency & Narrative Folio ✅
+- [x] **Editable Investigator Dossier & Journal**:
   - Add in-place editing for Motivation, Trauma, Dark Secret, and Personal Memento.
   - Implement a dedicated **Field Notes / Mystery Journal** editor for players to record clues, rumors, and NPC interactions.
-- [ ] **Custom Gear Management**:
+- [x] **Custom Gear Management**:
   - Allow players to edit custom weapons, armor, and equipment items after creation (name, damage, protection, slots, notes).
-- [ ] **Unified "Conclude Mystery" Workflow**:
+- [x] **Unified "Conclude Mystery" Workflow**:
   - Create a single comprehensive end-of-mystery flow that combines:
     1. Debrief questionnaire (+XP)
     2. Castle Development Points reward (+Dev Points)

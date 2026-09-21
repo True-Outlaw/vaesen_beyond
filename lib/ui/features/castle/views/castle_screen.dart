@@ -40,17 +40,65 @@ class CastleScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: AppColors.surfaceLight,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: AppColors.goldBright),
-                          ),
-                          child: Text(
-                            'DEV POINTS: ${castle.developmentPoints}',
-                            style: AppTypography.titleSmall.copyWith(fontSize: 12),
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Dev points stepper
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceLight,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: AppColors.goldBright),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  InkWell(
+                                    onTap: () => viewModel.adjustDevelopmentPoints(-1),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      child: Text('-',
+                                          style: TextStyle(
+                                            color: AppColors.goldBright,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          )),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                    child: Text(
+                                      '${castle.developmentPoints}',
+                                      style: AppTypography.titleSmall.copyWith(
+                                        fontSize: 14,
+                                        color: AppColors.goldBright,
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () => viewModel.adjustDevelopmentPoints(1),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      child: Text('+',
+                                          style: TextStyle(
+                                            color: AppColors.goldBright,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          )),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'DEV PTS',
+                              style: AppTypography.labelSmall.copyWith(
+                                color: AppColors.gold,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -68,6 +116,8 @@ class CastleScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               ...castle.facilities.map((fac) {
+                final canAfford = castle.developmentPoints >= fac.devCost;
+                final canToggle = fac.isBuilt || canAfford;
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: GothicCard(
@@ -95,14 +145,32 @@ class CastleScreen extends StatelessWidget {
                                       color: fac.isBuilt ? AppColors.goldBright : AppColors.textPrimary,
                                     ),
                                   ),
-                                  Text(
-                                    fac.isBuilt ? 'BUILT' : 'COST: ${fac.devCost} PTS',
-                                    style: AppTypography.bodySmall.copyWith(
-                                      color: fac.isBuilt ? AppColors.gold : AppColors.textMuted,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10,
+                                  if (!fac.isBuilt && !canAfford)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.crimsonDark,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(color: AppColors.crimsonLight, width: 0.8),
+                                      ),
+                                      child: Text(
+                                        'NEEDS ${fac.devCost} PTS',
+                                        style: AppTypography.labelSmall.copyWith(
+                                          color: AppColors.crimsonBright,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Text(
+                                      fac.isBuilt ? 'BUILT' : 'COST: ${fac.devCost} PTS',
+                                      style: AppTypography.bodySmall.copyWith(
+                                        color: fac.isBuilt ? AppColors.gold : AppColors.textMuted,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10,
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                               const SizedBox(height: 2),
@@ -123,7 +191,21 @@ class CastleScreen extends StatelessWidget {
                           value: fac.isBuilt,
                           activeThumbColor: AppColors.goldBright,
                           activeTrackColor: AppColors.surfaceLight,
-                          onChanged: (_) => viewModel.toggleFacility(fac.id),
+                          inactiveThumbColor: canAfford ? null : AppColors.textMuted,
+                          onChanged: canToggle
+                              ? (_) async {
+                                  final success = await viewModel.toggleFacility(fac.id);
+                                  if (!success && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Not enough Development Points to build this facility.'),
+                                        backgroundColor: AppColors.crimsonDark,
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  }
+                                }
+                              : null,
                         ),
                       ],
                     ),

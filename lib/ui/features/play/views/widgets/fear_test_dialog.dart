@@ -6,11 +6,17 @@ import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/d6_dice_widget.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
+import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 
 class FearTestDialog extends StatefulWidget {
   final Character character;
+  final PlayViewModel viewModel;
 
-  const FearTestDialog({super.key, required this.character});
+  const FearTestDialog({
+    super.key,
+    required this.character,
+    required this.viewModel,
+  });
 
   @override
   State<FearTestDialog> createState() => _FearTestDialogState();
@@ -21,6 +27,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
   AttributeType _chosenAttr = AttributeType.logic;
   int _fearValue = 1;
   int _companionsCount = 1;
+  bool _conditionsApplied = false;
 
   @override
   Widget build(BuildContext context) {
@@ -252,10 +259,57 @@ class _FearTestDialogState extends State<FearTestDialog> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () => _diceVm.clearRoll(),
+                        onPressed: () {
+                          _diceVm.clearRoll();
+                          setState(() => _conditionsApplied = false);
+                        },
                         child: const Text('ROLL AGAIN'),
                       ),
                     ),
+
+                    if (!result.passed) ...[
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _conditionsApplied
+                              ? null
+                              : () async {
+                                  await widget.viewModel.applyFearConditions(
+                                    result.conditionsSuffered,
+                                  );
+                                  setState(() => _conditionsApplied = true);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          '${result.conditionsSuffered} mental condition(s) applied.',
+                                        ),
+                                        backgroundColor: AppColors.crimsonDark,
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
+                                  }
+                                },
+                          icon: Icon(
+                            _conditionsApplied ? Icons.check_circle : Icons.psychology_alt,
+                            size: 16,
+                            color: _conditionsApplied ? AppColors.textMuted : Colors.white,
+                          ),
+                          label: Text(
+                            _conditionsApplied
+                                ? 'CONDITIONS APPLIED'
+                                : 'APPLY ${result.conditionsSuffered} MENTAL CONDITION(S)',
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _conditionsApplied
+                                ? AppColors.surfaceLight
+                                : AppColors.crimsonDark,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ],
               ),
