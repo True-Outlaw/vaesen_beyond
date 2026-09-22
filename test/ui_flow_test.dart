@@ -12,6 +12,8 @@ import 'package:vaesen_beyond/ui/features/play/views/play_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/combat_action_dial.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/condition_arc_hud.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/inventory_card.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/prep_and_lore_card.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/tactile_weapon_cards.dart';
 
 Widget createTestApp(Widget child, PlayViewModel playVm, DiceRollerViewModel diceVm) {
@@ -283,5 +285,39 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(diceVm.currentRoll!.dice.length, 6);
+  });
+
+  testWidgets('PrepAndLoreCard and InventoryCard render on narrow screen without RenderFlex overflow', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final playVm = PlayViewModel();
+    await playVm.initialize();
+    await playVm.loadPregenCharacters();
+    final diceVm = DiceRollerViewModel();
+
+    final character = playVm.activeCharacter!;
+
+    await tester.pumpWidget(createTestApp(
+      SingleChildScrollView(
+        child: Column(
+          children: [
+            PrepAndLoreCard(character: character, playViewModel: playVm),
+            InventoryCard(character: character, playViewModel: playVm, diceViewModel: diceVm),
+          ],
+        ),
+      ),
+      playVm,
+      diceVm,
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('INVESTIGATOR DOSSIER'), findsOneWidget);
+    expect(find.text('GEAR & FINANCES'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

@@ -39,7 +39,8 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
       vsync: this,
       duration: const Duration(milliseconds: 1400),
     );
-    if (!kIsWeb && !io.Platform.environment.containsKey('FLUTTER_TEST')) {
+    final bool isTest = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+    if (!isTest) {
       _pulseController.repeat(reverse: true);
     }
     _pulseAnimation = CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut);

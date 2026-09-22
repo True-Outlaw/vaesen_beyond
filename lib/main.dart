@@ -6,6 +6,7 @@ import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/features/builder/views/character_builder_screen.dart';
 import 'package:vaesen_beyond/ui/features/compendium/views/compendium_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
+import 'package:vaesen_beyond/ui/features/play/view_models/initiative_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:flutter/services.dart';
 import 'package:vaesen_beyond/ui/features/play/views/play_screen.dart';
@@ -25,6 +26,7 @@ class VaesenBeyondApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => PlayViewModel()..initialize()),
         ChangeNotifierProvider(create: (_) => DiceRollerViewModel()),
+        ChangeNotifierProvider(create: (_) => InitiativeViewModel()),
       ],
       child: MaterialApp(
         title: 'Vaesen: The Society Companion',

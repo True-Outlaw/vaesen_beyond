@@ -215,14 +215,23 @@ class PrepAndLoreCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.menu_book, color: AppColors.gold, size: 18),
-                      const SizedBox(width: 8),
-                      Text('INVESTIGATOR DOSSIER', style: AppTypography.titleMedium),
-                    ],
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.menu_book, color: AppColors.gold, size: 18),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'INVESTIGATOR DOSSIER',
+                            style: AppTypography.titleMedium,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   ElevatedButton.icon(
                     onPressed: () => showDossierSheet(context, character, playViewModel),
                     icon: const Icon(Icons.edit_note, size: 13, color: AppColors.goldBright),
@@ -318,21 +327,28 @@ class PrepAndLoreCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.edit_note, color: AppColors.gold, size: 14),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'FIELD NOTES & EXPEDITION LOG',
-                                  style: AppTypography.labelSmall.copyWith(
-                                    color: AppColors.goldDim,
-                                    fontSize: 9,
-                                    letterSpacing: 0.6,
-                                    fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.edit_note, color: AppColors.gold, size: 14),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      'FIELD NOTES & EXPEDITION LOG',
+                                      style: AppTypography.labelSmall.copyWith(
+                                        color: AppColors.goldDim,
+                                        fontSize: 9,
+                                        letterSpacing: 0.6,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             GestureDetector(
                               onTap: () => showDossierSheet(context, character, playViewModel),
                               child: Text(
@@ -432,14 +448,18 @@ class PrepAndLoreCard extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                t.name,
-                                style: AppTypography.titleSmall.copyWith(
-                                  fontSize: 13,
-                                  color: AppColors.goldBright,
+                              Expanded(
+                                child: Text(
+                                  t.name,
+                                  style: AppTypography.titleSmall.copyWith(
+                                    fontSize: 13,
+                                    color: AppColors.goldBright,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              if (t.archetypeName != null)
+                              if (t.archetypeName != null) ...[
+                                const SizedBox(width: 6),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                                   decoration: BoxDecoration(
@@ -455,6 +475,7 @@ class PrepAndLoreCard extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+                              ],
                             ],
                           ),
                           const SizedBox(height: 4),

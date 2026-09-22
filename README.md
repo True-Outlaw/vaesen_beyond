@@ -89,15 +89,21 @@ The following roadmap synthesizes the current system assessment and outlines upc
   - Cross-platform custom portrait upload (**Windows, Android, iOS, Web**) powered by `file_picker`.
   - Built-in engine-level image optimization (512px downsampling via `dart:ui.instantiateImageCodec`) storing self-contained Base64 Data URIs (`data:image/png;base64,...`) for 100% offline portability and cross-device JSON export/import compatibility.
 
-### Phase 4: Lore & Society Compendium Expansion 📜
-- [ ] **The Vaesen Bestiary**:
-  - Add a dedicated **BESTIARY** tab to the Society Compendium featuring Nordic folklore creatures:
-    - *Ash Tree Wife, Brook Horse (Bäckahästen), Church Grim, Fairy, Ghost, Giant, Lindworm, Mermaid (Sjörå), Myling, Night Raven, Nixie (Näcken), Revenant, Spertus, Troll, Vaettir, Werewolf, Will-o'-the-Wisp, Wood Wife*.
-  - Include creature ratings (*Might, Body, Mind, Magic*), Fear values, supernatural Enchantments, and folkloric *Weaknesses / Rituals of Banishment*.
-- [ ] **Global Compendium Search**:
-  - Enhance search to scan across all compendium categories simultaneously, displaying badge counts for matches in Archetypes, Talents, Injuries, Gear, Rules, and Bestiary.
-- [ ] **Initiative Card Slot Tracker**:
-  - Implement a tactile 1–10 turn order slot tracker for combat rounds, supporting card swapping between investigators and adversaries.
+### Phase 4: Lore & Society Compendium Expansion 📜 ✅
+- [x] **The Vaesen Bestiary**:
+  - Added a dedicated **BESTIARY** tab to the Society Compendium featuring 18 authentic Scandinavian folklore creatures:
+    - *Ash Tree Wife (Askfrun), Brook Horse (Bäckahästen), Church Grim (Kyrkogrim), Fairy (Älva), Ghost (Spöke/Gast), Giant (Jätte), Lindworm (Lindorm), Mermaid / Sea Wife (Sjörå/Havsrå), Myling, Night Raven (Nattramn), Nixie (Näcken), Revenant (Gengångare), Spertus (Bjära), Troll, Vaettir / Tomte, Werewolf (Varulv), Will-o'-the-Wisp (Lyktgubbe), Wood Wife (Skogsrå)*.
+  - Complete with 4-attribute matrix (*Might, Body, Mind, Magic*), Fear ratings with skulls, supernatural Enchantments with costs/triggers, combat Attacks with damage and reach, folkloric *Weaknesses*, *Banishment Rituals*, and GM *Folklore Secrets*.
+  - Category filters: *All, Nature Spirits, Undead, Fae, Monstrosities*.
+- [x] **Global Compendium Search**:
+  - Live multi-category search scanning across all compendium catalogs simultaneously.
+  - Dynamic pill counter badges on category tabs (*BESTIARY (N), ARCHETYPES (N), TALENTS (N), CRITICAL INJURIES (N), WEAPONS & GEAR (N), RULES REFERENCE (N)*).
+  - Consolidated *ALL (N)* results view grouping matching entries by section with visual category headers.
+- [x] **Initiative Card Slot Tracker**:
+  - Dedicated tactile 1–10 card rack dialog adhering strictly to official *Vaesen* turn order rules (lowest card acts first).
+  - Visual cards with Roman numerals I through X, glowing active turn indicator, investigator vs adversary badge styling.
+  - Interactive two-tap card swapping between participants (Fast reflexes / tactical coordination).
+  - Round counter with re-deal capabilities, turn advancing, active turn toggling, and on-the-fly adversary slot generation.
 
 ---
 

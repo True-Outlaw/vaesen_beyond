@@ -1,5 +1,6 @@
-import 'dart:io';
+import 'dart:io' as io;
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
@@ -49,7 +50,8 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
       vsync: this,
       duration: const Duration(milliseconds: 1800),
     );
-    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+    final bool isTest = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+    if (!isTest) {
       _pulseController.repeat(reverse: true);
     }
     _pulseAnimation = CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut);

@@ -7,6 +7,7 @@ import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/ui/features/play/views/widgets/initiative_tracker_dialog.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/party_management_dialog.dart';
 
 class InvestigatorPartyBar extends StatelessWidget {
@@ -129,39 +130,52 @@ class InvestigatorPartyBar extends StatelessWidget {
           ),
           const SizedBox(width: 4),
 
-          // Initiative Roller Pill (Right side)
+          // 1. Initiative Quick Roll Pill (Right side)
           GestureDetector(
             onTap: () => _rollInitiative(context, activeChar),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: const Color(0xFF221A0C),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.gold.withAlpha(180), width: 1.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.gold.withAlpha(60),
-                    blurRadius: 6,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.flash_on, color: AppColors.goldBright, size: 13),
-                  const SizedBox(width: 4),
-                  Text(
-                    '+$agilityValue INIT',
-                    style: AppTypography.statValue.copyWith(
-                      fontSize: 11,
-                      color: AppColors.goldBright,
-                      letterSpacing: 0.8,
+            child: Tooltip(
+              message: 'Roll Agility Initiative Check ($agilityValue D6)',
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF221A0C),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.gold.withAlpha(180), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.gold.withAlpha(60),
+                      blurRadius: 6,
+                      offset: const Offset(0, 1),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.flash_on, color: AppColors.goldBright, size: 13),
+                    const SizedBox(width: 4),
+                    Text(
+                      '+$agilityValue INIT',
+                      style: AppTypography.statValue.copyWith(
+                        fontSize: 11,
+                        color: AppColors.goldBright,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+          ),
+          const SizedBox(width: 4),
+
+          // 2. Tactile 1–10 Initiative Card Rack & Combat Turn Order Dialog Button
+          IconButton(
+            icon: const Icon(Icons.style, color: AppColors.goldBright, size: 20),
+            tooltip: '1–10 Combat Initiative Card Rack',
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            onPressed: () => showInitiativeTrackerDialog(context),
           ),
         ],
       ),

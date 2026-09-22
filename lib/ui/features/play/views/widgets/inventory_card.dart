@@ -222,15 +222,19 @@ class InventoryCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Carrying: $carry / $maxCarry slots (Physique + 2)',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: isOver ? AppColors.physicalCondition : AppColors.textPrimary,
-                                fontWeight: isOver ? FontWeight.bold : FontWeight.normal,
-                                fontSize: 11,
+                            Expanded(
+                              child: Text(
+                                'Carrying: $carry / $maxCarry slots (Physique + 2)',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: isOver ? AppColors.physicalCondition : AppColors.textPrimary,
+                                  fontWeight: isOver ? FontWeight.bold : FontWeight.normal,
+                                  fontSize: 11,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (isOver)
+                            if (isOver) ...[
+                              const SizedBox(width: 4),
                               Text(
                                 'ENCUMBERED (-2 Agility)',
                                 style: AppTypography.bodySmall.copyWith(
@@ -239,6 +243,7 @@ class InventoryCard extends StatelessWidget {
                                   fontSize: 9,
                                 ),
                               ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -318,11 +323,15 @@ class InventoryCard extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                    w.name,
-                                    style: AppTypography.titleSmall.copyWith(
-                                      color: w.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
-                                      fontSize: 13,
+                                  Flexible(
+                                    child: Text(
+                                      w.name,
+                                      style: AppTypography.titleSmall.copyWith(
+                                        color: w.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
+                                        fontSize: 13,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   if (w.isEquipped) ...[
@@ -467,11 +476,15 @@ class InventoryCard extends StatelessWidget {
                                   color: a.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
                                   fontSize: 13,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Protection: +${a.protection}  •  Agility Penalty: ${a.agilityPenalty}',
                                 style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
