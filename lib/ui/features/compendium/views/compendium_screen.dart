@@ -11,6 +11,7 @@ import 'package:vaesen_beyond/domain/models/talent.dart';
 import 'package:vaesen_beyond/domain/models/vaesen_creature.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
 
 class _CompendiumRule {
@@ -31,6 +32,8 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
   int _selectedTab = 0;
   String _searchQuery = '';
   String _selectedBestiaryCategory = 'All';
+  String _selectedInjuryFilter = 'All';
+  String _selectedGearFilter = 'All';
 
   static const List<_CompendiumRule> _rulesList = [
     _CompendiumRule(
@@ -67,6 +70,9 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
   Widget build(BuildContext context) {
     final query = _searchQuery.trim().toLowerCase();
     final isSearching = query.isNotEmpty;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isWide = Responsive.isWide(context);
+    final isDesktop = screenWidth >= 1400;
 
     // Filtered lists for all categories
     final bestiaryMatches = _filterBestiary(query);
@@ -86,140 +92,262 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
         gearMatchesCount +
         ruleMatches.length;
 
+    // Responsive column distribution
+    final bestiaryColumns = isWide ? 2 : 1;
+    final archetypeColumns = isDesktop ? 3 : (isWide ? 2 : 1);
+    final talentColumns = isDesktop ? 3 : (isWide ? 2 : 1);
+    final injuryColumns = isDesktop ? 3 : (isWide ? 2 : 1);
+    final gearColumns = isDesktop ? 3 : (isWide ? 2 : 1);
+    final rulesColumns = isWide ? 2 : 1;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
+        title: isWide
+            ? Row(
+                children: [
+                  const Icon(Icons.auto_stories, color: AppColors.goldBright, size: 22),
+                  const SizedBox(width: 10),
+                  Text('SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: AppColors.border, width: 0.8),
+                    ),
+                    child: Text(
+                      'REFERENCE ARCHIVE',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.gold,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Text('SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: Row(
-              children: [
-                if (isSearching) ...[
-                  _tabChip('ALL ($totalMatches)', -1, isSelected: _selectedTab == -1),
-                  const SizedBox(width: 8),
-                ],
-                _tabChip(
-                  isSearching ? 'BESTIARY (${bestiaryMatches.length})' : 'BESTIARY',
-                  0,
-                  isSelected: _selectedTab == 0,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: Responsive.maxContentWidth),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWide ? 24 : 16,
+                  vertical: 6,
                 ),
-                const SizedBox(width: 8),
-                _tabChip(
-                  isSearching ? 'ARCHETYPES (${archetypeMatches.length})' : 'ARCHETYPES',
-                  1,
-                  isSelected: _selectedTab == 1,
+                child: Row(
+                  children: [
+                    if (isSearching) ...[
+                      _tabChip('ALL ($totalMatches)', -1, isSelected: _selectedTab == -1),
+                      const SizedBox(width: 8),
+                    ],
+                    _tabChip(
+                      isSearching ? 'BESTIARY (${bestiaryMatches.length})' : 'BESTIARY',
+                      0,
+                      isSelected: _selectedTab == 0,
+                    ),
+                    const SizedBox(width: 8),
+                    _tabChip(
+                      isSearching ? 'ARCHETYPES (${archetypeMatches.length})' : 'ARCHETYPES',
+                      1,
+                      isSelected: _selectedTab == 1,
+                    ),
+                    const SizedBox(width: 8),
+                    _tabChip(
+                      isSearching ? 'TALENTS (${talentMatches.length})' : 'TALENTS',
+                      2,
+                      isSelected: _selectedTab == 2,
+                    ),
+                    const SizedBox(width: 8),
+                    _tabChip(
+                      isSearching ? 'CRITICAL INJURIES (${injuryMatches.length})' : 'CRITICAL INJURIES',
+                      3,
+                      isSelected: _selectedTab == 3,
+                    ),
+                    const SizedBox(width: 8),
+                    _tabChip(
+                      isSearching ? 'WEAPONS & GEAR ($gearMatchesCount)' : 'WEAPONS & GEAR',
+                      4,
+                      isSelected: _selectedTab == 4,
+                    ),
+                    const SizedBox(width: 8),
+                    _tabChip(
+                      isSearching ? 'RULES REFERENCE (${ruleMatches.length})' : 'RULES REFERENCE',
+                      5,
+                      isSelected: _selectedTab == 5,
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                _tabChip(
-                  isSearching ? 'TALENTS (${talentMatches.length})' : 'TALENTS',
-                  2,
-                  isSelected: _selectedTab == 2,
-                ),
-                const SizedBox(width: 8),
-                _tabChip(
-                  isSearching ? 'CRITICAL INJURIES (${injuryMatches.length})' : 'CRITICAL INJURIES',
-                  3,
-                  isSelected: _selectedTab == 3,
-                ),
-                const SizedBox(width: 8),
-                _tabChip(
-                  isSearching ? 'WEAPONS & GEAR ($gearMatchesCount)' : 'WEAPONS & GEAR',
-                  4,
-                  isSelected: _selectedTab == 4,
-                ),
-                const SizedBox(width: 8),
-                _tabChip(
-                  isSearching ? 'RULES REFERENCE (${ruleMatches.length})' : 'RULES REFERENCE',
-                  5,
-                  isSelected: _selectedTab == 5,
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
-      body: Column(
-        children: [
-          // Global Search Input
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: TextField(
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: InputDecoration(
-                hintText: 'Search bestiary, archetypes, talents, injuries, gear, rules...',
-                hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                prefixIcon: const Icon(Icons.search, color: AppColors.gold),
-                suffixIcon: isSearching
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppColors.goldDim, size: 18),
-                        onPressed: () => setState(() {
-                          _searchQuery = '';
-                          if (_selectedTab == -1) _selectedTab = 0;
-                        }),
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppColors.surfaceLight,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.border),
-                ),
-                isDense: true,
-              ),
-              onChanged: (val) => setState(() {
-                _searchQuery = val;
-              }),
-            ),
-          ),
-
-          // Sub-category filters for Bestiary tab (when on Bestiary and not in search All)
-          if (_selectedTab == 0) ...[
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(
-                children: VaesenBestiaryData.categories.map((cat) {
-                  final isSelected = _selectedBestiaryCategory == cat;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: FilterChip(
-                      label: Text(cat),
-                      selected: isSelected,
-                      selectedColor: AppColors.goldBright,
-                      backgroundColor: AppColors.surfaceLight,
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.black : AppColors.textPrimary,
-                        fontSize: 11,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                      onSelected: (_) => setState(() => _selectedBestiaryCategory = cat),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Responsive.maxContentWidth),
+          child: Column(
+            children: [
+              // Global Search Input
+              Padding(
+                padding: EdgeInsets.fromLTRB(isWide ? 24 : 16, 12, isWide ? 24 : 16, 8),
+                child: TextField(
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: 'Search bestiary, archetypes, talents, injuries, gear, rules...',
+                    hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.gold),
+                    suffixIcon: isSearching
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, color: AppColors.goldDim, size: 18),
+                            onPressed: () => setState(() {
+                              _searchQuery = '';
+                              if (_selectedTab == -1) _selectedTab = 0;
+                            }),
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: AppColors.surfaceLight,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: AppColors.border),
                     ),
-                  );
-                }).toList(),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: AppColors.goldBright, width: 1.2),
+                    ),
+                    isDense: true,
+                  ),
+                  onChanged: (val) => setState(() {
+                    _searchQuery = val;
+                  }),
+                ),
               ),
-            ),
-          ],
 
-          // Content List
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              children: _buildTabContent(
-                bestiaryMatches: bestiaryMatches,
-                archetypeMatches: archetypeMatches,
-                talentMatches: talentMatches,
-                injuryMatches: injuryMatches,
-                weaponsMatches: weaponsMatches,
-                armorMatches: armorMatches,
-                equipmentMatches: equipmentMatches,
-                ruleMatches: ruleMatches,
-                totalMatches: totalMatches,
+              // Sub-category filters for Bestiary tab
+              if (_selectedTab == 0) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: isWide ? 24 : 16, vertical: 4),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: VaesenBestiaryData.categories.map((cat) {
+                        final isSelected = _selectedBestiaryCategory == cat;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: FilterChip(
+                            label: Text(cat),
+                            selected: isSelected,
+                            selectedColor: AppColors.goldBright,
+                            backgroundColor: AppColors.surfaceLight,
+                            labelStyle: TextStyle(
+                              color: isSelected ? Colors.black : AppColors.textPrimary,
+                              fontSize: 11,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                            onSelected: (_) => setState(() => _selectedBestiaryCategory = cat),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+
+              // Sub-category filters for Critical Injuries tab
+              if (_selectedTab == 3) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: isWide ? 24 : 16, vertical: 4),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: ['All', 'Physical', 'Mental', 'Lethal'].map((filter) {
+                        final isSelected = _selectedInjuryFilter == filter;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: FilterChip(
+                            label: Text(filter),
+                            selected: isSelected,
+                            selectedColor: AppColors.goldBright,
+                            backgroundColor: AppColors.surfaceLight,
+                            labelStyle: TextStyle(
+                              color: isSelected ? Colors.black : AppColors.textPrimary,
+                              fontSize: 11,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                            onSelected: (_) => setState(() => _selectedInjuryFilter = filter),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+
+              // Sub-category filters for Weapons & Gear tab
+              if (_selectedTab == 4) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: isWide ? 24 : 16, vertical: 4),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: ['All', 'Weapons', 'Armor & Protection', 'Common Equipment'].map((filter) {
+                        final isSelected = _selectedGearFilter == filter;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: FilterChip(
+                            label: Text(filter),
+                            selected: isSelected,
+                            selectedColor: AppColors.goldBright,
+                            backgroundColor: AppColors.surfaceLight,
+                            labelStyle: TextStyle(
+                              color: isSelected ? Colors.black : AppColors.textPrimary,
+                              fontSize: 11,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                            onSelected: (_) => setState(() => _selectedGearFilter = filter),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+
+              // Content List
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isWide ? 24 : 16,
+                    vertical: 8,
+                  ),
+                  children: _buildTabContent(
+                    bestiaryMatches: bestiaryMatches,
+                    archetypeMatches: archetypeMatches,
+                    talentMatches: talentMatches,
+                    injuryMatches: injuryMatches,
+                    weaponsMatches: weaponsMatches,
+                    armorMatches: armorMatches,
+                    equipmentMatches: equipmentMatches,
+                    ruleMatches: ruleMatches,
+                    totalMatches: totalMatches,
+                    bestiaryColumns: bestiaryColumns,
+                    archetypeColumns: archetypeColumns,
+                    talentColumns: talentColumns,
+                    injuryColumns: injuryColumns,
+                    gearColumns: gearColumns,
+                    rulesColumns: rulesColumns,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -237,6 +365,42 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
       ),
       onSelected: (_) => setState(() => _selectedTab = index),
     );
+  }
+
+  // --- Grid / Column Helpers ---
+
+  /// Distributes items across [columnCount] vertical columns within a single Row
+  /// for optimal responsive masonry flow without unconstrained height errors.
+  List<Widget> _wrapInColumns(
+    List<Widget> items,
+    int columnCount, {
+    double spacing = 16,
+  }) {
+    if (items.isEmpty) return const <Widget>[];
+    if (columnCount <= 1 || items.length <= 1) return items;
+
+    final columns = List.generate(columnCount, (_) => <Widget>[]);
+    for (int i = 0; i < items.length; i++) {
+      columns[i % columnCount].add(items[i]);
+    }
+
+    return [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (int i = 0; i < columnCount; i++) ...[
+            if (i > 0) SizedBox(width: spacing),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: columns[i],
+              ),
+            ),
+          ],
+        ],
+      ),
+    ];
   }
 
   // --- Search Filter Helpers ---
@@ -282,7 +446,16 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
   }
 
   List<CriticalInjury> _filterInjuries(String query) {
-    final all = [...InjuriesData.physicalInjuries, ...InjuriesData.mentalInjuries];
+    var all = [...InjuriesData.physicalInjuries, ...InjuriesData.mentalInjuries];
+    if (_selectedTab == 3) {
+      if (_selectedInjuryFilter == 'Physical') {
+        all = all.where((i) => i.isPhysical).toList();
+      } else if (_selectedInjuryFilter == 'Mental') {
+        all = all.where((i) => !i.isPhysical).toList();
+      } else if (_selectedInjuryFilter == 'Lethal') {
+        all = all.where((i) => i.isLethal).toList();
+      }
+    }
     if (query.isEmpty) return all;
     return all.where((i) {
       return i.name.toLowerCase().contains(query) ||
@@ -329,6 +502,12 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
     required List<EquipmentItem> equipmentMatches,
     required List<_CompendiumRule> ruleMatches,
     required int totalMatches,
+    required int bestiaryColumns,
+    required int archetypeColumns,
+    required int talentColumns,
+    required int injuryColumns,
+    required int gearColumns,
+    required int rulesColumns,
   }) {
     switch (_selectedTab) {
       case -1:
@@ -342,24 +521,31 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
           equipmentMatches: equipmentMatches,
           ruleMatches: ruleMatches,
           totalMatches: totalMatches,
+          bestiaryColumns: bestiaryColumns,
+          archetypeColumns: archetypeColumns,
+          talentColumns: talentColumns,
+          injuryColumns: injuryColumns,
+          gearColumns: gearColumns,
+          rulesColumns: rulesColumns,
         );
       case 0:
-        return _buildBestiary(bestiaryMatches);
+        return _buildBestiary(bestiaryMatches, bestiaryColumns);
       case 1:
-        return _buildArchetypes(archetypeMatches);
+        return _buildArchetypes(archetypeMatches, archetypeColumns);
       case 2:
-        return _buildTalents(talentMatches);
+        return _buildTalents(talentMatches, talentColumns);
       case 3:
-        return _buildInjuries(injuryMatches);
+        return _buildInjuries(injuryMatches, injuryColumns);
       case 4:
         return _buildGear(
           weapons: weaponsMatches,
           armor: armorMatches,
           equipment: equipmentMatches,
+          columns: gearColumns,
         );
       case 5:
       default:
-        return _buildRules(ruleMatches);
+        return _buildRules(ruleMatches, rulesColumns);
     }
   }
 
@@ -373,6 +559,12 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
     required List<EquipmentItem> equipmentMatches,
     required List<_CompendiumRule> ruleMatches,
     required int totalMatches,
+    required int bestiaryColumns,
+    required int archetypeColumns,
+    required int talentColumns,
+    required int injuryColumns,
+    required int gearColumns,
+    required int rulesColumns,
   }) {
     if (totalMatches == 0) {
       return [
@@ -410,25 +602,25 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
 
     if (bestiaryMatches.isNotEmpty) {
       widgets.add(_sectionHeader('VAESEN BESTIARY (${bestiaryMatches.length})', Icons.pets));
-      widgets.addAll(_buildBestiary(bestiaryMatches));
+      widgets.addAll(_buildBestiary(bestiaryMatches, bestiaryColumns));
       widgets.add(const SizedBox(height: 16));
     }
 
     if (archetypeMatches.isNotEmpty) {
       widgets.add(_sectionHeader('ARCHETYPES (${archetypeMatches.length})', Icons.badge));
-      widgets.addAll(_buildArchetypes(archetypeMatches));
+      widgets.addAll(_buildArchetypes(archetypeMatches, archetypeColumns));
       widgets.add(const SizedBox(height: 16));
     }
 
     if (talentMatches.isNotEmpty) {
       widgets.add(_sectionHeader('TALENTS (${talentMatches.length})', Icons.star));
-      widgets.addAll(_buildTalents(talentMatches));
+      widgets.addAll(_buildTalents(talentMatches, talentColumns));
       widgets.add(const SizedBox(height: 16));
     }
 
     if (injuryMatches.isNotEmpty) {
       widgets.add(_sectionHeader('CRITICAL INJURIES (${injuryMatches.length})', Icons.healing));
-      widgets.addAll(_buildInjuries(injuryMatches));
+      widgets.addAll(_buildInjuries(injuryMatches, injuryColumns));
       widgets.add(const SizedBox(height: 16));
     }
 
@@ -439,13 +631,14 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
         weapons: weaponsMatches,
         armor: armorMatches,
         equipment: equipmentMatches,
+        columns: gearColumns,
       ));
       widgets.add(const SizedBox(height: 16));
     }
 
     if (ruleMatches.isNotEmpty) {
       widgets.add(_sectionHeader('RULES REFERENCE (${ruleMatches.length})', Icons.menu_book));
-      widgets.addAll(_buildRules(ruleMatches));
+      widgets.addAll(_buildRules(ruleMatches, rulesColumns));
     }
 
     return widgets;
@@ -473,9 +666,31 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
     );
   }
 
+  Widget _sectionSubHeader(String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, color: AppColors.goldDim, size: 14),
+          const SizedBox(width: 6),
+          Text(
+            title,
+            style: AppTypography.titleSmall.copyWith(
+              fontSize: 12,
+              color: AppColors.goldBright,
+              letterSpacing: 0.8,
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Expanded(child: Divider(color: AppColors.border, height: 1)),
+        ],
+      ),
+    );
+  }
+
   // --- Bestiary UI ---
 
-  List<Widget> _buildBestiary(List<VaesenCreature> creatures) {
+  List<Widget> _buildBestiary(List<VaesenCreature> creatures, int columns) {
     if (creatures.isEmpty) {
       return [
         Padding(
@@ -490,11 +705,10 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
       ];
     }
 
-    return creatures.map((c) => _buildCreatureCard(c)).toList();
+    return _wrapInColumns(creatures.map((c) => _buildCreatureCard(c)).toList(), columns);
   }
 
   Widget _buildCreatureCard(VaesenCreature c) {
-    // Fear skull string
     final fearSkulls = '💀 ' * c.fear;
 
     return Container(
@@ -530,6 +744,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -569,7 +784,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
             ),
 
             const SizedBox(height: 8),
-            Text(c.description, style: AppTypography.bodySmall),
+            Text(c.description, style: AppTypography.bodySmall.copyWith(height: 1.35)),
 
             const SizedBox(height: 10),
 
@@ -623,7 +838,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                         const SizedBox(height: 2),
                         Text(
                           e.effect,
-                          style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textSecondary),
+                          style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textSecondary, height: 1.3),
                         ),
                       ],
                     ),
@@ -661,7 +876,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         _pill('Dmg ${a.damage}', AppColors.crimson),
                         const SizedBox(width: 4),
                         _pill(a.range, AppColors.goldDim),
@@ -787,113 +1002,239 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
 
   // --- Archetypes UI ---
 
-  List<Widget> _buildArchetypes(List<Archetype> archetypes) {
-    return archetypes.map((arc) {
-      return Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        child: GothicCard(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                arc.name.toUpperCase(),
-                style: AppTypography.titleLarge.copyWith(fontSize: 16, color: AppColors.goldBright),
-              ),
-              const SizedBox(height: 2),
-              Text(arc.tagline, style: AppTypography.quote.copyWith(fontSize: 13)),
-              const SizedBox(height: 6),
-              Text(arc.description, style: AppTypography.bodySmall),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  _pill('Main Attr: ${arc.mainAttribute.label}', AppColors.gold),
-                  _pill('Main Skill: ${arc.mainSkill.label}', AppColors.crimsonLight),
-                  _pill('Resources: ${arc.startingResources}', AppColors.surfaceOverlay),
-                ],
-              ),
-            ],
+  List<Widget> _buildArchetypes(List<Archetype> archetypes, int columns) {
+    if (archetypes.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text('No archetypes found matching query.', style: AppTypography.bodySmall),
           ),
         ),
-      );
-    }).toList();
+      ];
+    }
+
+    return _wrapInColumns(archetypes.map(_buildArchetypeCard).toList(), columns);
+  }
+
+  Widget _buildArchetypeCard(Archetype arc) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: GothicCard(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        arc.name.toUpperCase(),
+                        style: AppTypography.titleLarge.copyWith(fontSize: 16, color: AppColors.goldBright),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(arc.tagline, style: AppTypography.quote.copyWith(fontSize: 12, color: AppColors.goldDim)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _pill(arc.mainAttribute.label.toUpperCase(), AppColors.gold),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(arc.description, style: AppTypography.bodySmall.copyWith(height: 1.35)),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                _pill('Main Skill: ${arc.mainSkill.label}', AppColors.crimsonLight),
+                _pill('Resources: ${arc.startingResources}', AppColors.surfaceOverlay),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // --- Talents UI ---
 
-  List<Widget> _buildTalents(List<Talent> talents) {
-    return talents.map((t) {
-      return Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        child: GothicCard(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(t.name, style: AppTypography.titleSmall),
-                  _pill(t.archetypeName ?? 'General', AppColors.goldDim),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(t.effect, style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary)),
-            ],
+  List<Widget> _buildTalents(List<Talent> talents, int columns) {
+    if (talents.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text('No talents found matching query.', style: AppTypography.bodySmall),
           ),
         ),
-      );
-    }).toList();
+      ];
+    }
+
+    return _wrapInColumns(talents.map(_buildTalentCard).toList(), columns);
+  }
+
+  Widget _buildTalentCard(Talent t) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: GothicCard(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    t.name,
+                    style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright, fontSize: 13),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _pill(t.archetypeName ?? 'General', AppColors.goldDim),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              t.effect,
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, height: 1.3),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // --- Injuries UI ---
 
-  List<Widget> _buildInjuries(List<CriticalInjury> injuries) {
-    return injuries.map((i) {
-      return Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        child: GothicCard(
-          padding: const EdgeInsets.all(10),
-          borderColor: i.isLethal ? AppColors.lethal : AppColors.surfaceOverlay,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '${i.d66}: ${i.name}',
-                        style: AppTypography.titleSmall.copyWith(
-                          fontSize: 13,
-                          color: i.isLethal ? AppColors.lethal : AppColors.goldBright,
-                        ),
-                      ),
-                      if (i.isLethal)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6),
-                          child: _pill('LETHAL', AppColors.lethal),
-                        ),
-                    ],
-                  ),
-                  _pill(i.isPhysical ? 'Physical' : 'Mental', AppColors.surfaceOverlay),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(i.effect, style: AppTypography.bodySmall),
-              const SizedBox(height: 4),
-              Text(
-                'Treatment: ${i.treatmentSkill.label} • Healing: ${i.healingTime} • Time Limit: ${i.timeLimit}',
-                style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.goldDim),
-              ),
-            ],
+  List<Widget> _buildInjuries(List<CriticalInjury> injuries, int columns) {
+    if (injuries.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text('No critical injuries found matching query.', style: AppTypography.bodySmall),
           ),
         ),
-      );
-    }).toList();
+      ];
+    }
+
+    return _wrapInColumns(injuries.map(_buildInjuryCard).toList(), columns);
+  }
+
+  Widget _buildInjuryCard(CriticalInjury i) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: GothicCard(
+        padding: const EdgeInsets.all(12),
+        borderColor: i.isLethal ? AppColors.lethal : AppColors.border,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                        margin: const EdgeInsets.only(right: 6),
+                        decoration: BoxDecoration(
+                          color: i.isLethal ? AppColors.lethal.withAlpha(40) : AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(3),
+                          border: Border.all(
+                            color: i.isLethal ? AppColors.lethal : AppColors.goldDim,
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Text(
+                          '${i.d66}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: i.isLethal ? AppColors.lethal : AppColors.goldBright,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          i.name,
+                          style: AppTypography.titleSmall.copyWith(
+                            fontSize: 13,
+                            color: i.isLethal ? AppColors.lethal : AppColors.goldBright,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (i.isLethal) ...[
+                      _pill('LETHAL', AppColors.lethal),
+                      const SizedBox(width: 4),
+                    ],
+                    _pill(i.isPhysical ? 'Physical' : 'Mental', AppColors.surfaceOverlay),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(i.effect, style: AppTypography.bodySmall.copyWith(height: 1.3)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.healing, size: 12, color: AppColors.goldDim),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Treatment: ${i.treatmentSkill.label}',
+                      style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.goldDim),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.timer_outlined, size: 12, color: AppColors.goldDim),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Healing: ${i.healingTime}',
+                      style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.goldDim),
+                    ),
+                  ],
+                ),
+                if (i.timeLimit != '-')
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.warning_amber_rounded, size: 12, color: AppColors.lethal),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Limit: ${i.timeLimit}',
+                        style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.lethal),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // --- Gear UI ---
@@ -902,88 +1243,183 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
     required List<Weapon> weapons,
     required List<Armor> armor,
     required List<EquipmentItem> equipment,
+    required int columns,
   }) {
+    final isAllSearch = _selectedTab == -1;
+    final showWeapons = isAllSearch || _selectedGearFilter == 'All' || _selectedGearFilter == 'Weapons';
+    final showArmor = isAllSearch || _selectedGearFilter == 'All' || _selectedGearFilter == 'Armor & Protection';
+    final showEquipment = isAllSearch || _selectedGearFilter == 'All' || _selectedGearFilter == 'Common Equipment';
+
+    final filteredWeapons = showWeapons ? weapons : <Weapon>[];
+    final filteredArmor = showArmor ? armor : <Armor>[];
+    final filteredEquipment = showEquipment ? equipment : <EquipmentItem>[];
+
+    if (filteredWeapons.isEmpty && filteredArmor.isEmpty && filteredEquipment.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text('No gear found in this category.', style: AppTypography.bodySmall),
+          ),
+        ),
+      ];
+    }
+
     return [
-      if (weapons.isNotEmpty) ...[
-        Text('WEAPONS', style: AppTypography.titleSmall),
-        const SizedBox(height: 6),
-        ...weapons.map((w) => Container(
-              margin: const EdgeInsets.only(bottom: 6),
-              child: GothicCard(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(w.name, style: AppTypography.titleSmall.copyWith(fontSize: 13)),
-                    Row(
-                      children: [
-                        _pill('Dmg ${w.damage}', AppColors.surfaceOverlay),
-                        const SizedBox(width: 4),
-                        _pill(w.range.label, AppColors.goldDim),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )),
+      if (filteredWeapons.isNotEmpty) ...[
+        _sectionSubHeader('WEAPONS (${filteredWeapons.length})', Icons.colorize),
+        ..._wrapInColumns(filteredWeapons.map(_buildWeaponCard).toList(), columns),
         const SizedBox(height: 14),
       ],
-      if (armor.isNotEmpty) ...[
-        Text('ARMOR & PROTECTION', style: AppTypography.titleSmall),
-        const SizedBox(height: 6),
-        ...armor.map((a) => Container(
-              margin: const EdgeInsets.only(bottom: 6),
-              child: GothicCard(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(a.name, style: AppTypography.titleSmall.copyWith(fontSize: 13)),
-                    _pill('Protection ${a.protection}', AppColors.gold),
-                  ],
-                ),
-              ),
-            )),
+      if (filteredArmor.isNotEmpty) ...[
+        _sectionSubHeader('ARMOR & PROTECTION (${filteredArmor.length})', Icons.shield),
+        ..._wrapInColumns(filteredArmor.map(_buildArmorCard).toList(), columns),
         const SizedBox(height: 14),
       ],
-      if (equipment.isNotEmpty) ...[
-        Text('COMMON EQUIPMENT', style: AppTypography.titleSmall),
-        const SizedBox(height: 6),
-        ...equipment.map((e) => Container(
-              margin: const EdgeInsets.only(bottom: 6),
-              child: GothicCard(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(e.name, style: AppTypography.titleSmall.copyWith(fontSize: 13)),
-                    const SizedBox(height: 2),
-                    Text(e.description, style: AppTypography.bodySmall),
-                  ],
-                ),
-              ),
-            )),
+      if (filteredEquipment.isNotEmpty) ...[
+        _sectionSubHeader('COMMON EQUIPMENT (${filteredEquipment.length})', Icons.backpack_outlined),
+        ..._wrapInColumns(filteredEquipment.map(_buildEquipmentCard).toList(), columns),
       ],
     ];
   }
 
+  Widget _buildWeaponCard(Weapon w) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: GothicCard(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  const Icon(Icons.colorize, size: 16, color: AppColors.crimsonLight),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      w.name,
+                      style: AppTypography.titleSmall.copyWith(fontSize: 13, color: AppColors.textPrimary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _pill('Dmg ${w.damage}', AppColors.crimson),
+                const SizedBox(width: 4),
+                _pill(w.range.label, AppColors.goldDim),
+                if (w.bonus > 0) ...[
+                  const SizedBox(width: 4),
+                  _pill('+${w.bonus}', AppColors.gold),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildArmorCard(Armor a) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: GothicCard(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  const Icon(Icons.shield, size: 16, color: AppColors.gold),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      a.name,
+                      style: AppTypography.titleSmall.copyWith(fontSize: 13, color: AppColors.textPrimary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            _pill('Protection ${a.protection}', AppColors.gold),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEquipmentCard(EquipmentItem e) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: GothicCard(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.backpack_outlined, size: 15, color: AppColors.goldDim),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    e.name,
+                    style: AppTypography.titleSmall.copyWith(fontSize: 13, color: AppColors.goldBright),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(e.description, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary, height: 1.3)),
+          ],
+        ),
+      ),
+    );
+  }
+
   // --- Rules UI ---
 
-  List<Widget> _buildRules(List<_CompendiumRule> rules) {
-    return rules.map((r) => _ruleCard(r.title, r.body)).toList();
+  List<Widget> _buildRules(List<_CompendiumRule> rules, int columns) {
+    if (rules.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text('No rules found matching query.', style: AppTypography.bodySmall),
+          ),
+        ),
+      ];
+    }
+    return _wrapInColumns(rules.map((r) => _ruleCard(r.title, r.body)).toList(), columns);
   }
 
   Widget _ruleCard(String title, String body) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       child: GothicCard(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
-            const SizedBox(height: 6),
-            Text(body, style: AppTypography.bodyMedium),
+            Row(
+              children: [
+                const Icon(Icons.auto_stories, size: 16, color: AppColors.goldBright),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright, fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(body, style: AppTypography.bodyMedium.copyWith(height: 1.4)),
           ],
         ),
       ),

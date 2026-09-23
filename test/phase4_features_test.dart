@@ -268,5 +268,79 @@ void main() {
 
       expect(find.text('Bäckahästen'), findsOneWidget);
     });
+
+    testWidgets('CompendiumScreen renders desktop multi-column responsive layout and sub-category filtering', (tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(1500, 1000);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.theme,
+          home: const CompendiumScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // On desktop (width >= 1180), header badge should display
+      expect(find.text('REFERENCE ARCHIVE'), findsOneWidget);
+      expect(find.text('SOCIETY COMPENDIUM'), findsOneWidget);
+
+      // Verify Bestiary renders multiple creature cards
+      expect(find.text('ASH TREE WIFE'), findsOneWidget);
+      expect(find.text('BROOK HORSE'), findsOneWidget);
+
+      // Switch to Critical Injuries tab
+      final injuriesTab = find.text('CRITICAL INJURIES');
+      await tester.ensureVisible(injuriesTab);
+      await tester.tap(injuriesTab);
+      await tester.pumpAndSettle();
+
+      // Verify Critical Injury filters exist
+      expect(find.widgetWithText(FilterChip, 'Physical'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'Mental'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'Lethal'), findsOneWidget);
+
+      // Tap "Lethal" filter
+      await tester.tap(find.widgetWithText(FilterChip, 'Lethal'));
+      await tester.pumpAndSettle();
+      expect(find.text('LETHAL'), findsWidgets);
+
+      // Switch to Weapons & Gear tab
+      final gearTab = find.text('WEAPONS & GEAR');
+      await tester.ensureVisible(gearTab);
+      await tester.tap(gearTab);
+      await tester.pumpAndSettle();
+
+      // Verify gear sub-filters exist
+      expect(find.widgetWithText(FilterChip, 'Weapons'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'Armor & Protection'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'Common Equipment'), findsOneWidget);
+
+      // Filter by Armor & Protection
+      await tester.tap(find.widgetWithText(FilterChip, 'Armor & Protection'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('ARMOR & PROTECTION'), findsOneWidget);
+      expect(find.textContaining('WEAPONS ('), findsNothing);
+
+      // Switch to Archetypes tab
+      final archetypesTab = find.text('ARCHETYPES');
+      await tester.ensureVisible(archetypesTab);
+      await tester.tap(archetypesTab);
+      await tester.pumpAndSettle();
+      expect(find.text('ACADEMIC'), findsOneWidget);
+      expect(find.text('DOCTOR'), findsOneWidget);
+
+      // Switch to Rules tab
+      final rulesTab = find.text('RULES REFERENCE');
+      await tester.ensureVisible(rulesTab);
+      await tester.tap(rulesTab);
+      await tester.pumpAndSettle();
+      expect(find.text('PUSHING THE ROLL'), findsOneWidget);
+      expect(find.text('FEAR TESTS'), findsOneWidget);
+    });
   });
 }

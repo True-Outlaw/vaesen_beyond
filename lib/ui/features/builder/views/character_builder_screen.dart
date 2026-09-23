@@ -594,15 +594,13 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        Expanded(
-                          child: Text(
-                            cat == AgeCategory.young
-                                ? 'Peak physical and mental agility, but less experience facing the unknown.'
-                                : cat == AgeCategory.middleAged
-                                    ? 'A seasoned investigator balancing physical competence with worldly wisdom.'
-                                    : 'Failing physical stamina, compensated by deep academic knowledge or years of survival.',
-                            style: AppTypography.bodySmall,
-                          ),
+                        Text(
+                          cat == AgeCategory.young
+                              ? 'Peak physical and mental agility, but less experience facing the unknown.'
+                              : cat == AgeCategory.middleAged
+                                  ? 'A seasoned investigator balancing physical competence with worldly wisdom.'
+                                  : 'Failing physical stamina, compensated by deep academic knowledge or years of survival.',
+                          style: AppTypography.bodySmall,
                         ),
                       ],
                     ),
@@ -765,39 +763,36 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                         ],
                       ),
                       const OrnateDivider(height: 16),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: AttributeType.values.map((attr) {
-                            final val = _builderVm.attributes[attr] ?? 2;
-                            final isMain = attr == arc.mainAttribute;
-                            final maxCap = isMain ? 5 : 4;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(attr.label, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
-                                      if (isMain)
-                                        Padding(
-                                          padding: const EdgeInsets.only(left: 8),
-                                          child: _badge('MAIN (max 5)', AppColors.gold),
-                                        ),
-                                    ],
-                                  ),
-                                  PipCounter(
-                                    value: val,
-                                    min: 2,
-                                    max: maxCap,
-                                    onChanged: (newVal) => _builderVm.setAttribute(attr, newVal),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                      Column(
+                        children: AttributeType.values.map((attr) {
+                          final val = _builderVm.attributes[attr] ?? 2;
+                          final isMain = attr == arc.mainAttribute;
+                          final maxCap = isMain ? 5 : 4;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(attr.label, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
+                                    if (isMain)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: _badge('MAIN (max 5)', AppColors.gold),
+                                      ),
+                                  ],
+                                ),
+                                PipCounter(
+                                  value: val,
+                                  min: 2,
+                                  max: maxCap,
+                                  onChanged: (newVal) => _builderVm.setAttribute(attr, newVal),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
@@ -1047,11 +1042,10 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
 
         const SizedBox(height: 16),
 
-        // 2-Column Dossier Split with Matching Column Heights
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+        // 2-Column Dossier Split
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
               // Left Column: Identity, Portrait, Gear & Talent
               Expanded(
                 flex: 5,
@@ -1237,28 +1231,23 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
 
                     const SizedBox(height: 14),
 
-                    Expanded(
-                      child: GothicCard(
-                        padding: const EdgeInsets.all(18),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('NARRATIVE FOUNDATIONS', style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright)),
-                            const OrnateDivider(height: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  _narrativeBullet('Motivation', _builderVm.motivation),
-                                  _narrativeBullet('The Sight', _builderVm.trauma),
-                                  _narrativeBullet('Dark Secret', _builderVm.darkSecret),
-                                  _narrativeBullet('Memento', _builderVm.memento),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                    GothicCard(
+                      padding: const EdgeInsets.all(18),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('NARRATIVE FOUNDATIONS', style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright)),
+                          const OrnateDivider(height: 14),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _narrativeBullet('Motivation', _builderVm.motivation),
+                              _narrativeBullet('The Sight', _builderVm.trauma),
+                              _narrativeBullet('Dark Secret', _builderVm.darkSecret),
+                              _narrativeBullet('Memento', _builderVm.memento),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -1266,7 +1255,6 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
               ),
             ],
           ),
-        ),
       ],
     );
   }
