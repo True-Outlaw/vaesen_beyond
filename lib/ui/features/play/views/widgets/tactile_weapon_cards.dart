@@ -296,70 +296,77 @@ class TactileWeaponCards extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: 140,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  label,
-                  style: AppTypography.labelSmall.copyWith(
-                    color: AppColors.goldDim,
-                    fontSize: 8,
-                    letterSpacing: 0.8,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Icon(
-                  isMelee ? Icons.sports_kabaddi : Icons.gps_fixed,
-                  size: 11,
-                  color: AppColors.goldDim,
-                ),
-              ],
-            ),
-            const SizedBox(height: 3),
-            Text(
-              weaponName,
-              style: AppTypography.titleSmall.copyWith(
-                fontSize: 12,
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                  decoration: BoxDecoration(
-                    color: AppColors.gold.withAlpha(35),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: AppColors.gold.withAlpha(140), width: 0.6),
-                  ),
-                  child: Text(
-                    '$totalPool D6',
-                    style: AppTypography.statValue.copyWith(
-                      fontSize: 10,
-                      color: AppColors.goldBright,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      label,
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.goldDim,
+                        fontSize: 8,
+                        letterSpacing: 0.8,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
+                    Icon(
+                      isMelee ? Icons.sports_kabaddi : Icons.gps_fixed,
+                      size: 11,
+                      color: AppColors.goldDim,
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 3),
                 Text(
-                  'DMG $damage',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontSize: 9,
-                    color: AppColors.crimsonBright,
-                    fontWeight: FontWeight.w700,
+                  weaponName,
+                  style: AppTypography.titleSmall.copyWith(
+                    fontSize: 12,
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                      decoration: BoxDecoration(
+                        color: AppColors.gold.withAlpha(35),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: AppColors.gold.withAlpha(140), width: 0.6),
+                      ),
+                      child: Text(
+                        '$totalPool D6',
+                        style: AppTypography.statValue.copyWith(
+                          fontSize: 10,
+                          color: AppColors.goldBright,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'DMG $damage',
+                      style: AppTypography.bodySmall.copyWith(
+                        fontSize: 9,
+                        color: AppColors.crimsonBright,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

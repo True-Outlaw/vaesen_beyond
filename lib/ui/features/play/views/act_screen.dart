@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
@@ -45,7 +46,7 @@ class _ActScreenState extends State<ActScreen> {
     );
   }
 
-  // ── Mobile Layout (< 900px): Preserved exact single-column cockpit ─────────
+  // ── Mobile Layout (< 1180px): Single-column cockpit with docked cards ─────
   Widget _buildMobileLayout(BuildContext context) {
     return Column(
       children: [
@@ -55,46 +56,62 @@ class _ActScreenState extends State<ActScreen> {
           diceViewModel: widget.diceViewModel,
         ),
 
-        // 2. Main Scrollable Action Cockpit
+        // 2. Main Center Action Cockpit: perfectly proportioned to avoid scrolling
         Expanded(
-          child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 6),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Reserve vertical height for ConditionArcHud (~120px) and comfortable breathing room
+              final double maxAvailableHeight = constraints.maxHeight - 144.0;
+              final double maxAvailableWidth = constraints.maxWidth - 24.0;
+              // Clamp to an optimal size (max 380px) so the wheel is comfortably large but never overflows
+              final double dialSize = math.min(
+                maxAvailableWidth,
+                maxAvailableHeight,
+              ).clamp(240.0, 380.0);
 
-                // Character HUD with 6-Arc Condition Gauge & Armor Shield
-                ConditionArcHud(
-                  character: widget.character,
-                  viewModel: widget.playViewModel,
-                  diceViewModel: widget.diceViewModel,
-                ),
-
-                const SizedBox(height: 4),
-
-                // Centerpiece: The Sculpted 4-Attribute Action Dial
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: CombatActionDial(
+              final content = Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ConditionArcHud(
+                    character: widget.character,
+                    viewModel: widget.playViewModel,
+                    diceViewModel: widget.diceViewModel,
+                  ),
+                  CombatActionDial(
                     character: widget.character,
                     playViewModel: widget.playViewModel,
                     diceViewModel: widget.diceViewModel,
+                    maxDialSize: dialSize,
                   ),
-                ),
+                ],
+              );
 
-                const SizedBox(height: 6),
+              // Only wrap in scroll if viewport is extremely short (e.g. landscape phones < 400px)
+              if (constraints.maxHeight < 400) {
+                return SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: content,
+                );
+              }
 
-                // Bottom Docked Tactile Weapon Cards & Memento Ribbon
-                TactileWeaponCards(
-                  character: widget.character,
-                  playViewModel: widget.playViewModel,
-                  diceViewModel: widget.diceViewModel,
-                ),
+              return content;
+            },
+          ),
+        ),
 
-                const SizedBox(height: 12),
-              ],
+        // 3. Docked Tactile Weapon Cards & Memento Ribbon at Bottom of Screen
+        Container(
+          padding: const EdgeInsets.only(top: 4, bottom: 6),
+          decoration: const BoxDecoration(
+            color: AppColors.backgroundDark,
+            border: Border(
+              top: BorderSide(color: AppColors.border, width: 0.6),
             ),
+          ),
+          child: TactileWeaponCards(
+            character: widget.character,
+            playViewModel: widget.playViewModel,
+            diceViewModel: widget.diceViewModel,
           ),
         ),
       ],
@@ -115,7 +132,7 @@ class _ActScreenState extends State<ActScreen> {
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final double sideColWidth = (constraints.maxWidth * 0.28).clamp(350.0, 420.0);
+              final double sideColWidth = (constraints.maxWidth * 0.26).clamp(330.0, 390.0);
 
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

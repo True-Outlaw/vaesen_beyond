@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 /// Helper utility for adaptive breakpoints across Mobile, Tablet, Desktop and Web.
 class Responsive {
-  static const double mobileBreakpoint = 900.0;
+  static const double mobileBreakpoint = 1180.0;
   static const double maxContentWidth = 1500.0;
 
   /// Returns true if the screen width is wide enough for the multi-column desktop/web layout.
