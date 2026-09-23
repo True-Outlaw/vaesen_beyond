@@ -2,146 +2,126 @@
 
 > *"In the shadows of the ancient forests and cobblestone alleys of nineteenth-century Scandinavia, those with The Sight uncover mysteries the world prefers to forget."*
 
-**Vaesen Beyond** is an authentic, pitch-grade digital folio and companion app for **Vaesen – Nordic Horror Roleplaying** (Free League Publishing / Fria Ligan). Designed with a handcrafted Scandinavian Gothic aesthetic, it serves as an immersive tabletop cockpit for investigators exploring the Mythic North.
+[![Deploy to GitHub Pages](https://github.com/True-Outlaw/vaesen_beyond/actions/workflows/deploy.yml/badge.svg)](https://github.com/True-Outlaw/vaesen_beyond/actions/workflows/deploy.yml)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-gold?style=flat-square&logo=github)](https://true-outlaw.github.io/vaesen_beyond/)
+[![Flutter](https://img.shields.io/badge/Flutter-3.19+-02569B?style=flat-square&logo=flutter)](https://flutter.dev)
+[![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Windows%20%7C%20Android%20%7C%20iOS-4E6572?style=flat-square)](#)
+
+**Vaesen Beyond** is an authentic, pitch-grade digital folio and tabletop companion application for **Vaesen – Nordic Horror Roleplaying** (Free League Publishing / Fria Ligan). Handcrafted with an immersive Scandinavian Gothic aesthetic, it provides an all-in-one digital command center for investigators and GMs exploring the Mythic North.
+
+🌐 **Try the Live Web App**: [https://true-outlaw.github.io/vaesen_beyond/](https://true-outlaw.github.io/vaesen_beyond/)
 
 ---
 
-## 🕯️ Current Feature Set
+## 🕯️ Key Features
 
 ### 1. Act Cockpit (`ACT` Tab)
-- **6-Segment Condition Arc HUD**: Dual-arc physical (Exhausted, Battered, Wounded) and mental (Upset, Frightened, Hopeless) biometric ring surrounding the investigator portrait, with Broken state pulsing animations.
-- **Scandinavian 4-Attribute Action Dial**: Custom Canvas-painted wheel providing rapid action resolution for *Physique*, *Precision*, *Logic*, and *Empathy*, alongside specialized hubs for *Fear Tests* and *Talents*.
-- **Tactile Weapon Dock**: Quick-draw attack rolls with damage, reach, bonus dice, and equip toggles.
+- **Sculpted 4-Attribute Action Dial**: High-performance `CustomPainter` obsidian wheel providing one-tap skill & attribute rolls for *Physique*, *Precision*, *Logic*, and *Empathy*, alongside dedicated hubs for *Fear Tests* and *Talents*.
+- **6-Segment Condition Arc HUD**: Dual-arc physical (*Exhausted, Battered, Wounded*) and mental (*Upset, Frightened, Hopeless*) biometric ring framing the investigator portrait, complete with pulsing Broken animations and lethality alerts.
+- **Tactile Weapon Dock**: Quick-draw weapon cards with damage counters, reach ratings, bonus dice, and equip states.
 - **Personal Memento Solace**: Grounding heirloom ribbon enabling one-click emergency condition relief once per mystery.
-- **Party Carousel**: Quick-switching between active investigators with live condition status indicators.
+- **Edge-to-Edge Desktop Cockpit**: 3-column edge-to-edge layout on desktop/web (`>= 1180px`) with the giant action dial flanked by character dossiers, skills, inventory, and lore.
+- **Zero-Scroll Mobile Layout**: Perfectly balanced single-column layout on compact screens with docked bottom cards and zero overflow.
 
-### 2. Castle Gyllencreutz (`TABLE` Tab)
-- **Headquarters Roster**: Manage Society headquarters in Upsala, tracking unlockable Facilities (Infirmary, Library, Laboratory, Stables, Seance Room, Guard Tower).
-- **Staff Employment**: Hire and maintain specialized staff members (Archivist, Caretaker, Coachman, Occult Scholar, Field Surgeon).
-- **Expedition Chronicles**: Historical logs of past mysteries and investigator accomplishments.
+### 2. Castle Gyllencreutz Headquarters (`TABLE` Tab)
+- **Gothic Headquarters Command Center**: Chapter branding for the Society's ancestral fortress in Upsala, Sweden.
+- **4 Real-Time Metric Pods**:
+  - **Development Points**: Point bank with inline `+` / `–` quick steppers to invest in or award points.
+  - **Facilities Built**: Renovation percentage and operational status tracker.
+  - **Retainers Active**: Live headcount of hired staff on duty.
+  - **Expeditions Logged**: Total recorded mysteries and cumulative XP awarded.
+- **Widescreen 2-Column Split Workstation**:
+  - **Facilities & Architecture**: Filter by *All*, *Operational*, *Can Build*, or *Unbuilt*. Includes Grand Library, Restorative Infirmary, Smithy & Workshop, Seance Room, Alchemical Laboratory, and Relic Vault with highlighted mechanical benefit callouts and dev-point economy validation.
+  - **Staff Retainers**: Role-specific retainer cards (Head Butler, Carriage Coachman, Housekeeper & Cook, Night Watchman) with duty toggles.
+  - **Expedition Chronicles**: Interactive **`+ LOG EXPEDITION`** dialog to record completed mysteries (Title, Date, Summary, and Awarded XP) with persistent archive cards.
 
 ### 3. Investigator Folio (`SHEET` Tab)
-- **12-Skill Tabletop Roster**: Full skill list categorized by core attributes with live condition penalty adjustments.
-- **Experience & Advancement**: XP tracking with official 5 XP skill rank increases (max 5) and talent acquisition.
+- **12-Skill Tabletop Roster**: Categorized skill list with live condition penalty adjustments and dice roll shortcuts.
+- **Rule-Locked Advancement**: Strict adherence to the official 5 XP rule for increasing skill ranks (max 5) with confirmation and undo dialogs.
 - **Session Debrief Wizard**: 5 official end-of-session questions to tally Advancement Points earned.
-- **Gear & Encumbrance Engine**: Wealth steppers (Resources & Capital), slot capacity calculations (`Physique + 2`), and encumbrance warnings (`-2 Agility`).
-- **Investigator Dossier**: Deep narrative profile detailing Motivation, Trauma (The Sight), Dark Secret, and Personal Memento.
+- **Gear & Encumbrance Engine**: Wealth steppers (Resources & Capital), slot capacity calculations (`Physique + 2`), encumbrance alerts (`-2 Agility`), and armor protection dice roll buttons.
+- **Investigator Dossier & Field Journal**: Narrative profile detailing Motivation, Trauma (The Sight), Dark Secret, Personal Memento, and a rich multi-entry Field Journal for clues and notes.
 
-### 4. Society Compendium
-- Complete in-app reference library covering:
-  - **10 Core Archetypes**: Academic, Doctor, Hunter, Occultist, Officer, Priest, Private Detective, Servant, Vagabond, Writer.
-  - **Talent Catalog**: All Archetype and General Talents with mechanical effects.
-  - **D66 Critical Injuries**: Full tables for physical and mental trauma, treatment skills, healing durations, and lethal time limits.
-  - **Weapons & Equipment**: Damage, bonus, range, and cost listings.
-  - **Core Rules Reference**: Combat actions, fear mechanics, healing, and skill test fundamentals.
-
-### 5. Physical D6 Dice Engine
-- Realistic wooden and brass D6 visual presentation.
-- Automatic calculation of successes (sixes) and extra stunts.
-- **Advantage & Situational Modifiers**: Unified modifier engine (+2 dice for Advantage, ±1 to ±5 situational modifiers).
-- **Pushing the Roll**: Faithful implementation of pushing failed rolls with condition selection and rerolling non-sixes.
-- **Fear Tests**: Dedicated fear tests with Panic effects, panic durations, and mental condition penalties.
-
-### 6. New Investigator Registry (Character Builder)
-- 6-step guided wizard for creating investigators: Identity, Age Category, Attribute/Skill Point Distribution, Talent Selection, Narrative Foundations, and Official Enrollment.
-
----
-
-## 🗺️ Product Roadmap & Identified Issues
-
-The following roadmap synthesizes the current system assessment and outlines upcoming milestones for gameplay integrity, narrative depth, and compendium expansion.
-
-### Phase 1: Gameplay Integrity & Rules Automation ✅
-- [x] **Castle Development Points Economy**:
-  - Enforce development point balance when building facilities (`devCost`).
-  - Deduct development points upon construction and refund when dismantling.
-  - Add interactive point adjustment steppers (`[-] PTS [+]`).
-- [x] **Fear Test Condition Integration**:
-  - Connect `FearTestDialog` directly to `PlayViewModel`.
-  - Add a one-tap `"APPLY CONDITIONS"` button to automatically inflict suffered mental conditions upon failing a fear test.
-- [x] **Lethal Critical Injury Alert Banner**:
-  - Surface active lethal injuries directly on the `ACT` cockpit HUD with prominent countdown timers (e.g. *"LETHAL: Treat within 1 hour"*).
-
-### Phase 2: Player Agency & Narrative Folio ✅
-- [x] **Editable Investigator Dossier & Journal**:
-  - Add in-place editing for Motivation, Trauma, Dark Secret, and Personal Memento.
-  - Implement a dedicated **Field Notes / Mystery Journal** editor for players to record clues, rumors, and NPC interactions.
-- [x] **Custom Gear Management**:
-  - Allow players to edit custom weapons, armor, and equipment items after creation (name, damage, protection, slots, notes).
-- [x] **Unified "Conclude Mystery" Workflow**:
-  - Create a single comprehensive end-of-mystery flow that combines:
-    1. Debrief questionnaire (+XP)
-    2. Castle Development Points reward (+Dev Points)
-    3. Memento solace restoration
-    4. Auto-generating a new Expedition Log in Castle Gyllencreutz archives.
-
-### Phase 3: Party & Investigator Management ✅
-- [x] **Investigator Deletion & Retirement**:
-  - Full Society roster management with active investigator switching, retiring down to 0, and clean Scandinavian Gothic empty state with restore capabilities.
-- [x] **Character JSON Portability**:
-  - Export investigator JSON directly to clipboard from Party Management or the main app bar menu.
-  - Full modal import workflow with instant clipboard paste and duplicate ID collision protection.
-- [x] **Character Builder Point Allocation Enforcement**:
-  - Full point-budget validation enforced across all steps of investigator creation (Attributes: 15 Young / 14 Middle-aged / 13 Old; Skills: 10 Young / 12 Middle-aged / 14 Old).
-  - Prevents overspending and blocks step progression or enrollment until points are balanced.
-- [x] **Gothic Portrait Picker & Custom Image Upload**:
-  - Visual circular portrait picker during Step 1 (Identity) selecting from high-res bundled Scandinavian portraits (Astrid, Birger, Elias, Johan).
-  - Cross-platform custom portrait upload (**Windows, Android, iOS, Web**) powered by `file_picker`.
-  - Built-in engine-level image optimization (512px downsampling via `dart:ui.instantiateImageCodec`) storing self-contained Base64 Data URIs (`data:image/png;base64,...`) for 100% offline portability and cross-device JSON export/import compatibility.
-
-### Phase 4: Lore & Society Compendium Expansion 📜 ✅
-- [x] **The Vaesen Bestiary**:
-  - Added a dedicated **BESTIARY** tab to the Society Compendium featuring 18 authentic Scandinavian folklore creatures:
-    - *Ash Tree Wife (Askfrun), Brook Horse (Bäckahästen), Church Grim (Kyrkogrim), Fairy (Älva), Ghost (Spöke/Gast), Giant (Jätte), Lindworm (Lindorm), Mermaid / Sea Wife (Sjörå/Havsrå), Myling, Night Raven (Nattramn), Nixie (Näcken), Revenant (Gengångare), Spertus (Bjära), Troll, Vaettir / Tomte, Werewolf (Varulv), Will-o'-the-Wisp (Lyktgubbe), Wood Wife (Skogsrå)*.
-  - Complete with 4-attribute matrix (*Might, Body, Mind, Magic*), Fear ratings with skulls, supernatural Enchantments with costs/triggers, combat Attacks with damage and reach, folkloric *Weaknesses*, *Banishment Rituals*, and GM *Folklore Secrets*.
+### 4. Society Compendium & Bestiary
+- **The Vaesen Bestiary**: 18 authentic Scandinavian folklore creatures (*Ash Tree Wife, Brook Horse, Church Grim, Fairy, Ghost, Giant, Lindworm, Mermaid, Myling, Night Raven, Nixie, Revenant, Spertus, Troll, Vaettir / Tomte, Werewolf, Will-o'-the-Wisp, Wood Wife*).
+  - Complete with 4-attribute matrix (*Might, Body, Mind, Magic*), Fear ratings, supernatural Enchantments, combat Attacks, folkloric *Weaknesses*, *Banishment Rituals*, and GM *Folklore Secrets*.
   - Category filters: *All, Nature Spirits, Undead, Fae, Monstrosities*.
-- [x] **Global Compendium Search**:
-  - Live multi-category search scanning across all compendium catalogs simultaneously.
-  - Dynamic pill counter badges on category tabs (*BESTIARY (N), ARCHETYPES (N), TALENTS (N), CRITICAL INJURIES (N), WEAPONS & GEAR (N), RULES REFERENCE (N)*).
-  - Consolidated *ALL (N)* results view grouping matching entries by section with visual category headers.
-- [x] **Initiative Card Slot Tracker**:
-  - Dedicated tactile 1–10 card rack dialog adhering strictly to official *Vaesen* turn order rules (lowest card acts first).
-  - Visual cards with Roman numerals I through X, glowing active turn indicator, investigator vs adversary badge styling.
-  - Interactive two-tap card swapping between participants (Fast reflexes / tactical coordination).
-  - Round counter with re-deal capabilities, turn advancing, active turn toggling, and on-the-fly adversary slot generation.
+- **Global Compendium Search**: Live multi-category instant search across all catalogs with dynamic count badges (*Bestiary, Archetypes, Talents, Critical Injuries, Gear, Rules*).
+- **10 Core Archetypes**: Academic, Doctor, Hunter, Occultist, Officer, Priest, Private Detective, Servant, Vagabond, Writer.
+- **D66 Critical Injuries**: Physical and mental trauma tables with recovery times, treatment skills, and lethal timers.
+
+### 5. Tactical Initiative Card Rack
+- **1–10 Card Rack Dialog**: Tactile card slot tracker adhering to official *Vaesen* turn order rules (lowest card acts first).
+- **Roman Numeral Cards (I–X)**: Glowing active turn indicator, investigator vs adversary badge styling.
+- **Tactical Card Swapping**: Interactive two-tap card swapping between participants for fast reflexes or coordinated actions.
+- **Round Management**: Turn advancing, round counter with re-deal capabilities, and on-the-fly adversary slot generation.
+
+### 6. Investigator Enrollment & Portability
+- **Guided Character Builder**: 6-step wizard with strict point-budget enforcement (Attributes: 15 Young / 14 Middle-aged / 13 Old; Skills: 10 Young / 12 Middle-aged / 14 Old).
+- **Gothic Portrait Picker & Custom Upload**: Select bundled high-resolution portraits or upload custom images (automatically downsampled to 512px and stored as self-contained Base64 Data URIs).
+- **100% Offline Persistence**: Zero external servers or login walls. All state is serialized via `SharedPreferences`.
+- **Character JSON Export/Import**: One-tap clipboard export/import with duplicate ID collision protection.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 🛠️ Tech Stack & Architecture
 
-- **Framework**: [Flutter](https://flutter.dev/) (Targeting Windows Desktop, Android, iOS, macOS, Linux).
-- **State Management**: MVVM pattern via `ChangeNotifier` and `Provider`.
-- **Custom Graphics**: High-performance `CustomPainter` renderers for the 4-Attribute Action Dial and 6-Segment Condition Arc Ring.
-- **Persistence**: Clean repository abstraction with `SharedPreferences` and structured JSON serialization for offline play.
-- **Typography & Theme**: Bespoke Scandinavian Gothic palette (`Cinzel`, `EB Garamond`, oxidized gold accents, and aged parchment surfaces).
+- **Framework**: [Flutter](https://flutter.dev/) (Web, Windows Desktop, Android, iOS, macOS, Linux).
+- **State Management**: Clean MVVM architecture with `ChangeNotifier` and `Provider`.
+- **Custom Renderers**: Bespoke `CustomPainter` implementations for the obsidian 4-Attribute Action Dial and 6-Segment Condition Arc Ring.
+- **Typography & Aesthetics**: Scandinavian Gothic palette (`Cinzel`, `EB Garamond`, oxidized brass, antique gold accents, and aged parchment cards).
+- **Hosting & CI/CD**: Automated deployment to GitHub Pages via GitHub Actions.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started Locally
 
 ### Prerequisites
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.19.0 or higher recommended)
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.19.0 or higher)
 - Dart SDK (v3.3.0 or higher)
 
-### Installation & Run
+### Run the App
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/vaesen_beyond.git
+git clone https://github.com/True-Outlaw/vaesen_beyond.git
 cd vaesen_beyond
 
 # Install dependencies
 flutter pub get
 
-# Run on Desktop (Windows)
+# Run on Edge / Chrome (Web)
+flutter run -d edge
+
+# Run on Windows Desktop
 flutter run -d windows
 
-# Run on Android Emulator
-flutter run -d emulator-5554
-
-# Run test suite
+# Run all automated tests
 flutter test
 ```
 
 ---
 
-*Vaesen – Nordic Horror Roleplaying is copyright © Free League Publishing (Fria Ligan). This companion app is built for personal tabletop use in adherence with Free League workshop guidelines.*
+## 🌐 GitHub Pages Deployment
+
+The repository includes an automated GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically compiles and publishes the web build on every push to `main`.
+
+### Enabling GitHub Pages on your repository:
+1. Push the latest code to GitHub.
+2. Go to your repository on GitHub and open **Settings**.
+3. Under the **Code and automation** section on the left sidebar, click **Pages**.
+4. Under **Build and deployment → Source**, select **Deploy from a branch**.
+5. Choose branch **`gh-pages`** and folder **`/ (root)`**, then click **Save**.
+6. The app will be live at:
+   ```
+   https://true-outlaw.github.io/vaesen_beyond/
+   ```
+
+---
+
+## ⚖️ Legal & Copyright Disclaimer
+
+* **Vaesen – Nordic Horror Roleplaying** is copyright © [Fria Ligan AB](https://freeleaguepublishing.com/) (Free League Publishing).
+* *Vaesen* is based on the illustrated book *Vaesen: Spirits and Monsters of Scandinavian Folklore* by author and illustrator **Johan Egerkrans**.
+* **Vaesen Beyond** is an unofficial, non-commercial fan-made companion application created for personal tabletop play in accordance with Free League's community and workshop guidelines.
+* This project is not affiliated with, endorsed, sponsored, or specifically approved by Fria Ligan AB or Johan Egerkrans.
+* All game mechanics, skill structures, and rules references are based on the Year Zero Engine by Free League Publishing.

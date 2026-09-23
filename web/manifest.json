@@ -1,11 +1,11 @@
 {
-    "name": "vaesen_beyond",
-    "short_name": "vaesen_beyond",
+    "name": "Vaesen Beyond — The Society Companion",
+    "short_name": "Vaesen Beyond",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0A0D0F",
+    "theme_color": "#0A0D0F",
+    "description": "An authentic, pitch-grade digital folio and companion app for Vaesen – Nordic Horror Roleplaying.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
