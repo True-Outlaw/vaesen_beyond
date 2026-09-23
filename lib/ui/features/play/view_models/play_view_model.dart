@@ -298,6 +298,20 @@ class PlayViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> addMysteryLog(MysteryLog log) async {
+    final updatedLogs = List<MysteryLog>.from(_castle.mysteryLogs)..insert(0, log);
+    _castle = _castle.copyWith(mysteryLogs: updatedLogs);
+    await _repository.saveCastleState(_castle);
+    notifyListeners();
+  }
+
+  Future<void> removeMysteryLog(String logId) async {
+    final updatedLogs = _castle.mysteryLogs.where((l) => l.id != logId).toList();
+    _castle = _castle.copyWith(mysteryLogs: updatedLogs);
+    await _repository.saveCastleState(_castle);
+    notifyListeners();
+  }
+
   // ── INVENTORY MANAGEMENT ───────────────────────────────────────────────
   Future<void> addWeapon(Weapon weapon) async {
     if (_activeCharacter == null) return;
