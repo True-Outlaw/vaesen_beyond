@@ -106,12 +106,11 @@ flutter test
 The repository includes an automated GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically compiles and publishes the web build on every push to `main`.
 
 ### Enabling GitHub Pages on your repository:
-1. Push the latest code to GitHub.
-2. Go to your repository on GitHub and open **Settings**.
-3. Under the **Code and automation** section on the left sidebar, click **Pages**.
-4. Under **Build and deployment → Source**, select **Deploy from a branch**.
-5. Choose branch **`gh-pages`** and folder **`/ (root)`**, then click **Save**.
-6. The app will be live at:
+1. Go to your repository on GitHub: [https://github.com/True-Outlaw/vaesen_beyond](https://github.com/True-Outlaw/vaesen_beyond).
+2. Open **Settings → Pages** (under *Code and automation* on the left sidebar).
+3. Under **Build and deployment → Source**, change the dropdown from **Deploy from a branch** to **GitHub Actions**.
+4. That's it! No secondary branch is needed. GitHub will automatically build and deploy your app whenever you push to `main`.
+5. Your live app will be accessible at:
    ```
    https://true-outlaw.github.io/vaesen_beyond/
    ```
