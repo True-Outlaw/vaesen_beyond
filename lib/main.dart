@@ -9,6 +9,7 @@ import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_mode
 import 'package:vaesen_beyond/ui/features/play/view_models/initiative_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:flutter/services.dart';
+import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
 import 'package:vaesen_beyond/ui/features/castle/views/castle_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/play_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/party_management_dialog.dart';
@@ -46,6 +47,7 @@ class MainNavigationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final playVm = context.watch<PlayViewModel>();
     final diceVm = context.watch<DiceRollerViewModel>();
+    final isWide = Responsive.isWide(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -57,9 +59,10 @@ class MainNavigationScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.castle_outlined, color: AppColors.gold),
-            tooltip: 'Castle Gyllencreutz Headquarters',
+          if (isWide)
+            IconButton(
+              icon: const Icon(Icons.castle_outlined, color: AppColors.gold),
+              tooltip: 'Castle Gyllencreutz Headquarters',
             onPressed: () {
               Navigator.push(
                 context,

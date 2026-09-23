@@ -7,6 +7,8 @@ import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
+import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
@@ -159,37 +161,56 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
   }
 
   void _showTalentsSheet() {
+    final isWide = Responsive.isWide(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.surface,
       isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: isWide ? 600 : double.infinity,
+      ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.auto_awesome, color: AppColors.goldBright, size: 20),
-                const SizedBox(width: 8),
-                Text('INVESTIGATOR TALENTS', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
+                Row(
+                  children: [
+                    const Icon(Icons.auto_awesome, color: AppColors.goldBright, size: 20),
+                    const SizedBox(width: 8),
+                    Text('INVESTIGATOR TALENTS', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18, color: AppColors.textMuted),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ],
             ),
-            const SizedBox(height: 12),
+            const OrnateDivider(height: 18),
             if (widget.character.talents.isEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Text('No talents currently acquired.', style: AppTypography.bodyMedium),
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Center(
+                  child: Text('No talents currently acquired.', style: AppTypography.bodyMedium.copyWith(color: AppColors.textMuted)),
+                ),
               )
             else
               ...widget.character.talents.map(
                 (t) => Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(12),
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceLight,
                     borderRadius: BorderRadius.circular(8),
@@ -198,17 +219,31 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        t.name,
-                        style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright, fontSize: 13),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            t.name,
+                            style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright, fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppColors.gold.withAlpha(40),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
+                            ),
+                            child: const Text('ACTIVE', style: TextStyle(fontSize: 10, color: AppColors.goldBright, fontWeight: FontWeight.bold)),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(t.effect, style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary)),
+                      const SizedBox(height: 6),
+                      Text(t.effect, style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, height: 1.35)),
                     ],
                   ),
                 ),
               ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -222,6 +257,7 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
     final penalty = isPhysical
         ? widget.character.conditions.physicalPenalty
         : widget.character.conditions.mentalPenalty;
+    final isWide = Responsive.isWide(context);
 
     // Filter the 3 skills belonging to this attribute
     final skills = SkillType.values.where((s) => s.attribute == attribute).toList();
@@ -230,16 +266,19 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
       context: context,
       backgroundColor: AppColors.surface,
       isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: isWide ? 600 : double.infinity,
+      ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header: Attribute Name + Penalty
+            // Header: Attribute Name + Penalty + Close
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -257,20 +296,31 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
                     ),
                   ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceLight,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
-                  ),
-                  child: Text(
-                    'Score: $rawAttrVal${penalty > 0 ? " (-$penalty)" : ""}',
-                    style: AppTypography.labelSmall.copyWith(
-                      color: penalty > 0 ? AppColors.crimsonBright : AppColors.gold,
-                      fontWeight: FontWeight.w700,
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
+                      ),
+                      child: Text(
+                        'Score: $rawAttrVal${penalty > 0 ? " (-$penalty)" : ""}',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: penalty > 0 ? AppColors.crimsonBright : AppColors.gold,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 18, color: AppColors.textMuted),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -279,7 +329,7 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
               attribute.description,
               style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
             ),
-            const SizedBox(height: 14),
+            const OrnateDivider(height: 18),
 
             // 3 Skills Cards with 1-Tap Roll buttons
             ...skills.map((skill) {

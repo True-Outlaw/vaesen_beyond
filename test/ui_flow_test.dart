@@ -240,6 +240,46 @@ void main() {
     expect(find.text('NEXT STEP'), findsOneWidget);
   });
 
+  testWidgets('CharacterBuilderScreen renders desktop multi-column layout on wide viewport', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final playVm = PlayViewModel();
+    await playVm.initialize();
+    final diceVm = DiceRollerViewModel();
+
+    await tester.pumpWidget(createTestApp(
+      CharacterBuilderScreen(playViewModel: playVm, onFinished: () {}),
+      playVm,
+      diceVm,
+    ));
+    await tester.pumpAndSettle();
+
+    // Verify desktop stepper and cards are present
+    expect(find.textContaining('IDENTITY'), findsWidgets);
+    expect(find.text('INVESTIGATOR FULL NAME'), findsOneWidget);
+    expect(find.text('GOTHIC PORTRAIT'), findsOneWidget);
+    expect(find.text('ACADEMIC'), findsOneWidget);
+    expect(find.text('DOCTOR'), findsOneWidget);
+    // Enter investigator name so Step 0 passes validation
+    await tester.enterText(find.byType(TextField), 'Arthur Pendelton');
+    await tester.pumpAndSettle();
+
+    // Advance to Step 1: Choose Age Group
+    await tester.tap(find.text('NEXT STEP'));
+    await tester.pumpAndSettle();
+    expect(find.text('Step 2: Choose Age Group'), findsOneWidget);
+    expect(find.textContaining('MIDDLE-AGED'), findsOneWidget);
+
+    // Advance to Step 2: Point Allocation Workstation (where IntrinsicHeight is rendered)
+    await tester.tap(find.text('NEXT STEP'));
+    await tester.pumpAndSettle();
+    expect(find.text('CORE ATTRIBUTES'), findsOneWidget);
+    expect(find.text('INVESTIGATOR SKILLS'), findsOneWidget);
+  });
+
   testWidgets('DiceTrayDialog toggles Advantage, updates modifier display, and rolls pool with modifiers', (WidgetTester tester) async {
     final playVm = PlayViewModel();
     await playVm.initialize();
