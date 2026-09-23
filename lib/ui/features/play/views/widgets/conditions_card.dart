@@ -90,7 +90,14 @@ class ConditionsCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('TRAUMA & CONDITIONS', style: AppTypography.titleMedium),
+                      Flexible(
+                        child: Text(
+                          'CONDITIONS',
+                          style: AppTypography.titleMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
                       ElevatedButton.icon(
                         onPressed: () => showDialog(
                           context: context,
@@ -341,14 +348,18 @@ class ConditionsCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: AppTypography.bodyMedium.copyWith(
-                fontSize: 13,
-                color: value
-                    ? (isBroken ? AppColors.lethal : AppColors.goldBright)
-                    : AppColors.textPrimary,
-                fontWeight: value ? FontWeight.bold : FontWeight.normal,
+            Expanded(
+              child: Text(
+                label,
+                style: AppTypography.bodyMedium.copyWith(
+                  fontSize: 12,
+                  color: value
+                      ? (isBroken ? AppColors.lethal : AppColors.goldBright)
+                      : AppColors.textPrimary,
+                  fontWeight: value ? FontWeight.bold : FontWeight.normal,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

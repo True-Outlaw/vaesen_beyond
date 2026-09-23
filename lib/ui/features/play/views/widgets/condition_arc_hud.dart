@@ -17,11 +17,14 @@ class ConditionArcHud extends StatefulWidget {
   final PlayViewModel viewModel;
   final DiceRollerViewModel diceViewModel;
 
+  final bool showCharacterInfo;
+
   const ConditionArcHud({
     super.key,
     required this.character,
     required this.viewModel,
     required this.diceViewModel,
+    this.showCharacterInfo = true,
   });
 
   @override
@@ -141,54 +144,56 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Left: Archetype & Name identity pod
+                  // Left: Archetype & Name identity pod (or empty balancer if showCharacterInfo is false)
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          activeCharacter.name,
-                          style: AppTypography.titleSmall.copyWith(
-                            color: AppColors.goldBright,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
-                            fontSize: 13,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppColors.surfaceLight,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: AppColors.gold.withAlpha(60), width: 0.6),
-                              ),
-                              child: Text(
-                                activeCharacter.archetypeName.toUpperCase(),
-                                style: AppTypography.labelSmall.copyWith(
-                                  color: AppColors.gold,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w600,
+                    child: widget.showCharacterInfo
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                activeCharacter.name,
+                                style: AppTypography.titleSmall.copyWith(
+                                  color: AppColors.goldBright,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                  fontSize: 13,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'AGE ${activeCharacter.actualAge}',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: AppColors.textMuted,
-                                fontSize: 10,
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surfaceLight,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(color: AppColors.gold.withAlpha(60), width: 0.6),
+                                    ),
+                                    child: Text(
+                                      activeCharacter.archetypeName.toUpperCase(),
+                                      style: AppTypography.labelSmall.copyWith(
+                                        color: AppColors.gold,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'AGE ${activeCharacter.actualAge}',
+                                    style: AppTypography.bodySmall.copyWith(
+                                      color: AppColors.textMuted,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                   ),
 
                   // Center: Circular Portrait with 6-segment Condition Arc Ring

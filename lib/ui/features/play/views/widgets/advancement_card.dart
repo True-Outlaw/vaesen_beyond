@@ -285,22 +285,38 @@ class AdvancementCard extends StatelessWidget {
                             ),
                           ),
 
-                          // Quick Rank Stepper (+ / -)
+                          // Rank Badge & Upgrade Button (Locked to 5 XP per Vaesen rules)
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove, size: 14, color: AppColors.textMuted),
-                                constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
-                                padding: EdgeInsets.zero,
-                                onPressed: rank > 0 ? () => playViewModel.freeAdjustSkill(skill, -1) : null,
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceLight,
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: AppColors.gold.withAlpha(70), width: 0.6),
+                                ),
+                                child: Text(
+                                  'RANK $rank',
+                                  style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.bold, fontSize: 10),
+                                ),
                               ),
-                              Text('$rank', style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.bold, fontSize: 12)),
+                              const SizedBox(width: 4),
                               IconButton(
-                                icon: const Icon(Icons.add, size: 14, color: AppColors.gold),
-                                constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                                icon: const Icon(Icons.add_circle_outline, size: 16),
+                                color: (rank < 5 && character.experiencePoints >= 5)
+                                    ? AppColors.goldBright
+                                    : AppColors.textMuted.withAlpha(80),
+                                tooltip: rank >= 5
+                                    ? 'Max Rank (5)'
+                                    : character.experiencePoints < 5
+                                        ? 'Requires 5 XP (Current: ${character.experiencePoints})'
+                                        : 'Spend 5 XP to raise ${skill.label} to Rank ${rank + 1}',
+                                constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
                                 padding: EdgeInsets.zero,
-                                onPressed: rank < 5 ? () => playViewModel.freeAdjustSkill(skill, 1) : null,
+                                onPressed: (rank < 5 && character.experiencePoints >= 5)
+                                    ? () => _confirmRaiseSingleSkill(context, skill, rank)
+                                    : null,
                               ),
                             ],
                           ),
@@ -446,6 +462,88 @@ class AdvancementCard extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+
+  void _confirmRaiseSingleSkill(BuildContext context, SkillType skill, int currentRank) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: AppColors.gold, width: 1.2),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.upgrade, color: AppColors.gold, size: 20),
+            const SizedBox(width: 8),
+            Text('RAISE ${skill.label.toUpperCase()}', style: AppTypography.titleMedium),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Spend 5 Advancement Points to increase ${skill.label} from Rank $currentRank to Rank ${currentRank + 1}?',
+              style: AppTypography.bodyMedium,
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: AppColors.border, width: 0.8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('XP Cost: 5', style: AppTypography.bodySmall.copyWith(color: AppColors.gold)),
+                  Text(
+                    'Remaining: ${character.experiencePoints - 5} XP',
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.goldBright, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              final success = await playViewModel.raiseSkill(skill, spendXp: true);
+              if (success && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Raised ${skill.label} to Rank ${currentRank + 1}! (-5 XP)'),
+                    backgroundColor: AppColors.surfaceOverlay,
+                    action: SnackBarAction(
+                      label: 'UNDO',
+                      textColor: AppColors.goldBright,
+                      onPressed: () async {
+                        await playViewModel.freeAdjustSkill(skill, -1);
+                        await playViewModel.addExperience(5);
+                      },
+                    ),
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.gold,
+              foregroundColor: AppColors.backgroundDark,
+            ),
+            child: const Text('SPEND 5 XP'),
+          ),
+        ],
       ),
     );
   }

@@ -230,12 +230,14 @@ class DialPainter extends CustomPainter {
       poolText = '$pool D6';
     }
 
+    final double fontScale = (outerRadius / 157.0).clamp(0.85, 1.45);
+
     // Measure and draw title
     final TextSpan titleSpan = TextSpan(
       text: chamber.title,
       style: TextStyle(
         fontFamily: 'Cinzel',
-        fontSize: 10,
+        fontSize: (10 * fontScale).roundToDouble(),
         fontWeight: FontWeight.w700,
         letterSpacing: 0.8,
         color: isSelected ? AppColors.goldBright : Colors.white.withAlpha(230),
@@ -249,7 +251,7 @@ class DialPainter extends CustomPainter {
 
     tpTitle.paint(
       canvas,
-      textPos - Offset(tpTitle.width / 2, tpTitle.height / 2 + (poolText.isNotEmpty ? 6 : 0)),
+      textPos - Offset(tpTitle.width / 2, tpTitle.height / 2 + (poolText.isNotEmpty ? 6 * fontScale : 0)),
     );
 
     // Draw pool badge if attribute
@@ -258,7 +260,7 @@ class DialPainter extends CustomPainter {
         text: poolText,
         style: TextStyle(
           fontFamily: 'Inter',
-          fontSize: 9,
+          fontSize: (9 * fontScale).roundToDouble(),
           fontWeight: FontWeight.w700,
           color: isSelected ? AppColors.goldBright : AppColors.goldDim,
         ),

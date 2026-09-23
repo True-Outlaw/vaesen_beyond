@@ -21,6 +21,31 @@ class InventoryCard extends StatelessWidget {
     required this.diceViewModel,
   });
 
+  void _rollArmorProtection(BuildContext context, int protection, {String? title}) {
+    if (protection <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No armor protection to absorb damage.'),
+          backgroundColor: AppColors.surfaceOverlay,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+    diceViewModel.rollCustomPool(
+      poolSize: protection,
+      title: title ?? 'Armor Protection Roll',
+      breakdown: 'Rolling $protection Armor dice. Each 6 absorbs 1 damage.',
+    );
+    showDialog(
+      context: context,
+      builder: (_) => DiceTrayDialog(
+        diceViewModel: diceViewModel,
+        playViewModel: playViewModel,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final carry = character.currentCarryWeight;
@@ -431,16 +456,40 @@ class InventoryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: AppColors.goldDim),
+                  InkWell(
+                    onTap: () => _rollArmorProtection(
+                      context,
+                      character.totalArmorProtection,
+                      title: 'Total Armor Protection Roll',
                     ),
-                    child: Text(
-                      'TOTAL ARMOR: ${character.totalArmorProtection}',
-                      style: AppTypography.titleSmall.copyWith(fontSize: 9, color: AppColors.gold),
+                    borderRadius: BorderRadius.circular(4),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: character.totalArmorProtection > 0
+                              ? AppColors.gold.withAlpha(160)
+                              : AppColors.goldDim,
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.casino, size: 12, color: AppColors.goldBright),
+                          const SizedBox(width: 4),
+                          Text(
+                            'ARMOR: ${character.totalArmorProtection}',
+                            style: AppTypography.titleSmall.copyWith(
+                              fontSize: 9,
+                              color: AppColors.goldBright,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -497,6 +546,15 @@ class InventoryCard extends StatelessWidget {
                           ),
                           tooltip: a.isEquipped ? 'Worn' : 'Carried',
                           onPressed: () => playViewModel.toggleEquipArmor(a.id),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.casino, size: 18, color: AppColors.goldBright),
+                          tooltip: 'Roll Protection (+${a.protection} D6)',
+                          onPressed: () => _rollArmorProtection(
+                            context,
+                            a.protection,
+                            title: '${a.name} Protection Roll',
+                          ),
                         ),
                         IconButton(
                           icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),

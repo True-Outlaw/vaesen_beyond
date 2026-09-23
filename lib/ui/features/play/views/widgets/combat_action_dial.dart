@@ -18,11 +18,14 @@ class CombatActionDial extends StatefulWidget {
   final PlayViewModel playViewModel;
   final DiceRollerViewModel diceViewModel;
 
+  final double? maxDialSize;
+
   const CombatActionDial({
     super.key,
     required this.character,
     required this.playViewModel,
     required this.diceViewModel,
+    this.maxDialSize,
   });
 
   @override
@@ -405,7 +408,8 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double maxDialSize = math.min(constraints.maxWidth - 24, 330.0);
+        final double targetMaxSize = widget.maxDialSize ?? 330.0;
+        final double maxDialSize = math.min(constraints.maxWidth - 24, targetMaxSize);
 
         return Center(
           child: SizedBox(
@@ -434,45 +438,50 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
 
                   // 2. Centerpiece: The Society Talisman D6
                   IgnorePointer(
-                    child: Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF2CE8C5).withAlpha(60),
-                            blurRadius: 16,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.view_in_ar,
-                            color: AppColors.goldBright,
-                            size: 24,
-                            shadows: [
-                              Shadow(
-                                color: const Color(0xFF2CE8C5).withAlpha(180),
-                                blurRadius: 10,
+                    child: Builder(
+                      builder: (context) {
+                        final double talismanScale = (maxDialSize / 330.0).clamp(0.9, 1.4);
+                        return Container(
+                          width: 56 * talismanScale,
+                          height: 56 * talismanScale,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF2CE8C5).withAlpha(60),
+                                blurRadius: 16 * talismanScale,
+                                spreadRadius: 2 * talismanScale,
                               ),
                             ],
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'D6',
-                            style: AppTypography.statValue.copyWith(
-                              fontSize: 10,
-                              color: AppColors.goldBright,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.8,
-                            ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.view_in_ar,
+                                color: AppColors.goldBright,
+                                size: 24 * talismanScale,
+                                shadows: [
+                                  Shadow(
+                                    color: const Color(0xFF2CE8C5).withAlpha(180),
+                                    blurRadius: 10 * talismanScale,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 2 * talismanScale),
+                              Text(
+                                'D6',
+                                style: AppTypography.statValue.copyWith(
+                                  fontSize: 10 * talismanScale,
+                                  color: AppColors.goldBright,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ],

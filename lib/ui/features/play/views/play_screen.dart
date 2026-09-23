@@ -3,6 +3,7 @@ import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
+import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
 import 'package:vaesen_beyond/ui/features/builder/views/character_builder_screen.dart';
 import 'package:vaesen_beyond/ui/features/castle/views/castle_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
@@ -62,10 +63,11 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
         }
 
         final character = widget.viewModel.activeCharacter;
+        final isWide = Responsive.isWide(context);
 
         return Scaffold(
           body: IndexedStack(
-            index: _currentNavIndex,
+            index: isWide ? 1 : _currentNavIndex,
             children: [
               // 0: TABLE (Castle Gyllencreutz & Mystery Headquarters)
               CastleScreen(viewModel: widget.viewModel),
@@ -86,39 +88,42 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
             ],
           ),
 
-          // ── 3-Tab Bottom Navigation Bar ─────────────────────────────────
-          bottomNavigationBar: Container(
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              border: Border(
-                top: BorderSide(color: AppColors.border, width: 0.8),
-              ),
-            ),
-            child: NavigationBar(
-              selectedIndex: _currentNavIndex,
-              onDestinationSelected: (idx) => setState(() => _currentNavIndex = idx),
-              backgroundColor: AppColors.surface,
-              indicatorColor: AppColors.gold.withAlpha(50),
-              height: 60,
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.castle_outlined, color: AppColors.textSecondary),
-                  selectedIcon: Icon(Icons.castle, color: AppColors.goldBright),
-                  label: 'TABLE',
+          // ── Bottom Navigation Bar: Only visible on Mobile (< 900px) ─────
+          bottomNavigationBar: isWide
+              ? null
+              : Container(
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    color: AppColors.surface,
+                    border: Border(
+                      top: BorderSide(color: AppColors.border, width: 0.8),
+                    ),
+                  ),
+                  child: NavigationBar(
+                    selectedIndex: _currentNavIndex,
+                    onDestinationSelected: (idx) => setState(() => _currentNavIndex = idx),
+                    backgroundColor: AppColors.surface,
+                    indicatorColor: AppColors.gold.withAlpha(50),
+                    height: 60,
+                    destinations: const [
+                      NavigationDestination(
+                        icon: Icon(Icons.castle_outlined, color: AppColors.textSecondary),
+                        selectedIcon: Icon(Icons.castle, color: AppColors.goldBright),
+                        label: 'TABLE',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.diamond_outlined, color: AppColors.textSecondary),
+                        selectedIcon: Icon(Icons.diamond, color: AppColors.goldBright),
+                        label: 'ACT',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.badge_outlined, color: AppColors.textSecondary),
+                        selectedIcon: Icon(Icons.badge, color: AppColors.goldBright),
+                        label: 'SHEET',
+                      ),
+                    ],
+                  ),
                 ),
-                NavigationDestination(
-                  icon: Icon(Icons.diamond_outlined, color: AppColors.textSecondary),
-                  selectedIcon: Icon(Icons.diamond, color: AppColors.goldBright),
-                  label: 'ACT',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.badge_outlined, color: AppColors.textSecondary),
-                  selectedIcon: Icon(Icons.badge, color: AppColors.goldBright),
-                  label: 'SHEET',
-                ),
-              ],
-            ),
-          ),
         );
       },
     );

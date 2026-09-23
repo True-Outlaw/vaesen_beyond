@@ -9,6 +9,7 @@ import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_mode
 import 'package:vaesen_beyond/ui/features/play/view_models/initiative_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:flutter/services.dart';
+import 'package:vaesen_beyond/ui/features/castle/views/castle_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/play_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/party_management_dialog.dart';
 
@@ -56,6 +57,29 @@ class MainNavigationScreen extends StatelessWidget {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.castle_outlined, color: AppColors.gold),
+            tooltip: 'Castle Gyllencreutz Headquarters',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                    appBar: AppBar(
+                      title: Row(
+                        children: [
+                          const Icon(Icons.castle, color: AppColors.goldBright, size: 20),
+                          const SizedBox(width: 8),
+                          Text('CASTLE GYLLENCREUTZ', style: AppTypography.titleLarge),
+                        ],
+                      ),
+                    ),
+                    body: CastleScreen(viewModel: playVm),
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.menu_book, color: AppColors.gold),
             tooltip: 'The Society Compendium',
