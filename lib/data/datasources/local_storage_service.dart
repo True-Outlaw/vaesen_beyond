@@ -39,4 +39,16 @@ class LocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_kCastleStateKey);
   }
+
+  static const _kDisclaimerAcceptedKey = 'vaesen_disclaimer_accepted_v1';
+
+  Future<bool> hasAcceptedDisclaimer() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_kDisclaimerAcceptedKey) ?? false;
+  }
+
+  Future<void> setDisclaimerAccepted(bool accepted) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kDisclaimerAcceptedKey, accepted);
+  }
 }

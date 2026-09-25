@@ -627,4 +627,13 @@ class PlayViewModel extends ChangeNotifier {
       await adjustDevelopmentPoints(devPointsEarned);
     }
   }
+
+  Future<bool> hasAcceptedDisclaimer() async {
+    return _repository.hasAcceptedDisclaimer();
+  }
+
+  Future<void> setDisclaimerAccepted(bool accepted) async {
+    await _repository.setDisclaimerAccepted(accepted);
+    notifyListeners();
+  }
 }

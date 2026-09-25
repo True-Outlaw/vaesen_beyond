@@ -89,4 +89,12 @@ class CharacterRepository {
     final decoded = jsonDecode(jsonStr) as Map<String, dynamic>;
     return Character.fromJson(decoded);
   }
+
+  Future<bool> hasAcceptedDisclaimer() async {
+    return _storage.hasAcceptedDisclaimer();
+  }
+
+  Future<void> setDisclaimerAccepted(bool accepted) async {
+    await _storage.setDisclaimerAccepted(accepted);
+  }
 }

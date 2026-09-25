@@ -13,6 +13,7 @@ import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
 import 'package:vaesen_beyond/ui/features/castle/views/castle_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/play_screen.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/party_management_dialog.dart';
+import 'package:vaesen_beyond/ui/core/widgets/legal_disclaimer_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,8 +41,39 @@ class VaesenBeyondApp extends StatelessWidget {
   }
 }
 
-class MainNavigationScreen extends StatelessWidget {
+class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
+
+  @override
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
+  bool _checkedDisclaimer = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkDisclaimer();
+    });
+  }
+
+  Future<void> _checkDisclaimer() async {
+    if (_checkedDisclaimer || !mounted) return;
+    _checkedDisclaimer = true;
+
+    final playVm = context.read<PlayViewModel>();
+    final hasAccepted = await playVm.hasAcceptedDisclaimer();
+    if (!hasAccepted && mounted) {
+      showLegalDisclaimerDialog(
+        context,
+        onAcknowledge: () async {
+          await playVm.setDisclaimerAccepted(true);
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +176,13 @@ class MainNavigationScreen extends StatelessWidget {
                 }
               } else if (val == 'import') {
                 showPartyManagementDialog(context, playVm);
+              } else if (val == 'legal') {
+                showLegalDisclaimerDialog(
+                  context,
+                  onAcknowledge: () async {
+                    await playVm.setDisclaimerAccepted(true);
+                  },
+                );
               }
             },
             itemBuilder: (_) => [
@@ -153,7 +192,9 @@ class MainNavigationScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.groups_outlined, size: 16, color: AppColors.goldBright),
                     const SizedBox(width: 8),
-                    Text('Society Roster & Party', style: AppTypography.titleSmall),
+                    Expanded(
+                      child: Text('Society Roster & Party', style: AppTypography.titleSmall),
+                    ),
                   ],
                 ),
               ),
@@ -163,7 +204,9 @@ class MainNavigationScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.person_add, size: 16, color: AppColors.goldBright),
                     const SizedBox(width: 8),
-                    Text('Create New Investigator', style: AppTypography.titleSmall),
+                    Expanded(
+                      child: Text('Create New Investigator', style: AppTypography.titleSmall),
+                    ),
                   ],
                 ),
               ),
@@ -173,7 +216,9 @@ class MainNavigationScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.file_upload_outlined, size: 16, color: AppColors.gold),
                     const SizedBox(width: 8),
-                    Text('Export Active (JSON)', style: AppTypography.titleSmall),
+                    Expanded(
+                      child: Text('Export Active (JSON)', style: AppTypography.titleSmall),
+                    ),
                   ],
                 ),
               ),
@@ -183,7 +228,22 @@ class MainNavigationScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.file_download_outlined, size: 16, color: AppColors.gold),
                     const SizedBox(width: 8),
-                    Text('Import Investigator (JSON)', style: AppTypography.titleSmall),
+                    Expanded(
+                      child: Text('Import Investigator (JSON)', style: AppTypography.titleSmall),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'legal',
+                child: Row(
+                  children: [
+                    const Icon(Icons.gavel_outlined, size: 16, color: AppColors.gold),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text('Legal & Copyright Notice', style: AppTypography.titleSmall),
+                    ),
                   ],
                 ),
               ),
