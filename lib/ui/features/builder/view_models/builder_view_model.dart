@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:vaesen_beyond/data/seed/archetypes_data.dart';
 import 'package:vaesen_beyond/data/seed/gear_data.dart';
+import 'package:vaesen_beyond/data/seed/mementos_data.dart';
 import 'package:vaesen_beyond/data/seed/talents_data.dart';
 import 'package:vaesen_beyond/domain/models/archetype.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
@@ -44,6 +46,9 @@ class BuilderViewModel extends ChangeNotifier {
   String _memento = '';
   String get memento => _memento;
 
+  int _resources = 4;
+  int get resources => _resources;
+
   Map<AttributeType, int> _attributes = {
     AttributeType.physique: 2,
     AttributeType.precision: 2,
@@ -77,6 +82,7 @@ class BuilderViewModel extends ChangeNotifier {
     _archetype = ArchetypesData.allArchetypes.first;
     _ageCategory = AgeCategory.middleAged;
     _actualAge = 35;
+    _resources = _archetype.minResources;
     _attributes = {
       AttributeType.physique: 3,
       AttributeType.precision: 3,
@@ -148,6 +154,7 @@ class BuilderViewModel extends ChangeNotifier {
 
   void setArchetype(Archetype arc) {
     _archetype = arc;
+    _resources = arc.minResources;
     _selectedTalents = [
       TalentsData.allTalents.firstWhere(
         (t) => arc.talentIds.contains(t.id),
@@ -211,6 +218,55 @@ class BuilderViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setResources(int val) {
+    final current = _resources;
+    if (val > current && remainingSkillPoints <= 0) {
+      return;
+    }
+    _resources = val.clamp(_archetype.minResources, _archetype.maxResources);
+    notifyListeners();
+  }
+
+  void rollRandomMemento() {
+    final (_, item) = MementosData.rollMemento();
+    _memento = item;
+    notifyListeners();
+  }
+
+  void rollRandomName() {
+    if (_archetype.suggestedFirstNames.isNotEmpty && _archetype.suggestedLastNames.isNotEmpty) {
+      final rng = Random();
+      final first = _archetype.suggestedFirstNames[rng.nextInt(_archetype.suggestedFirstNames.length)];
+      final last = _archetype.suggestedLastNames[rng.nextInt(_archetype.suggestedLastNames.length)];
+      _name = '$first $last';
+      notifyListeners();
+    }
+  }
+
+  void rollRandomMotivation() {
+    if (_archetype.suggestedMotivations.isNotEmpty) {
+      final rng = Random();
+      _motivation = _archetype.suggestedMotivations[rng.nextInt(_archetype.suggestedMotivations.length)];
+      notifyListeners();
+    }
+  }
+
+  void rollRandomTrauma() {
+    if (_archetype.suggestedTraumas.isNotEmpty) {
+      final rng = Random();
+      _trauma = _archetype.suggestedTraumas[rng.nextInt(_archetype.suggestedTraumas.length)];
+      notifyListeners();
+    }
+  }
+
+  void rollRandomDarkSecret() {
+    if (_archetype.suggestedDarkSecrets.isNotEmpty) {
+      final rng = Random();
+      _darkSecret = _archetype.suggestedDarkSecrets[rng.nextInt(_archetype.suggestedDarkSecrets.length)];
+      notifyListeners();
+    }
+  }
+
   void setAttribute(AttributeType type, int val) {
     final current = _attributes[type] ?? 2;
     if (val > current && remainingAttributePoints <= 0) {
@@ -251,8 +307,10 @@ class BuilderViewModel extends ChangeNotifier {
   int get totalSkillPointsSpent =>
       _skills.values.fold<int>(0, (sum, val) => sum + val);
 
+  int get extraResourcesPoints => (_resources - _archetype.minResources).clamp(0, 99);
+
   int get remainingSkillPoints =>
-      _ageCategory.skillPoints - totalSkillPointsSpent;
+      _ageCategory.skillPoints - totalSkillPointsSpent - extraResourcesPoints;
 
   bool get isNameValid => _name.trim().isNotEmpty;
   bool get isAttributeBudgetValid => remainingAttributePoints == 0;
@@ -278,10 +336,10 @@ class BuilderViewModel extends ChangeNotifier {
           return 'You have overspent Attribute points by ${-remainingAttributePoints}. Reduce points to balance.';
         }
         if (remainingSkillPoints > 0) {
-          return 'You must allocate all $remainingSkillPoints remaining Skill points.';
+          return 'You must allocate all $remainingSkillPoints remaining Skill/Resource points.';
         }
         if (remainingSkillPoints < 0) {
-          return 'You have overspent Skill points by ${-remainingSkillPoints}. Reduce points to balance.';
+          return 'You have overspent Skill/Resource points by ${-remainingSkillPoints}. Reduce points to balance.';
         }
         return null;
       case 3:
@@ -298,8 +356,8 @@ class BuilderViewModel extends ChangeNotifier {
         }
         if (!isSkillBudgetValid) {
           return remainingSkillPoints > 0
-              ? 'Skill points must be fully allocated ($remainingSkillPoints remaining).'
-              : 'Skill points overspent by ${-remainingSkillPoints}.';
+              ? 'Skill/Resource points must be fully allocated ($remainingSkillPoints remaining).'
+              : 'Skill/Resource points overspent by ${-remainingSkillPoints}.';
         }
         if (!isTalentValid) return 'A starting Talent is required (Step 4).';
         return null;
@@ -339,7 +397,7 @@ class BuilderViewModel extends ChangeNotifier {
       weapons: List.from(_weapons),
       armor: List.from(_armor),
       equipment: List.from(_equipment),
-      resources: _archetype.startingResources,
+      resources: _resources,
       capital: 1,
       experiencePoints: 0,
       notes: 'Formed at Castle Gyllencreutz.',

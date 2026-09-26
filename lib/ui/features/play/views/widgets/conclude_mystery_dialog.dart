@@ -44,13 +44,16 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
 
-  // Step 1: Debrief Questions (Standard Vaesen debrief)
+  // Step 1: Debrief Questions (Chapter 2, p. 25 official debrief)
   final List<String> _questions = const [
-    '1. Did you participate in the mystery? (+1 XP)',
-    '2. Did you confront or discover a vaesen? (+1 XP)',
-    '3. Did you use your archetype talent? (+1 XP)',
-    '4. Were you affected or held back by your Dark Secret? (+1 XP)',
-    '5. Did you suffer from a condition or critical injury? (+1 XP)',
+    '1. Did you participate in the session? (Always at least 1 XP)',
+    '2. Did you confront any vaesen? (+1 XP)',
+    '3. Did you identify a previously unknown vaesen? (+1 XP)',
+    '4. Were you affected by your dark secret? (+1 XP)',
+    '5. Did you take risks to protect other people? (+1 XP)',
+    '6. Have you learned anything? (+1 XP)',
+    '7. Did you develop something in your headquarters? (+1 XP)',
+    '8. Did you perform an extraordinary action? (+1 XP)',
   ];
   late final List<bool> _answers;
 

@@ -174,33 +174,50 @@ class PlayViewModel extends ChangeNotifier {
 
   Future<bool> useMemento() => drawSolaceFromMemento(healPhysical: false);
 
-  Future<bool> drawSolaceFromMemento({required bool healPhysical}) async {
+  Future<bool> drawSolaceFromMemento({
+    required bool healPhysical,
+    int conditionsToHeal = 2,
+  }) async {
     if (_activeCharacter == null || _activeCharacter!.isMementoUsed) {
       return false;
     }
 
-    final cond = _activeCharacter!.conditions;
-    ConditionsState newCond = cond;
+    ConditionsState newCond = _activeCharacter!.conditions;
+    int remaining = conditionsToHeal;
 
     if (healPhysical) {
-      if (cond.wounded) {
-        newCond = cond.copyWith(wounded: false);
-      } else if (cond.battered) {
-        newCond = cond.copyWith(battered: false);
-      } else if (cond.exhausted) {
-        newCond = cond.copyWith(exhausted: false);
-      } else if (cond.brokenPhysical) {
-        newCond = cond.copyWith(brokenPhysical: false);
+      if (newCond.wounded && remaining > 0) {
+        newCond = newCond.copyWith(wounded: false);
+        remaining--;
+      }
+      if (newCond.battered && remaining > 0) {
+        newCond = newCond.copyWith(battered: false);
+        remaining--;
+      }
+      if (newCond.exhausted && remaining > 0) {
+        newCond = newCond.copyWith(exhausted: false);
+        remaining--;
+      }
+      if (newCond.brokenPhysical && remaining > 0) {
+        newCond = newCond.copyWith(brokenPhysical: false);
+        remaining--;
       }
     } else {
-      if (cond.hopeless) {
-        newCond = cond.copyWith(hopeless: false);
-      } else if (cond.frightened) {
-        newCond = cond.copyWith(frightened: false);
-      } else if (cond.angry) {
-        newCond = cond.copyWith(angry: false);
-      } else if (cond.brokenMental) {
-        newCond = cond.copyWith(brokenMental: false);
+      if (newCond.hopeless && remaining > 0) {
+        newCond = newCond.copyWith(hopeless: false);
+        remaining--;
+      }
+      if (newCond.frightened && remaining > 0) {
+        newCond = newCond.copyWith(frightened: false);
+        remaining--;
+      }
+      if (newCond.angry && remaining > 0) {
+        newCond = newCond.copyWith(angry: false);
+        remaining--;
+      }
+      if (newCond.brokenMental && remaining > 0) {
+        newCond = newCond.copyWith(brokenMental: false);
+        remaining--;
       }
     }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/data/seed/archetypes_data.dart';
+import 'package:vaesen_beyond/data/seed/mementos_data.dart';
 import 'package:vaesen_beyond/data/seed/talents_data.dart';
 import 'package:vaesen_beyond/domain/models/archetype.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
@@ -32,6 +33,54 @@ class CharacterBuilderScreen extends StatefulWidget {
 
 class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
   final BuilderViewModel _builderVm = BuilderViewModel();
+
+  late final TextEditingController _nameController;
+  late final TextEditingController _motivationController;
+  late final TextEditingController _traumaController;
+  late final TextEditingController _darkSecretController;
+  late final TextEditingController _mementoController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: _builderVm.name);
+    _motivationController = TextEditingController(text: _builderVm.motivation);
+    _traumaController = TextEditingController(text: _builderVm.trauma);
+    _darkSecretController = TextEditingController(text: _builderVm.darkSecret);
+    _mementoController = TextEditingController(text: _builderVm.memento);
+
+    _builderVm.addListener(_syncControllersWithVm);
+  }
+
+  void _syncControllersWithVm() {
+    if (_nameController.text != _builderVm.name) {
+      _nameController.text = _builderVm.name;
+    }
+    if (_motivationController.text != _builderVm.motivation) {
+      _motivationController.text = _builderVm.motivation;
+    }
+    if (_traumaController.text != _builderVm.trauma) {
+      _traumaController.text = _builderVm.trauma;
+    }
+    if (_darkSecretController.text != _builderVm.darkSecret) {
+      _darkSecretController.text = _builderVm.darkSecret;
+    }
+    if (_mementoController.text != _builderVm.memento) {
+      _mementoController.text = _builderVm.memento;
+    }
+  }
+
+  @override
+  void dispose() {
+    _builderVm.removeListener(_syncControllersWithVm);
+    _nameController.dispose();
+    _motivationController.dispose();
+    _traumaController.dispose();
+    _darkSecretController.dispose();
+    _mementoController.dispose();
+    _builderVm.dispose();
+    super.dispose();
+  }
 
   static const _availablePortraits = [
     ('assets/images/portraits/astrid.jpg', 'Astrid', 'Doctor / Scholar'),
@@ -399,13 +448,18 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
-                        initialValue: _builderVm.name,
-                        decoration: const InputDecoration(
+                        controller: _nameController,
+                        decoration: InputDecoration(
                           labelText: 'Investigator Full Name',
                           hintText: 'e.g. Inspector Johan Lindgren',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           filled: true,
                           fillColor: AppColors.surfaceLight,
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.casino_outlined, color: AppColors.goldBright),
+                            tooltip: 'Roll random suggested name',
+                            onPressed: _builderVm.rollRandomName,
+                          ),
                         ),
                         onChanged: _builderVm.setName,
                       ),
@@ -722,7 +776,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('SKILL POINTS BUDGET', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                        Text('SKILL & RESOURCE POINTS BUDGET', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
                         Text('${_builderVm.totalSkillPointsSpent} / ${_builderVm.ageCategory.skillPoints} Points Spent', style: AppTypography.bodySmall),
                       ],
                     ),
@@ -742,60 +796,66 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
 
         const SizedBox(height: 20),
 
-        // 2-Column Split: Left Attributes, Right Skills with matching height
+        // 2-Column Split: Left Attributes & Resources, Right Skills
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Left: Attributes (flex: 5)
+              // Left: Attributes & Resources (flex: 5)
               Expanded(
                 flex: 5,
-                child: GothicCard(
-                  padding: const EdgeInsets.all(18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  children: [
+                    GothicCard(
+                      padding: const EdgeInsets.all(18),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('CORE ATTRIBUTES', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
-                          Text('Baseline: 2', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
-                        ],
-                      ),
-                      const OrnateDivider(height: 16),
-                      Column(
-                        children: AttributeType.values.map((attr) {
-                          final val = _builderVm.attributes[attr] ?? 2;
-                          final isMain = attr == arc.mainAttribute;
-                          final maxCap = isMain ? 5 : 4;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('CORE ATTRIBUTES', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
+                              Text('Baseline: 2', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
+                            ],
+                          ),
+                          const OrnateDivider(height: 16),
+                          Column(
+                            children: AttributeType.values.map((attr) {
+                              final val = _builderVm.attributes[attr] ?? 2;
+                              final isMain = attr == arc.mainAttribute;
+                              final maxCap = isMain ? 5 : 4;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(attr.label, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
-                                    if (isMain)
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8),
-                                        child: _badge('MAIN (max 5)', AppColors.gold),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Text(attr.label, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
+                                        if (isMain)
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 8),
+                                            child: _badge('MAIN (max 5)', AppColors.gold),
+                                          ),
+                                      ],
+                                    ),
+                                    PipCounter(
+                                      value: val,
+                                      min: 2,
+                                      max: maxCap,
+                                      onChanged: (newVal) => _builderVm.setAttribute(attr, newVal),
+                                    ),
                                   ],
                                 ),
-                                PipCounter(
-                                  value: val,
-                                  min: 2,
-                                  max: maxCap,
-                                  onChanged: (newVal) => _builderVm.setAttribute(attr, newVal),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildResourcesSection(arc),
+                  ],
                 ),
               ),
 
@@ -980,6 +1040,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
   }
 
   Widget _step4LoreDesktop() {
+    final arc = _builderVm.archetype;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -991,17 +1052,32 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
         ),
         const SizedBox(height: 20),
 
-        // 2x2 Grid of Lore TextFields with Matching Heights
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: _textField('MOTIVATION', 'Why do you risk death to investigate the vaesen?', _builderVm.setMotivation, _builderVm.motivation),
+                child: _buildNarrativeCard(
+                  title: 'MOTIVATION',
+                  subtitle: 'Why do you risk death to investigate the vaesen?',
+                  controller: _motivationController,
+                  onChanged: _builderVm.setMotivation,
+                  suggestions: arc.suggestedMotivations,
+                  onRoll: _builderVm.rollRandomMotivation,
+                  rollTooltip: 'Roll random motivation',
+                ),
               ),
               const SizedBox(width: 20),
               Expanded(
-                child: _textField('TRAUMA (THE SIGHT)', 'What terrifying supernatural incident awakened your Sight?', _builderVm.setTrauma, _builderVm.trauma),
+                child: _buildNarrativeCard(
+                  title: 'TRAUMA (THE SIGHT)',
+                  subtitle: 'What terrifying supernatural incident awakened your Sight?',
+                  controller: _traumaController,
+                  onChanged: _builderVm.setTrauma,
+                  suggestions: arc.suggestedTraumas,
+                  onRoll: _builderVm.rollRandomTrauma,
+                  rollTooltip: 'Roll random trauma',
+                ),
               ),
             ],
           ),
@@ -1014,11 +1090,19 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: _textField('DARK SECRET', 'What guilt, crime, or forbidden secret do you conceal?', _builderVm.setDarkSecret, _builderVm.darkSecret),
+                child: _buildNarrativeCard(
+                  title: 'DARK SECRET',
+                  subtitle: 'What guilt, crime, or forbidden secret do you conceal?',
+                  controller: _darkSecretController,
+                  onChanged: _builderVm.setDarkSecret,
+                  suggestions: arc.suggestedDarkSecrets,
+                  onRoll: _builderVm.rollRandomDarkSecret,
+                  rollTooltip: 'Roll random dark secret',
+                ),
               ),
               const SizedBox(width: 20),
               Expanded(
-                child: _textField('MEMENTO', 'What physical heirloom brings comfort to heal conditions once per mystery?', _builderVm.setMemento, _builderVm.memento),
+                child: _buildMementoCard(),
               ),
             ],
           ),
@@ -1111,7 +1195,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              _badge('Resources: ${arc.startingResources}', AppColors.gold),
+                              _badge('Resources: ${_builderVm.resources} (${MementosData.standardOfLiving[_builderVm.resources]?.title ?? "Standard"})', AppColors.gold),
                               const SizedBox(width: 8),
                               _badge('Capital: 1', AppColors.surfaceOverlay),
                             ],
@@ -1451,13 +1535,18 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
         const SizedBox(height: 14),
 
         TextFormField(
-          initialValue: _builderVm.name,
-          decoration: const InputDecoration(
+          controller: _nameController,
+          decoration: InputDecoration(
             labelText: 'Investigator Full Name',
             hintText: 'e.g. Inspector Johan Lindgren',
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             filled: true,
             fillColor: AppColors.surfaceLight,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.casino_outlined, color: AppColors.goldBright),
+              tooltip: 'Roll random suggested name',
+              onPressed: _builderVm.rollRandomName,
+            ),
           ),
           onChanged: _builderVm.setName,
         ),
@@ -1659,7 +1748,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                 ),
                 child: Column(
                   children: [
-                    Text('SKILL POINTS', style: AppTypography.titleSmall.copyWith(fontSize: 10)),
+                    Text('SKILL & RESOURCE POINTS', style: AppTypography.titleSmall.copyWith(fontSize: 10)),
                     Text(
                       remSkill == 0 ? 'Balanced ✓' : (remSkill > 0 ? '$remSkill Unspent' : '${-remSkill} Overspent ⚠️'),
                       style: AppTypography.titleMedium.copyWith(
@@ -1691,7 +1780,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                   child: Text(
                     'Budget must balance exactly to 0 before proceeding.\n'
                     '${remAttr != 0 ? (remAttr > 0 ? "Spend $remAttr more Attribute pts. " : "Remove ${-remAttr} Attribute pts. ") : ""}'
-                    '${remSkill != 0 ? (remSkill > 0 ? "Spend $remSkill more Skill pts." : "Remove ${-remSkill} Skill pts.") : ""}',
+                    '${remSkill != 0 ? (remSkill > 0 ? "Spend $remSkill more Skill/Resource pts." : "Remove ${-remSkill} Skill/Resource pts.") : ""}',
                     style: const TextStyle(fontSize: 11, color: AppColors.crimsonLight),
                   ),
                 ),
@@ -1769,6 +1858,9 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
             ),
           );
         }),
+
+        const OrnateDivider(height: 20),
+        _buildResourcesSection(arc),
       ],
     );
   }
@@ -1831,6 +1923,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
   }
 
   Widget _step4LoreMobile() {
+    final arc = _builderVm.archetype;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1842,13 +1935,37 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
         ),
         const SizedBox(height: 14),
 
-        _textField('MOTIVATION', 'Why do you risk death to investigate the vaesen?', _builderVm.setMotivation, _builderVm.motivation),
+        _buildNarrativeCard(
+          title: 'MOTIVATION',
+          subtitle: 'Why do you risk death to investigate the vaesen?',
+          controller: _motivationController,
+          onChanged: _builderVm.setMotivation,
+          suggestions: arc.suggestedMotivations,
+          onRoll: _builderVm.rollRandomMotivation,
+          rollTooltip: 'Roll random motivation',
+        ),
         const SizedBox(height: 14),
-        _textField('TRAUMA (THE SIGHT)', 'What terrifying supernatural incident awakened your Sight?', _builderVm.setTrauma, _builderVm.trauma),
+        _buildNarrativeCard(
+          title: 'TRAUMA (THE SIGHT)',
+          subtitle: 'What terrifying supernatural incident awakened your Sight?',
+          controller: _traumaController,
+          onChanged: _builderVm.setTrauma,
+          suggestions: arc.suggestedTraumas,
+          onRoll: _builderVm.rollRandomTrauma,
+          rollTooltip: 'Roll random trauma',
+        ),
         const SizedBox(height: 14),
-        _textField('DARK SECRET', 'What guilt, crime, or forbidden secret do you conceal?', _builderVm.setDarkSecret, _builderVm.darkSecret),
+        _buildNarrativeCard(
+          title: 'DARK SECRET',
+          subtitle: 'What guilt, crime, or forbidden secret do you conceal?',
+          controller: _darkSecretController,
+          onChanged: _builderVm.setDarkSecret,
+          suggestions: arc.suggestedDarkSecrets,
+          onRoll: _builderVm.rollRandomDarkSecret,
+          rollTooltip: 'Roll random dark secret',
+        ),
         const SizedBox(height: 14),
-        _textField('MEMENTO', 'What physical heirloom brings comfort to heal conditions once per mystery?', _builderVm.setMemento, _builderVm.memento),
+        _buildMementoCard(),
       ],
     );
   }
@@ -1903,7 +2020,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  _badge('Resources: ${arc.startingResources}', AppColors.gold),
+                  _badge('Resources: ${_builderVm.resources} (${MementosData.standardOfLiving[_builderVm.resources]?.title ?? "Standard"})', AppColors.gold),
                   const SizedBox(width: 8),
                   _badge('Capital: 1', AppColors.surfaceOverlay),
                 ],
@@ -2010,18 +2127,224 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
     );
   }
 
-  Widget _textField(String label, String hint, ValueChanged<String> onChanged, [String initialValue = '']) {
-    return TextFormField(
-      initialValue: initialValue,
-      maxLines: 2,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        border: const OutlineInputBorder(),
-        filled: true,
-        fillColor: AppColors.surfaceLight,
+  Widget _buildResourcesSection(Archetype arc) {
+    final sol = MementosData.standardOfLiving[_builderVm.resources];
+    return GothicCard(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'RESOURCES & LIVING',
+                  style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright, fontSize: 13),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              _badge('Range: ${arc.minResources}–${arc.maxResources}', AppColors.gold),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Starting base: ${arc.minResources}. Spend Skill Points to raise your Resources (1 pt = +1 Resource, up to ${arc.maxResources}).',
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
+          ),
+          const OrnateDivider(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Score: ${_builderVm.resources} — ${sol?.title ?? ""}',
+                      style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (_builderVm.extraResourcesPoints > 0)
+                      Text(
+                        '+${_builderVm.extraResourcesPoints} pt from Skill Points budget',
+                        style: const TextStyle(fontSize: 11, color: AppColors.crimsonLight),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              PipCounter(
+                value: _builderVm.resources,
+                min: arc.minResources,
+                max: arc.maxResources,
+                onChanged: (newVal) => _builderVm.setResources(newVal),
+              ),
+            ],
+          ),
+          if (sol != null) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(sol.description, style: AppTypography.bodySmall.copyWith(fontSize: 11.5)),
+                  const SizedBox(height: 6),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Lodging: ', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.gold, fontSize: 11)),
+                      Expanded(child: Text(sol.lodging, style: AppTypography.bodySmall.copyWith(fontSize: 11))),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Clothes: ', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.gold, fontSize: 11)),
+                      Expanded(child: Text(sol.clothes, style: AppTypography.bodySmall.copyWith(fontSize: 11))),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
-      onChanged: onChanged,
+    );
+  }
+
+  Widget _buildNarrativeCard({
+    required String title,
+    required String subtitle,
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    required List<String> suggestions,
+    required VoidCallback onRoll,
+    String rollTooltip = 'Roll Random',
+  }) {
+    return GothicCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright, fontSize: 13)),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.casino_outlined, color: AppColors.goldBright, size: 20),
+                tooltip: rollTooltip,
+                onPressed: onRoll,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            maxLines: 2,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: AppColors.surfaceLight,
+            ),
+            onChanged: onChanged,
+          ),
+          if (suggestions.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text('SUGGESTIONS (TAP TO SELECT):', style: AppTypography.labelSmall.copyWith(fontSize: 9.5, color: AppColors.textMuted)),
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: suggestions.map((sug) {
+                final isCurrent = controller.text == sug;
+                return ActionChip(
+                  label: Text(sug, style: TextStyle(fontSize: 10.5, color: isCurrent ? Colors.black : Colors.white)),
+                  backgroundColor: isCurrent ? AppColors.goldBright : AppColors.surfaceLight,
+                  side: BorderSide(color: isCurrent ? AppColors.goldBright : AppColors.surfaceOverlay),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                  onPressed: () {
+                    controller.text = sug;
+                    onChanged(sug);
+                  },
+                );
+              }).toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMementoCard() {
+    return GothicCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('MEMENTO (D66 TABLE)', style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright, fontSize: 13)),
+                    const SizedBox(height: 2),
+                    Text('Solace: Heal up to 2 Conditions once per mystery.', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
+                  ],
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: _builderVm.rollRandomMemento,
+                icon: const Icon(Icons.casino_outlined, size: 16),
+                label: const Text('ROLL D66', style: TextStyle(fontSize: 11)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.goldDim,
+                  foregroundColor: Colors.black,
+                  visualDensity: VisualDensity.compact,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _mementoController,
+            maxLines: 2,
+            decoration: const InputDecoration(
+              hintText: 'e.g. A silver pocket watch that runs backward',
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: AppColors.surfaceLight,
+            ),
+            onChanged: _builderVm.setMemento,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Keep a personal object of emotional significance. During rest, spend time with it to regain peace of mind.',
+            style: AppTypography.bodySmall.copyWith(fontSize: 10.5, color: AppColors.textMuted, fontStyle: FontStyle.italic),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -370,14 +370,17 @@ class AdvancementCard extends StatelessWidget {
   }
 
   void _openSessionDebriefDialog(BuildContext context) {
-    final answers = [false, false, false, false, false];
     final questions = [
-      '1. Did you participate in the mystery session? (+1 XP)',
-      '2. Did you confront or discover a vaesen? (+1 XP)',
-      '3. Did you use your archetype talent? (+1 XP)',
-      '4. Were you affected or held back by your Dark Secret? (+1 XP)',
-      '5. Did you suffer from a condition or critical injury? (+1 XP)',
+      '1. Did you participate in the session? (Always at least 1 XP)',
+      '2. Did you confront any vaesen? (+1 XP)',
+      '3. Did you identify a previously unknown vaesen? (+1 XP)',
+      '4. Were you affected by your dark secret? (+1 XP)',
+      '5. Did you take risks to protect other people? (+1 XP)',
+      '6. Have you learned anything? (+1 XP)',
+      '7. Did you develop something in your headquarters? (+1 XP)',
+      '8. Did you perform an extraordinary action? (+1 XP)',
     ];
+    final answers = List.filled(questions.length, false);
 
     showDialog(
       context: context,
@@ -399,15 +402,16 @@ class AdvancementCard extends StatelessWidget {
             ),
             content: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Answer the 5 official Vaesen session questions to tally Advancement Points earned:',
-                    style: AppTypography.bodySmall,
-                  ),
-                  const SizedBox(height: 12),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Answer the 8 official Vaesen session questions (Chapter 2, p. 25) to tally Advancement Points earned:',
+                      style: AppTypography.bodySmall,
+                    ),
+                    const SizedBox(height: 12),
                   ...List.generate(questions.length, (i) {
                     return CheckboxListTile(
                       dense: true,
@@ -437,7 +441,8 @@ class AdvancementCard extends StatelessWidget {
                 ],
               ),
             ),
-            actions: [
+          ),
+          actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
                 child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),

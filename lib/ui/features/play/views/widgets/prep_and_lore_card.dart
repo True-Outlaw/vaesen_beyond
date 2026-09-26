@@ -288,7 +288,7 @@ class PrepAndLoreCard extends StatelessWidget {
                               final healed = await playViewModel.drawSolaceFromMemento(healPhysical: false);
                               if (context.mounted && healed) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Drew solace from memento! 1 condition healed.')),
+                                  const SnackBar(content: Text('Drew solace from memento! Healed up to 2 conditions.')),
                                 );
                               }
                             }

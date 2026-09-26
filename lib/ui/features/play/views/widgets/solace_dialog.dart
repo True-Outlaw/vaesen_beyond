@@ -39,7 +39,7 @@ class SolaceDialog extends StatelessWidget {
           const SizedBox(height: 12),
           const OrnateDivider(height: 16),
           Text(
-            'Which condition would you like to soothe?',
+            'Rest and heal up to 2 conditions with your memento:',
             style: AppTypography.titleSmall,
           ),
           const SizedBox(height: 12),
@@ -52,7 +52,7 @@ class SolaceDialog extends StatelessWidget {
                     if (context.mounted) Navigator.of(context).pop();
                   },
                   icon: const Icon(Icons.favorite, color: AppColors.physicalCondition, size: 16),
-                  label: const Text('PHYSICAL'),
+                  label: const Text('HEAL 2 PHYSICAL'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surfaceLight,
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -67,7 +67,7 @@ class SolaceDialog extends StatelessWidget {
                     if (context.mounted) Navigator.of(context).pop();
                   },
                   icon: const Icon(Icons.psychology, color: AppColors.mentalCondition, size: 16),
-                  label: const Text('MENTAL'),
+                  label: const Text('HEAL 2 MENTAL'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surfaceLight,
                     padding: const EdgeInsets.symmetric(vertical: 12),

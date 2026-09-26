@@ -20,12 +20,12 @@ class PregenCharacters {
           isMementoUsed: false,
           attributes: {
             AttributeType.physique: 3,
-            AttributeType.precision: 4, // Main attribute
-            AttributeType.logic: 4,
+            AttributeType.precision: 3,
+            AttributeType.logic: 5, // Main attribute (max 5)
             AttributeType.empathy: 3,
           },
           skills: {
-            SkillType.medicine: 3, // Main skill
+            SkillType.medicine: 3, // Main skill (max 3)
             SkillType.observation: 2,
             SkillType.learning: 2,
             SkillType.investigation: 2,
@@ -34,7 +34,7 @@ class PregenCharacters {
             SkillType.rangedCombat: 1,
           },
           conditions: const ConditionsState(),
-          talents: [TalentsData.allTalents.firstWhere((t) => t.id == 'doc_field_surgeon')],
+          talents: [TalentsData.allTalents.firstWhere((t) => t.id == 'doc_army_medic')],
           weapons: [
             GearData.standardWeapons.firstWhere((w) => w.id == 'w_derringer'),
             GearData.standardWeapons.firstWhere((w) => w.id == 'w_knife'),
@@ -44,7 +44,7 @@ class PregenCharacters {
             GearData.commonEquipment.firstWhere((e) => e.id == 'eq_medkit'),
             GearData.commonEquipment.firstWhere((e) => e.id == 'eq_magnifier'),
           ],
-          resources: 5,
+          resources: 4,
           capital: 2,
           experiencePoints: 2,
           relationships: {
@@ -68,19 +68,19 @@ class PregenCharacters {
           isMementoUsed: false,
           attributes: {
             AttributeType.physique: 3,
-            AttributeType.precision: 3,
-            AttributeType.logic: 4,
-            AttributeType.empathy: 5, // Main attribute
+            AttributeType.precision: 5, // Main attribute (max 5)
+            AttributeType.logic: 3,
+            AttributeType.empathy: 4,
           },
           skills: {
-            SkillType.observation: 3, // Main skill
+            SkillType.stealth: 3, // Main skill (max 3)
+            SkillType.observation: 2,
             SkillType.investigation: 2,
             SkillType.learning: 2,
-            SkillType.inspiration: 2,
-            SkillType.stealth: 1,
+            SkillType.inspiration: 1,
           },
           conditions: const ConditionsState(),
-          talents: [TalentsData.allTalents.firstWhere((t) => t.id == 'occ_sixth_sense')],
+          talents: [TalentsData.allTalents.firstWhere((t) => t.id == 'occ_medium')],
           weapons: [
             GearData.standardWeapons.firstWhere((w) => w.id == 'w_cane_sword'),
             GearData.standardWeapons.firstWhere((w) => w.id == 'w_derringer'),
@@ -90,7 +90,7 @@ class PregenCharacters {
             GearData.commonEquipment.firstWhere((e) => e.id == 'eq_holy_symbol'),
             GearData.commonEquipment.firstWhere((e) => e.id == 'eq_lantern'),
           ],
-          resources: 3,
+          resources: 2,
           capital: 1,
           experiencePoints: 0,
           relationships: {
@@ -114,12 +114,12 @@ class PregenCharacters {
           isMementoUsed: false,
           attributes: {
             AttributeType.physique: 3,
-            AttributeType.precision: 4,
-            AttributeType.logic: 4, // Main attribute
+            AttributeType.precision: 3,
+            AttributeType.logic: 5, // Main attribute (max 5)
             AttributeType.empathy: 3,
           },
           skills: {
-            SkillType.investigation: 3, // Main skill
+            SkillType.investigation: 3, // Main skill (max 3)
             SkillType.vigilance: 2,
             SkillType.rangedCombat: 2,
             SkillType.observation: 2,
@@ -128,7 +128,7 @@ class PregenCharacters {
             SkillType.manipulation: 1,
           },
           conditions: const ConditionsState(),
-          talents: [TalentsData.allTalents.firstWhere((t) => t.id == 'det_sherlock')],
+          talents: [TalentsData.allTalents.firstWhere((t) => t.id == 'det_focused')],
           weapons: [
             GearData.standardWeapons.firstWhere((w) => w.id == 'w_revolver'),
             GearData.standardWeapons.firstWhere((w) => w.id == 'w_knife'),
@@ -162,17 +162,17 @@ class PregenCharacters {
           isMementoUsed: false,
           attributes: {
             AttributeType.physique: 3,
-            AttributeType.precision: 4, // Main attribute
+            AttributeType.precision: 4, // Main attribute (max 5)
             AttributeType.logic: 3,
             AttributeType.empathy: 3,
           },
           skills: {
-            SkillType.rangedCombat: 3, // Main skill
-            SkillType.vigilance: 3,
+            SkillType.rangedCombat: 3, // Main skill (max 3)
+            SkillType.vigilance: 2, // Max 2 at start for non-key skill
             SkillType.stealth: 2,
             SkillType.agility: 2,
             SkillType.closeCombat: 2,
-            SkillType.force: 1,
+            SkillType.force: 2,
             SkillType.learning: 1,
           },
           conditions: const ConditionsState(),

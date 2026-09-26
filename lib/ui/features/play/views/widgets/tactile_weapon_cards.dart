@@ -96,7 +96,7 @@ class TactileWeaponCards extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Once per mystery, you can spend a moment with your memento to heal 1 Mental Condition (Angry, Frightened, or Hopeless).',
+              'Once per session, you can spend a moment resting with your memento to heal up to two Conditions (Chapter 2, p. 22).',
               style: AppTypography.bodySmall,
             ),
           ],
@@ -113,7 +113,7 @@ class TactileWeaponCards extends StatelessWidget {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('You drew solace from your memento. One mental condition healed.'),
+                    content: Text('You drew solace from your memento. Mental conditions healed.'),
                     backgroundColor: AppColors.surfaceOverlay,
                   ),
                 );
