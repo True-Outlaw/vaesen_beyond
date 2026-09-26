@@ -30,6 +30,9 @@ class PlayViewModel extends ChangeNotifier {
   CastleState _castle = const CastleState();
   CastleState get castle => _castle;
 
+  bool _isBestiaryEnabled = false;
+  bool get isBestiaryEnabled => _isBestiaryEnabled;
+
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
@@ -53,6 +56,7 @@ class PlayViewModel extends ChangeNotifier {
     }
 
     _castle = await _repository.loadCastleState();
+    _isBestiaryEnabled = await _repository.isBestiaryEnabled();
     _isLoading = false;
     notifyListeners();
   }
@@ -651,6 +655,12 @@ class PlayViewModel extends ChangeNotifier {
 
   Future<void> setDisclaimerAccepted(bool accepted) async {
     await _repository.setDisclaimerAccepted(accepted);
+    notifyListeners();
+  }
+
+  Future<void> setBestiaryEnabled(bool enabled) async {
+    _isBestiaryEnabled = enabled;
+    await _repository.setBestiaryEnabled(enabled);
     notifyListeners();
   }
 }

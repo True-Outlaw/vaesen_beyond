@@ -143,7 +143,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: AppColors.gold),
             color: AppColors.surface,
-            onSelected: (val) {
+            onSelected: (val) async {
               if (val == 'roster') {
                 showPartyManagementDialog(context, playVm);
               } else if (val == 'new_char') {
@@ -183,6 +183,26 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     await playVm.setDisclaimerAccepted(true);
                   },
                 );
+              } else if (val == 'gm_mode') {
+                final nextState = !playVm.isBestiaryEnabled;
+                await playVm.setBestiaryEnabled(nextState);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: AppColors.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: const BorderSide(color: AppColors.gold),
+                      ),
+                      content: Text(
+                        nextState
+                            ? 'Gamemaster Mode enabled: Society Bestiary unlocked.'
+                            : 'Gamemaster Mode disabled: Bestiary locked (spoiler protection active).',
+                        style: const TextStyle(color: AppColors.goldBright, fontSize: 12),
+                      ),
+                    ),
+                  );
+                }
               }
             },
             itemBuilder: (_) => [
@@ -235,6 +255,25 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 ),
               ),
               const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'gm_mode',
+                child: Row(
+                  children: [
+                    Icon(
+                      playVm.isBestiaryEnabled ? Icons.lock_open : Icons.lock_outline,
+                      size: 16,
+                      color: playVm.isBestiaryEnabled ? AppColors.goldBright : AppColors.crimsonLight,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'GM Bestiary: ${playVm.isBestiaryEnabled ? "Unlocked" : "Locked"}',
+                        style: AppTypography.titleSmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'legal',
                 child: Row(

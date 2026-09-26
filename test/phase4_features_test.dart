@@ -183,7 +183,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.theme,
-          home: const CompendiumScreen(),
+          home: const CompendiumScreen(initialBestiaryEnabled: true),
         ),
       );
       await tester.pumpAndSettle();
@@ -215,7 +215,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.theme,
-          home: const CompendiumScreen(),
+          home: const CompendiumScreen(initialBestiaryEnabled: true),
         ),
       );
       await tester.pumpAndSettle();
@@ -280,7 +280,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.theme,
-          home: const CompendiumScreen(),
+          home: const CompendiumScreen(initialBestiaryEnabled: true),
         ),
       );
       await tester.pumpAndSettle();

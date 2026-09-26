@@ -97,4 +97,12 @@ class CharacterRepository {
   Future<void> setDisclaimerAccepted(bool accepted) async {
     await _storage.setDisclaimerAccepted(accepted);
   }
+
+  Future<bool> isBestiaryEnabled() async {
+    return _storage.isBestiaryEnabled();
+  }
+
+  Future<void> setBestiaryEnabled(bool enabled) async {
+    await _storage.setBestiaryEnabled(enabled);
+  }
 }

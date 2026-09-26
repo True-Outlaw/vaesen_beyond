@@ -51,4 +51,16 @@ class LocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kDisclaimerAcceptedKey, accepted);
   }
+
+  static const _kBestiaryEnabledKey = 'vaesen_bestiary_enabled_v1';
+
+  Future<bool> isBestiaryEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_kBestiaryEnabledKey) ?? false;
+  }
+
+  Future<void> setBestiaryEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kBestiaryEnabledKey, enabled);
+  }
 }

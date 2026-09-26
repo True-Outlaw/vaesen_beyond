@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vaesen_beyond/data/datasources/local_storage_service.dart';
 import 'package:vaesen_beyond/data/seed/archetypes_data.dart';
 import 'package:vaesen_beyond/data/seed/gear_data.dart';
 import 'package:vaesen_beyond/data/seed/injuries_data.dart';
@@ -13,6 +15,8 @@ import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
+import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
+import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 
 class _CompendiumRule {
   final String title;
@@ -21,7 +25,12 @@ class _CompendiumRule {
 }
 
 class CompendiumScreen extends StatefulWidget {
-  const CompendiumScreen({super.key});
+  final bool? initialBestiaryEnabled;
+
+  const CompendiumScreen({
+    super.key,
+    this.initialBestiaryEnabled,
+  });
 
   @override
   State<CompendiumScreen> createState() => _CompendiumScreenState();
@@ -34,6 +43,75 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
   String _selectedBestiaryCategory = 'All';
   String _selectedInjuryFilter = 'All';
   String _selectedGearFilter = 'All';
+
+  bool _isBestiaryEnabled = false;
+  bool _initializedBestiarySetting = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initializedBestiarySetting) {
+      _initializedBestiarySetting = true;
+      if (widget.initialBestiaryEnabled != null) {
+        _isBestiaryEnabled = widget.initialBestiaryEnabled!;
+        try {
+          final playVm = Provider.of<PlayViewModel>(context, listen: false);
+          playVm.setBestiaryEnabled(widget.initialBestiaryEnabled!);
+        } catch (_) {}
+      } else {
+        try {
+          final playVm = Provider.of<PlayViewModel>(context, listen: false);
+          _isBestiaryEnabled = playVm.isBestiaryEnabled;
+        } catch (_) {
+          _loadBestiarySettingFromStorage();
+        }
+      }
+    }
+  }
+
+  Future<void> _loadBestiarySettingFromStorage() async {
+    final enabled = await LocalStorageService().isBestiaryEnabled();
+    if (mounted) {
+      setState(() => _isBestiaryEnabled = enabled);
+    }
+  }
+
+  bool get _isBestiaryActive {
+    try {
+      final playVm = Provider.of<PlayViewModel>(context);
+      return playVm.isBestiaryEnabled;
+    } catch (_) {
+      return _isBestiaryEnabled;
+    }
+  }
+
+  Future<void> _toggleBestiary(bool enabled) async {
+    setState(() => _isBestiaryEnabled = enabled);
+    try {
+      final playVm = Provider.of<PlayViewModel>(context, listen: false);
+      await playVm.setBestiaryEnabled(enabled);
+    } catch (_) {
+      await LocalStorageService().setBestiaryEnabled(enabled);
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: const BorderSide(color: AppColors.gold),
+          ),
+          content: Text(
+            enabled
+                ? 'Gamemaster Mode enabled: Society Bestiary unlocked.'
+                : 'Gamemaster Mode disabled: Bestiary locked (spoiler protection active).',
+            style: const TextStyle(color: AppColors.goldBright, fontSize: 12),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   static const List<_CompendiumRule> _rulesList = [
     _CompendiumRule(
@@ -129,6 +207,19 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                 ],
               )
             : Text('SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isBestiaryActive ? Icons.lock_open : Icons.lock_outline,
+              color: _isBestiaryActive ? AppColors.goldBright : AppColors.crimsonLight,
+            ),
+            tooltip: _isBestiaryActive
+                ? 'Gamemaster Mode Active (Bestiary Unlocked)'
+                : 'Gamemaster Mode Inactive (Bestiary Locked)',
+            onPressed: () => _toggleBestiary(!_isBestiaryActive),
+          ),
+          const SizedBox(width: 8),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Center(
@@ -147,9 +238,12 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                       const SizedBox(width: 8),
                     ],
                     _tabChip(
-                      isSearching ? 'BESTIARY (${bestiaryMatches.length})' : 'BESTIARY',
+                      isSearching
+                          ? 'BESTIARY (${bestiaryMatches.length})'
+                          : 'BESTIARY',
                       0,
                       isSelected: _selectedTab == 0,
+                      isLocked: !_isBestiaryActive,
                     ),
                     const SizedBox(width: 8),
                     _tabChip(
@@ -230,7 +324,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
               ),
 
               // Sub-category filters for Bestiary tab
-              if (_selectedTab == 0) ...[
+              if (_selectedTab == 0 && _isBestiaryActive) ...[
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: isWide ? 24 : 16, vertical: 4),
                   child: SingleChildScrollView(
@@ -352,9 +446,18 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
     );
   }
 
-  Widget _tabChip(String label, int index, {required bool isSelected}) {
+  Widget _tabChip(String label, int index, {required bool isSelected, bool isLocked = false}) {
     return ChoiceChip(
-      label: Text(label),
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label),
+          if (isLocked) ...[
+            const SizedBox(width: 4),
+            const Icon(Icons.lock_outline, size: 12, color: AppColors.crimsonLight),
+          ],
+        ],
+      ),
       selected: isSelected,
       selectedColor: AppColors.goldBright,
       backgroundColor: AppColors.surfaceLight,
@@ -406,6 +509,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
   // --- Search Filter Helpers ---
 
   List<VaesenCreature> _filterBestiary(String query) {
+    if (!_isBestiaryActive) return [];
     var list = VaesenBestiaryData.allCreatures;
     if (_selectedTab == 0 && _selectedBestiaryCategory != 'All') {
       list = list.where((c) => c.category == _selectedBestiaryCategory).toList();
@@ -691,6 +795,10 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
   // --- Bestiary UI ---
 
   List<Widget> _buildBestiary(List<VaesenCreature> creatures, int columns) {
+    if (!_isBestiaryActive) {
+      return [_buildBestiaryGatekeeper()];
+    }
+
     if (creatures.isEmpty) {
       return [
         Padding(
@@ -706,6 +814,132 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
     }
 
     return _wrapInColumns(creatures.map((c) => _buildCreatureCard(c)).toList(), columns);
+  }
+
+  Widget _buildBestiaryGatekeeper() {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 700),
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+          child: GothicCard(
+            padding: const EdgeInsets.all(28),
+            borderColor: AppColors.crimsonLight.withAlpha(160),
+            borderWidth: 1.5,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.crimson.withAlpha(40),
+                    border: Border.all(color: AppColors.crimsonLight, width: 1.5),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.lock_outline,
+                      color: AppColors.goldBright,
+                      size: 30,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'CONFIDENTIAL ARCHIVES',
+                  style: AppTypography.titleLarge.copyWith(
+                    color: AppColors.goldBright,
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.crimson.withAlpha(60),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: AppColors.crimsonLight, width: 0.8),
+                  ),
+                  child: Text(
+                    'GAMEMASTER ACCESS ONLY • SPOILER WARNING',
+                    style: AppTypography.labelSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ),
+                const OrnateDivider(height: 28),
+                Text(
+                  'The Society Bestiary details classified supernatural entities, secret weaknesses, magic actions, and sacred banishing rituals.\n\n'
+                  'In Vaesen, discovering the truth behind each haunting through investigation, scholarly study, and bravery is the core of the mystery. Reading creature stats in advance will diminish the horror of the unknown.',
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, color: AppColors.gold, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Are you running this mystery as the Gamemaster or preparing an encounter?',
+                          style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () => _toggleBestiary(true),
+                  icon: const Icon(Icons.lock_open, color: Colors.white, size: 18),
+                  label: const Text(
+                    'UNLOCK GAMEMASTER BESTIARY',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.crimson,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: const BorderSide(color: AppColors.goldBright, width: 1.2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'You can re-lock the Bestiary at any time using the lock button in the top bar.',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textMuted,
+                    fontSize: 11,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildCreatureCard(VaesenCreature c) {
