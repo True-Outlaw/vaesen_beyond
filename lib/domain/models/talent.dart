@@ -4,6 +4,7 @@ class Talent {
   final String? archetypeName;
   final String description;
   final String effect;
+  final bool isCustom;
 
   const Talent({
     required this.id,
@@ -11,9 +12,10 @@ class Talent {
     this.archetypeName,
     required this.description,
     required this.effect,
+    this.isCustom = false,
   });
 
-  bool get isGeneral => archetypeName == null;
+  bool get isGeneral => archetypeName == null || archetypeName!.isEmpty || archetypeName == 'General';
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -21,6 +23,7 @@ class Talent {
         'archetypeName': archetypeName,
         'description': description,
         'effect': effect,
+        'isCustom': isCustom,
       };
 
   factory Talent.fromJson(Map<String, dynamic> json) => Talent(
@@ -29,5 +32,6 @@ class Talent {
         archetypeName: json['archetypeName'] as String?,
         description: json['description'] as String,
         effect: json['effect'] as String,
+        isCustom: json['isCustom'] as bool? ?? false,
       );
 }

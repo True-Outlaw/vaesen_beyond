@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vaesen_beyond/data/seed/talents_data.dart';
+import 'package:vaesen_beyond/domain/models/talent.dart';
+import 'package:vaesen_beyond/ui/features/compendium/views/widgets/create_talent_dialog.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
@@ -615,7 +616,7 @@ class AdvancementCard extends StatelessWidget {
 
   void _openLearnTalentDialog(BuildContext context) {
     final existingTalentIds = character.talents.map((t) => t.id).toSet();
-    final available = TalentsData.allTalents
+    final available = playViewModel.allAvailableTalents
         .where((t) => !existingTalentIds.contains(t.id))
         .toList();
 
@@ -655,6 +656,21 @@ class AdvancementCard extends StatelessWidget {
                                 Row(
                                   children: [
                                     Text(t.name, style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright, fontSize: 13)),
+                                    if (t.isCustom) ...[
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.gold.withAlpha(40),
+                                          borderRadius: BorderRadius.circular(3),
+                                          border: Border.all(color: AppColors.gold),
+                                        ),
+                                        child: const Text(
+                                          'HOMEBREW',
+                                          style: TextStyle(fontSize: 8, color: AppColors.goldBright, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
                                     if (t.archetypeName != null) ...[
                                       const SizedBox(width: 6),
                                       Container(
@@ -702,6 +718,23 @@ class AdvancementCard extends StatelessWidget {
                 ),
         ),
         actions: [
+          TextButton.icon(
+            icon: const Icon(Icons.add, size: 14, color: AppColors.goldBright),
+            label: const Text('FORGE HOMEBREW', style: TextStyle(color: AppColors.goldBright, fontSize: 11)),
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              final created = await showDialog<Talent>(
+                context: context,
+                builder: (_) => CreateTalentDialog(
+                  playViewModel: playViewModel,
+                  initialArchetype: character.archetypeName,
+                ),
+              );
+              if (created != null && context.mounted) {
+                _openLearnTalentDialog(context);
+              }
+            },
+          ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('CLOSE', style: TextStyle(color: AppColors.textMuted)),

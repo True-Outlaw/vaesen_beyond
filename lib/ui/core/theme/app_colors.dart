@@ -35,7 +35,7 @@ class AppColors {
   static const Color goldBright = Color(0xFFF2D68F);
 
   /// Dim gold — borders, muted decorations
-  static const Color goldDim = Color(0xFF8D713C);
+  static const Color goldDim = Color(0xFFA68B52);
 
   /// Deepest gold background tint — pill backgrounds
   static const Color goldSubtle = Color(0xFF2A2218);
@@ -61,8 +61,8 @@ class AppColors {
 
   // ── Typography ──────────────────────────────────────────────────────────
   static const Color textPrimary = Color(0xFFECE5D8);
-  static const Color textSecondary = Color(0xFFA6B3BA);
-  static const Color textMuted = Color(0xFF6F7E86);
+  static const Color textSecondary = Color(0xFFB8C8D0);
+  static const Color textMuted = Color(0xFF8E9FA8);
   static const Color textDark = Color(0xFF1E1E1E);
 
   // ── Conditions & Status ─────────────────────────────────────────────────

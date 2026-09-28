@@ -3,6 +3,7 @@ import 'package:vaesen_beyond/data/datasources/local_storage_service.dart';
 import 'package:vaesen_beyond/data/seed/castle_data.dart';
 import 'package:vaesen_beyond/domain/models/castle.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
+import 'package:vaesen_beyond/domain/models/talent.dart';
 
 class CharacterRepository {
   final LocalStorageService _storage;
@@ -104,5 +105,44 @@ class CharacterRepository {
 
   Future<void> setBestiaryEnabled(bool enabled) async {
     await _storage.setBestiaryEnabled(enabled);
+  }
+
+  Future<List<Talent>> loadCustomTalents() async {
+    final jsonStr = await _storage.getCustomTalentsJson();
+    if (jsonStr == null || jsonStr.trim().isEmpty) return [];
+    try {
+      final decoded = jsonDecode(jsonStr) as List<dynamic>;
+      return decoded.map((t) => Talent.fromJson(t as Map<String, dynamic>)).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<void> saveCustomTalents(List<Talent> talents) async {
+    final listJson = talents.map((t) => t.toJson()).toList();
+    await _storage.saveCustomTalentsJson(jsonEncode(listJson));
+  }
+
+  Future<String> getBestiaryMode() async {
+    return _storage.getBestiaryMode();
+  }
+
+  Future<void> setBestiaryMode(String mode) async {
+    await _storage.setBestiaryMode(mode);
+  }
+
+  Future<Map<String, List<String>>> loadRevealedSections() async {
+    final jsonStr = await _storage.getRevealedSectionsJson();
+    if (jsonStr == null || jsonStr.trim().isEmpty) return {};
+    try {
+      final decoded = jsonDecode(jsonStr) as Map<String, dynamic>;
+      return decoded.map((key, val) => MapEntry(key, (val as List<dynamic>).map((e) => e.toString()).toList()));
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<void> saveRevealedSections(Map<String, List<String>> sections) async {
+    await _storage.saveRevealedSectionsJson(jsonEncode(sections));
   }
 }

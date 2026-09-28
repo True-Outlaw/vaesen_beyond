@@ -48,117 +48,139 @@ class _FearTestDialogState extends State<FearTestDialog> {
             side: const BorderSide(color: AppColors.crimsonLight, width: 1.5),
           ),
           contentPadding: const EdgeInsets.all(20),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.visibility, color: AppColors.crimsonLight),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'FEAR TEST',
-                          style: AppTypography.titleLarge.copyWith(color: AppColors.crimsonLight),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close, size: 20, color: AppColors.textMuted),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    'You come face-to-face with an uncanny horror from Scandinavian folklore.',
-                    style: AppTypography.bodySmall,
-                  ),
-                  const SizedBox(height: 12),
-
-                  if (result == null) ...[
-                    // Attribute Choice
-                    Text('CHOOSE RESISTANCE ATTRIBUTE', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
-                    const SizedBox(height: 6),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Row(
                       children: [
-                        Expanded(
-                          child: ChoiceChip(
-                            label: Text('LOGIC (${char.getAttribute(AttributeType.logic)})'),
-                            selected: _chosenAttr == AttributeType.logic,
-                            selectedColor: AppColors.goldBright,
-                            labelStyle: TextStyle(
-                              color: _chosenAttr == AttributeType.logic ? Colors.black : Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            onSelected: (_) => setState(() => _chosenAttr = AttributeType.logic),
-                          ),
-                        ),
+                        const Icon(Icons.visibility, color: AppColors.crimsonLight),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: ChoiceChip(
-                            label: Text('EMPATHY (${char.getAttribute(AttributeType.empathy)})'),
-                            selected: _chosenAttr == AttributeType.empathy,
-                            selectedColor: AppColors.goldBright,
-                            labelStyle: TextStyle(
-                              color: _chosenAttr == AttributeType.empathy ? Colors.black : Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            onSelected: (_) => setState(() => _chosenAttr = AttributeType.empathy),
+                          child: Text(
+                            'FEAR TEST',
+                            style: AppTypography.titleLarge.copyWith(color: AppColors.crimsonLight),
                           ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 20, color: AppColors.textMuted),
+                          onPressed: () => Navigator.of(context).pop(),
                         ),
                       ],
                     ),
-
+                    Text(
+                      'You come face-to-face with an uncanny horror from Scandinavian folklore.',
+                      style: AppTypography.bodySmall,
+                    ),
                     const SizedBox(height: 12),
 
-                    // Fear Value Picker
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text('Creature Fear Value:', style: AppTypography.bodyMedium),
-                        ),
-                        const SizedBox(width: 8),
-                        Wrap(
-                          spacing: 4,
-                          children: [1, 2, 3].map((fv) {
-                            return ChoiceChip(
-                              label: Text('Fear $fv'),
-                              selected: _fearValue == fv,
-                              selectedColor: AppColors.crimson,
+                    if (result == null) ...[
+                      // Attribute Choice
+                      Text('CHOOSE RESISTANCE ATTRIBUTE', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ChoiceChip(
+                              label: Text('LOGIC (${char.getAttribute(AttributeType.logic)})'),
+                              selected: _chosenAttr == AttributeType.logic,
+                              selectedColor: AppColors.goldBright,
                               labelStyle: TextStyle(
-                                color: _fearValue == fv ? Colors.white : AppColors.textPrimary,
+                                color: _chosenAttr == AttributeType.logic ? Colors.black : Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
-                              onSelected: (_) => setState(() => _fearValue = fv),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
+                              onSelected: (_) => setState(() => _chosenAttr = AttributeType.logic),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: ChoiceChip(
+                              label: Text('EMPATHY (${char.getAttribute(AttributeType.empathy)})'),
+                              selected: _chosenAttr == AttributeType.empathy,
+                              selectedColor: AppColors.goldBright,
+                              labelStyle: TextStyle(
+                                color: _chosenAttr == AttributeType.empathy ? Colors.black : Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              onSelected: (_) => setState(() => _chosenAttr = AttributeType.empathy),
+                            ),
+                          ),
+                        ],
+                      ),
 
-                    const SizedBox(height: 8),
+                      const SizedBox(height: 12),
 
-                    // Companions in zone
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Allies in zone (+1 die, max +3):', style: AppTypography.bodyMedium),
-                        DropdownButton<int>(
-                          value: _companionsCount,
-                          dropdownColor: AppColors.surfaceLight,
-                          items: [0, 1, 2, 3].map((n) {
-                            return DropdownMenuItem(
-                              value: n,
-                              child: Text('+$n dice', style: AppTypography.titleSmall),
-                            );
-                          }).toList(),
-                          onChanged: (val) => setState(() => _companionsCount = val ?? 0),
+                      // Fear Value Picker
+                      Text('CREATURE FEAR VALUE', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [1, 2, 3].map((fv) {
+                          final isSelected = _fearValue == fv;
+                          return Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(right: fv < 3 ? 6.0 : 0.0),
+                              child: ChoiceChip(
+                                showCheckmark: false,
+                                label: Center(
+                                  child: Text(
+                                    'FEAR $fv',
+                                    style: TextStyle(
+                                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11.5,
+                                    ),
+                                  ),
+                                ),
+                                selected: isSelected,
+                                selectedColor: AppColors.crimson,
+                                backgroundColor: AppColors.surfaceLight,
+                                onSelected: (_) => setState(() => _fearValue = fv),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Companions in zone
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppColors.border, width: 0.8),
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Allies in zone (+1 die, max +3):',
+                                style: AppTypography.bodyMedium.copyWith(fontSize: 13),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            DropdownButtonHideUnderline(
+                              child: DropdownButton<int>(
+                                value: _companionsCount,
+                                dropdownColor: AppColors.surfaceLight,
+                                items: [0, 1, 2, 3].map((n) {
+                                  return DropdownMenuItem(
+                                    value: n,
+                                    child: Text('+$n dice', style: AppTypography.titleSmall),
+                                  );
+                                }).toList(),
+                                onChanged: (val) => setState(() => _companionsCount = val ?? 0),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
                     const SizedBox(height: 12),
                     const OrnateDivider(height: 12),
@@ -315,7 +337,8 @@ class _FearTestDialogState extends State<FearTestDialog> {
               ),
             ),
           ),
-        );
+        ),
+      );
       },
     );
   }

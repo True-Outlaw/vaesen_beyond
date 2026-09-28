@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:vaesen_beyond/data/repositories/character_repository.dart';
 import 'package:vaesen_beyond/data/seed/pregen_characters.dart';
+import 'package:vaesen_beyond/data/seed/talents_data.dart';
 import 'package:vaesen_beyond/domain/models/advantage.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/castle.dart';
@@ -33,6 +34,18 @@ class PlayViewModel extends ChangeNotifier {
   bool _isBestiaryEnabled = false;
   bool get isBestiaryEnabled => _isBestiaryEnabled;
 
+  String _bestiaryMode = 'locked';
+  String get bestiaryMode => _bestiaryMode;
+  bool get isBestiaryPlayerLore => _bestiaryMode == 'playerLore';
+  bool get isBestiaryGamemaster => _bestiaryMode == 'gamemaster' || _isBestiaryEnabled;
+
+  Map<String, List<String>> _revealedSections = {};
+  Map<String, List<String>> get revealedSections => _revealedSections;
+
+  List<Talent> _customTalents = [];
+  List<Talent> get customTalents => _customTalents;
+  List<Talent> get allAvailableTalents => [...TalentsData.allTalents, ..._customTalents];
+
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
@@ -57,6 +70,9 @@ class PlayViewModel extends ChangeNotifier {
 
     _castle = await _repository.loadCastleState();
     _isBestiaryEnabled = await _repository.isBestiaryEnabled();
+    _bestiaryMode = await _repository.getBestiaryMode();
+    _revealedSections = await _repository.loadRevealedSections();
+    _customTalents = await _repository.loadCustomTalents();
     _isLoading = false;
     notifyListeners();
   }
@@ -660,7 +676,61 @@ class PlayViewModel extends ChangeNotifier {
 
   Future<void> setBestiaryEnabled(bool enabled) async {
     _isBestiaryEnabled = enabled;
+    _bestiaryMode = enabled ? 'gamemaster' : 'locked';
     await _repository.setBestiaryEnabled(enabled);
+    await _repository.setBestiaryMode(_bestiaryMode);
+    notifyListeners();
+  }
+
+  // ── CUSTOM HOMEBREW TALENTS ──────────────────────────────────────────────
+  Future<void> loadCustomTalents() async {
+    _customTalents = await _repository.loadCustomTalents();
+    notifyListeners();
+  }
+
+  Future<void> addCustomTalent(Talent talent) async {
+    _customTalents.removeWhere((t) => t.id == talent.id);
+    _customTalents.add(talent);
+    await _repository.saveCustomTalents(_customTalents);
+    notifyListeners();
+  }
+
+  Future<void> deleteCustomTalent(String talentId) async {
+    _customTalents.removeWhere((t) => t.id == talentId);
+    await _repository.saveCustomTalents(_customTalents);
+    notifyListeners();
+  }
+
+  // ── BESTIARY FOG-OF-WAR & REVEALS ────────────────────────────────────────
+  Future<void> setBestiaryMode(String mode) async {
+    _bestiaryMode = mode;
+    _isBestiaryEnabled = mode == 'gamemaster';
+    await _repository.setBestiaryMode(mode);
+    notifyListeners();
+  }
+
+  bool isSectionRevealed(String creatureName, String sectionKey) {
+    if (isBestiaryGamemaster) return true;
+    final list = _revealedSections[creatureName.toLowerCase()];
+    return list != null && list.contains(sectionKey);
+  }
+
+  Future<void> toggleSectionReveal(String creatureName, String sectionKey) async {
+    final key = creatureName.toLowerCase();
+    final list = List<String>.from(_revealedSections[key] ?? []);
+    if (list.contains(sectionKey)) {
+      list.remove(sectionKey);
+    } else {
+      list.add(sectionKey);
+    }
+    _revealedSections[key] = list;
+    await _repository.saveRevealedSections(_revealedSections);
+    notifyListeners();
+  }
+
+  Future<void> resetAllBestiaryReveals() async {
+    _revealedSections.clear();
+    await _repository.saveRevealedSections(_revealedSections);
     notifyListeners();
   }
 }

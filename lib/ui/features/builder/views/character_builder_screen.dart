@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/data/seed/archetypes_data.dart';
 import 'package:vaesen_beyond/data/seed/mementos_data.dart';
-import 'package:vaesen_beyond/data/seed/talents_data.dart';
 import 'package:vaesen_beyond/domain/models/archetype.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
@@ -15,6 +14,7 @@ import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/core/widgets/pip_counter.dart';
 import 'package:vaesen_beyond/ui/features/builder/view_models/builder_view_model.dart';
+import 'package:vaesen_beyond/ui/features/compendium/views/widgets/create_talent_dialog.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 
 class CharacterBuilderScreen extends StatefulWidget {
@@ -952,8 +952,8 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
 
   Widget _step3TalentDesktop() {
     final arc = _builderVm.archetype;
-    final availableTalents = TalentsData.allTalents
-        .where((t) => arc.talentIds.contains(t.id) || t.isGeneral)
+    final availableTalents = widget.playViewModel.allAvailableTalents
+        .where((t) => arc.talentIds.contains(t.id) || t.isGeneral || (t.isCustom && (t.archetypeName == null || t.archetypeName == arc.name)))
         .toList();
 
     return Column(
@@ -961,9 +961,30 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
       children: [
         Text('Step 4: Starting Talent', style: AppTypography.displayMedium.copyWith(fontSize: 22, color: AppColors.goldBright)),
         const SizedBox(height: 6),
-        Text(
-          'Choose 1 starting talent from your archetype (${arc.name}) or the general talents list.',
-          style: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondary),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Choose 1 starting talent from your archetype (${arc.name}) or the general talents list.',
+              style: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondary),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.add, size: 14, color: AppColors.goldBright),
+              label: const Text('FORGE HOMEBREW', style: TextStyle(color: AppColors.goldBright, fontSize: 11)),
+              onPressed: () async {
+                final created = await showDialog<Talent>(
+                  context: context,
+                  builder: (_) => CreateTalentDialog(
+                    playViewModel: widget.playViewModel,
+                    initialArchetype: arc.name,
+                  ),
+                );
+                if (created != null && mounted) {
+                  setState(() {});
+                }
+              },
+            ),
+          ],
         ),
         const SizedBox(height: 18),
 
@@ -1002,7 +1023,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
       child: GothicCard(
         padding: const EdgeInsets.all(14),
         backgroundColor: isSelected ? AppColors.surfaceLight : AppColors.surface,
-        borderColor: isSelected ? AppColors.goldBright : AppColors.surfaceOverlay,
+        borderColor: isSelected ? AppColors.goldBright : (talent.isCustom ? AppColors.gold.withAlpha(140) : AppColors.surfaceOverlay),
         borderWidth: isSelected ? 1.5 : 1.0,
         onTap: () => _builderVm.toggleTalent(talent),
         child: Column(
@@ -1023,7 +1044,9 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                if (talent.archetypeName != null)
+                if (talent.isCustom)
+                  _badge('HOMEBREW', AppColors.goldBright)
+                else if (talent.archetypeName != null)
                   _badge(talent.archetypeName!, AppColors.gold)
                 else
                   _badge('General', AppColors.surfaceOverlay),
@@ -1867,8 +1890,8 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
 
   Widget _step3TalentMobile() {
     final arc = _builderVm.archetype;
-    final availableTalents = TalentsData.allTalents
-        .where((t) => arc.talentIds.contains(t.id) || t.isGeneral)
+    final availableTalents = widget.playViewModel.allAvailableTalents
+        .where((t) => arc.talentIds.contains(t.id) || t.isGeneral || (t.isCustom && (t.archetypeName == null || t.archetypeName == arc.name)))
         .toList();
 
     return Column(
@@ -1876,9 +1899,32 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
       children: [
         Text('Step 4: Starting Talent', style: AppTypography.titleLarge),
         const SizedBox(height: 6),
-        Text(
-          'Choose 1 starting talent from your archetype (${arc.name}) or the general talents list.',
-          style: AppTypography.bodySmall,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                'Choose 1 starting talent from your archetype (${arc.name}) or the general talents list.',
+                style: AppTypography.bodySmall,
+              ),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.add, size: 14, color: AppColors.goldBright),
+              label: const Text('FORGE', style: TextStyle(color: AppColors.goldBright, fontSize: 11)),
+              onPressed: () async {
+                final created = await showDialog<Talent>(
+                  context: context,
+                  builder: (_) => CreateTalentDialog(
+                    playViewModel: widget.playViewModel,
+                    initialArchetype: arc.name,
+                  ),
+                );
+                if (created != null && mounted) {
+                  setState(() {});
+                }
+              },
+            ),
+          ],
         ),
         const SizedBox(height: 14),
 
@@ -1889,7 +1935,7 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
             margin: const EdgeInsets.only(bottom: 8),
             child: GothicCard(
               backgroundColor: isSelected ? AppColors.surfaceLight : AppColors.surface,
-              borderColor: isSelected ? AppColors.goldBright : AppColors.surfaceOverlay,
+              borderColor: isSelected ? AppColors.goldBright : (talent.isCustom ? AppColors.gold.withAlpha(140) : AppColors.surfaceOverlay),
               borderWidth: isSelected ? 1.5 : 1.0,
               onTap: () => _builderVm.toggleTalent(talent),
               child: Column(
@@ -1898,14 +1944,18 @@ class _CharacterBuilderScreenState extends State<CharacterBuilderScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        talent.name,
-                        style: AppTypography.titleSmall.copyWith(
-                          fontSize: 14,
-                          color: isSelected ? AppColors.goldBright : AppColors.textPrimary,
+                      Flexible(
+                        child: Text(
+                          talent.name,
+                          style: AppTypography.titleSmall.copyWith(
+                            fontSize: 14,
+                            color: isSelected ? AppColors.goldBright : AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                      if (talent.archetypeName != null)
+                      if (talent.isCustom)
+                        _badge('HOMEBREW', AppColors.goldBright)
+                      else if (talent.archetypeName != null)
                         _badge(talent.archetypeName!, AppColors.gold)
                       else
                         _badge('General', AppColors.surfaceOverlay),
