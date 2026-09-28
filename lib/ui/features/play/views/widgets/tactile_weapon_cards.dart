@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/domain/models/gear.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
@@ -28,8 +29,8 @@ class TactileWeaponCards extends StatelessWidget {
 
     diceViewModel.rollCustomPool(
       poolSize: totalPool,
-      title: '${weapon.name} Attack',
-      breakdown: '${skill.label} ($basePool) + Weapon Bonus (+${weapon.bonus}) = $totalPool D6. Damage: ${weapon.damage}. Range: ${weapon.range.label}.',
+      title: AppLocalizations.of(context)?.weaponAttackTitle(weapon.name) ?? '${weapon.name} Attack',
+      breakdown: AppLocalizations.of(context)?.weaponAttackBreakdown(skill.label, basePool, weapon.bonus, totalPool, weapon.damage, weapon.range.label) ?? '${skill.label} ($basePool) + Weapon Bonus (+${weapon.bonus}) = $totalPool D6. Damage: ${weapon.damage}. Range: ${weapon.range.label}.',
     );
 
     showDialog(
@@ -45,8 +46,8 @@ class TactileWeaponCards extends StatelessWidget {
     final pool = character.getEffectiveSkill(SkillType.closeCombat).clamp(1, 20);
     diceViewModel.rollCustomPool(
       poolSize: pool,
-      title: 'Unarmed Strike / Brawl',
-      breakdown: 'Close Combat ($pool D6). Damage: 1. Range: Engaged.',
+      title: AppLocalizations.of(context)?.unarmedStrikeBrawl ?? 'Unarmed Strike / Brawl',
+      breakdown: AppLocalizations.of(context)?.unarmedBreakdown(pool) ?? 'Close Combat ($pool D6). Damage: 1. Range: Engaged.',
     );
     showDialog(
       context: context,
@@ -58,10 +59,11 @@ class TactileWeaponCards extends StatelessWidget {
   }
 
   void _drawSolace(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (character.isMementoUsed) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Memento solace already drawn for this mystery.\n("${character.memento}")'),
+          content: Text(l10n?.mementoSolaceUsed(character.memento) ?? 'Memento solace already drawn for this mystery.\n("${character.memento}")'),
           backgroundColor: AppColors.surfaceOverlay,
         ),
       );
@@ -80,7 +82,7 @@ class TactileWeaponCards extends StatelessWidget {
           children: [
             const Icon(Icons.bookmark_outline, color: AppColors.goldBright, size: 20),
             const SizedBox(width: 8),
-            Text('DRAW SOLACE', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
+            Text(l10n?.drawSolace ?? 'DRAW SOLACE', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
           ],
         ),
         content: Column(
@@ -88,7 +90,7 @@ class TactileWeaponCards extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Memento: "${character.memento}"',
+              l10n?.mementoLabel(character.memento) ?? 'Memento: "${character.memento}"',
               style: AppTypography.bodyMedium.copyWith(
                 fontStyle: FontStyle.italic,
                 color: AppColors.gold,
@@ -96,7 +98,8 @@ class TactileWeaponCards extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Once per session, you can spend a moment resting with your memento to heal up to two Conditions (Chapter 2, p. 22).',
+              l10n?.mementoPrompt ??
+                  'Once per session, you can spend a moment resting with your memento to heal up to two Conditions (Chapter 2, p. 22).',
               style: AppTypography.bodySmall,
             ),
           ],
@@ -104,7 +107,7 @@ class TactileWeaponCards extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(l10n?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -112,8 +115,8 @@ class TactileWeaponCards extends StatelessWidget {
               await playViewModel.useMemento();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('You drew solace from your memento. Mental conditions healed.'),
+                  SnackBar(
+                    content: Text(l10n?.mementoHealed ?? 'You drew solace from your memento. Mental conditions healed.'),
                     backgroundColor: AppColors.surfaceOverlay,
                   ),
                 );
@@ -123,7 +126,7 @@ class TactileWeaponCards extends StatelessWidget {
               backgroundColor: AppColors.gold,
               foregroundColor: AppColors.backgroundDark,
             ),
-            child: const Text('DRAW SOLACE'),
+            child: Text(l10n?.drawSolace ?? 'DRAW SOLACE'),
           ),
         ],
       ),
@@ -161,7 +164,7 @@ class TactileWeaponCards extends StatelessWidget {
           Expanded(
             child: _buildWeaponCard(
               context: context,
-              label: 'OFF HAND',
+              label: AppLocalizations.of(context)?.offHand ?? 'OFF HAND',
               weapon: primaryRanged,
               isMelee: false,
               onTap: () {
@@ -180,7 +183,9 @@ class TactileWeaponCards extends StatelessWidget {
           GestureDetector(
             onTap: () => _drawSolace(context),
             child: Tooltip(
-              message: character.isMementoUsed ? 'Solace Already Used' : 'Draw Solace from Memento',
+              message: character.isMementoUsed
+                  ? (AppLocalizations.of(context)?.solaceAlreadyUsedTooltip ?? 'Solace Already Used')
+                  : (AppLocalizations.of(context)?.drawSolaceTooltip ?? 'Draw Solace from Memento'),
               child: Container(
                 width: 42,
                 height: 52,
@@ -220,7 +225,7 @@ class TactileWeaponCards extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'SOLACE',
+                      AppLocalizations.of(context)?.solace ?? 'SOLACE',
                       style: AppTypography.labelSmall.copyWith(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
@@ -240,7 +245,7 @@ class TactileWeaponCards extends StatelessWidget {
           Expanded(
             child: _buildWeaponCard(
               context: context,
-              label: 'MAIN HAND',
+              label: AppLocalizations.of(context)?.mainHand ?? 'MAIN HAND',
               weapon: primaryMelee,
               isMelee: true,
               onTap: () {
@@ -267,7 +272,8 @@ class TactileWeaponCards extends StatelessWidget {
     final skill = isMelee ? SkillType.closeCombat : SkillType.rangedCombat;
     final basePool = character.getEffectiveSkill(skill);
     final totalPool = weapon != null ? (basePool + weapon.bonus).clamp(1, 20) : basePool.clamp(1, 20);
-    final weaponName = weapon?.name ?? (isMelee ? 'Unarmed Strike' : 'Quick Throw');
+    final l10n = AppLocalizations.of(context);
+    final weaponName = weapon?.name ?? (isMelee ? (l10n?.unarmedStrike ?? 'Unarmed Strike') : (l10n?.quickThrow ?? 'Quick Throw'));
     final damage = weapon?.damage ?? 1;
 
     return GestureDetector(
@@ -355,7 +361,7 @@ class TactileWeaponCards extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'DMG $damage',
+                      AppLocalizations.of(context)?.dmgLabel(damage) ?? 'DMG $damage',
                       style: AppTypography.bodySmall.copyWith(
                         fontSize: 9,
                         color: AppColors.crimsonBright,

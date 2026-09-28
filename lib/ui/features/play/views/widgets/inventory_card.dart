@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
@@ -24,10 +25,10 @@ class InventoryCard extends StatelessWidget {
   void _rollArmorProtection(BuildContext context, int protection, {String? title}) {
     if (protection <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No armor protection to absorb damage.'),
+        SnackBar(
+          content: Text(context.l10n?.noArmorProtectionToAbsorb ?? 'No armor protection to absorb damage.'),
           backgroundColor: AppColors.surfaceOverlay,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
@@ -48,6 +49,7 @@ class InventoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final carry = character.currentCarryWeight;
     final maxCarry = character.maxCarrySlots;
     final isOver = character.isEncumbered;
@@ -72,7 +74,7 @@ class InventoryCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            'GEAR & FINANCES',
+                            l10n?.gearAndFinances ?? 'GEAR & FINANCES',
                             style: AppTypography.titleMedium,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -91,7 +93,7 @@ class InventoryCard extends StatelessWidget {
                       );
                     },
                     icon: const Icon(Icons.add, size: 13, color: AppColors.goldBright),
-                    label: const Text('ADD GEAR', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                    label: Text(l10n?.addGear ?? 'ADD GEAR', style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.surfaceOverlay,
                       foregroundColor: AppColors.goldBright,
@@ -123,7 +125,7 @@ class InventoryCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'RESOURCES',
+                            l10n?.resources ?? 'RESOURCES',
                             style: AppTypography.labelSmall.copyWith(
                               color: AppColors.goldDim,
                               fontSize: 9,
@@ -183,7 +185,7 @@ class InventoryCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'CAPITAL',
+                            l10n?.capital ?? 'CAPITAL',
                             style: AppTypography.labelSmall.copyWith(
                               color: AppColors.goldDim,
                               fontSize: 9,
@@ -249,7 +251,7 @@ class InventoryCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                'Carrying: $carry / $maxCarry slots (Physique + 2)',
+                                l10n?.carryingSlots(carry, maxCarry) ?? 'Carrying: $carry / $maxCarry slots (Physique + 2)',
                                 style: AppTypography.bodySmall.copyWith(
                                   color: isOver ? AppColors.physicalCondition : AppColors.textPrimary,
                                   fontWeight: isOver ? FontWeight.bold : FontWeight.normal,
@@ -261,7 +263,7 @@ class InventoryCard extends StatelessWidget {
                             if (isOver) ...[
                               const SizedBox(width: 4),
                               Text(
-                                'ENCUMBERED (-2 Agility)',
+                                l10n?.encumberedPenalty ?? 'ENCUMBERED (-2 Agility)',
                                 style: AppTypography.bodySmall.copyWith(
                                   color: AppColors.physicalCondition,
                                   fontWeight: FontWeight.bold,
@@ -309,7 +311,7 @@ class InventoryCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            'WEAPONS & ARSENAL',
+                            l10n?.weaponsAndArsenal ?? 'WEAPONS & ARSENAL',
                             style: AppTypography.titleMedium,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -318,14 +320,14 @@ class InventoryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  Text('${character.weapons.length} ITEMS', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 10)),
+                  Text(l10n?.itemsCount(character.weapons.length) ?? '${character.weapons.length} ITEMS', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 10)),
                 ],
               ),
               const SizedBox(height: 8),
               if (character.weapons.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text('No weapons equipped. Tap "+ ADD GEAR" to equip weapons.', style: AppTypography.bodySmall),
+                  child: Text(l10n?.noWeaponsEquippedPrompt ?? 'No weapons equipped. Tap "+ ADD GEAR" to equip weapons.', style: AppTypography.bodySmall),
                 )
               else
                 ...character.weapons.map((w) {
@@ -367,9 +369,9 @@ class InventoryCard extends StatelessWidget {
                                         color: AppColors.gold.withAlpha(40),
                                         borderRadius: BorderRadius.circular(3),
                                       ),
-                                      child: const Text(
-                                        'READY',
-                                        style: TextStyle(color: AppColors.gold, fontSize: 8, fontWeight: FontWeight.bold),
+                                      child: Text(
+                                        AppLocalizations.of(context)?.ready ?? 'READY',
+                                        style: const TextStyle(color: AppColors.gold, fontSize: 8, fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
@@ -498,7 +500,7 @@ class InventoryCard extends StatelessWidget {
               if (character.armor.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text('No armor equipped. Ordinary Clothing (0 Protection).', style: AppTypography.bodySmall),
+                  child: Text(l10n?.noArmorEquippedPrompt ?? 'No armor equipped. Ordinary Clothing (0 Protection).', style: AppTypography.bodySmall),
                 )
               else
                 ...character.armor.map((a) {
@@ -593,7 +595,7 @@ class InventoryCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            'ADVENTURING GEAR',
+                            AppLocalizations.of(context)?.adventuringGear ?? 'ADVENTURING GEAR',
                             style: AppTypography.titleMedium,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -602,14 +604,14 @@ class InventoryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  Text('${character.equipment.length} TYPES', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 10)),
+                  Text(l10n?.typesCount(character.equipment.length) ?? '${character.equipment.length} TYPES', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 10)),
                 ],
               ),
               const SizedBox(height: 8),
               if (character.equipment.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text('No general equipment carried. Tap "+ ADD GEAR" to pack items.', style: AppTypography.bodySmall),
+                  child: Text(l10n?.noEquipmentCarriedPrompt ?? 'No general equipment carried. Tap "+ ADD GEAR" to pack items.', style: AppTypography.bodySmall),
                 )
               else
                 ...character.equipment.map((eq) {
@@ -633,7 +635,7 @@ class InventoryCard extends StatelessWidget {
                                 Text(eq.description, style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted)),
                               ],
                               const SizedBox(height: 2),
-                              Text('Weight: ${eq.slots} slot${eq.slots > 1 ? "s" : ""} ${eq.isHeavy ? "(Heavy)" : ""}', style: const TextStyle(color: AppColors.goldDim, fontSize: 9)),
+                              Text(l10n?.weightSlot(eq.slots, eq.isHeavy ? "(${l10n.heavy})" : "") ?? 'Weight: ${eq.slots} slot${eq.slots > 1 ? "s" : ""} ${eq.isHeavy ? "(Heavy)" : ""}', style: const TextStyle(color: AppColors.goldDim, fontSize: 9)),
                             ],
                           ),
                         ),

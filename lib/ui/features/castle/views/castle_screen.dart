@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/castle.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
@@ -54,6 +55,7 @@ class _CastleScreenState extends State<CastleScreen> {
   }
 
   void _showAddMysteryDialog(BuildContext context) {
+    final l10n = context.l10n;
     final titleController = TextEditingController();
     final dateController = TextEditingController(text: 'October 1882');
     final summaryController = TextEditingController();
@@ -74,7 +76,7 @@ class _CastleScreenState extends State<CastleScreen> {
                 const Icon(Icons.history_edu, color: AppColors.goldBright, size: 24),
                 const SizedBox(width: 10),
                 Text(
-                  'RECORD EXPEDITION',
+                  l10n?.recordExpedition ?? 'RECORD EXPEDITION',
                   style: AppTypography.titleMedium.copyWith(
                     color: AppColors.goldBright,
                     letterSpacing: 1.2,
@@ -90,7 +92,7 @@ class _CastleScreenState extends State<CastleScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Log the conclusion of a Vaesen mystery into the Society annals.',
+                      l10n?.logExpeditionPrompt ?? 'Log the conclusion of a Vaesen mystery into the Society annals.',
                       style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     ),
                     const SizedBox(height: 14),
@@ -98,7 +100,7 @@ class _CastleScreenState extends State<CastleScreen> {
                       controller: titleController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'Mystery Title',
+                        labelText: l10n?.mysteryTitle ?? 'Mystery Title',
                         labelStyle: const TextStyle(color: AppColors.gold),
                         hintText: 'e.g. The Silver Mine of Sala',
                         hintStyle: const TextStyle(color: AppColors.textMuted),
@@ -119,9 +121,9 @@ class _CastleScreenState extends State<CastleScreen> {
                       controller: dateController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'Expedition Date',
+                        labelText: l10n?.expeditionDate ?? 'Expedition Date',
                         labelStyle: const TextStyle(color: AppColors.gold),
-                        hintText: 'e.g. November 14, 1882',
+                        hintText: l10n?.expeditionDateHint ?? 'e.g. November 14, 1882',
                         hintStyle: const TextStyle(color: AppColors.textMuted),
                         filled: true,
                         fillColor: AppColors.surfaceLight,
@@ -141,9 +143,9 @@ class _CastleScreenState extends State<CastleScreen> {
                       maxLines: 3,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'Expedition Summary & Secrets Unveiled',
+                        labelText: l10n?.expeditionSummaryLabel ?? 'Expedition Summary & Secrets Unveiled',
                         labelStyle: const TextStyle(color: AppColors.gold),
-                        hintText: 'Describe the encounter, rituals performed, or vaesen banished...',
+                        hintText: l10n?.expeditionSummaryHint ?? 'Describe the encounter, rituals performed, or vaesen banished...',
                         hintStyle: const TextStyle(color: AppColors.textMuted),
                         filled: true,
                         fillColor: AppColors.surfaceLight,
@@ -162,7 +164,7 @@ class _CastleScreenState extends State<CastleScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Experience Awarded:',
+                          l10n?.experienceAwarded ?? 'Experience Awarded:',
                           style: AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary),
                         ),
                         Row(
@@ -205,7 +207,7 @@ class _CastleScreenState extends State<CastleScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogCtx),
-                child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+                child: Text(l10n?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
               ),
               ElevatedButton.icon(
                 onPressed: () async {
@@ -232,7 +234,7 @@ class _CastleScreenState extends State<CastleScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
                 icon: const Icon(Icons.bookmark_added, size: 16),
-                label: const Text('RECORD EXPEDITION', style: TextStyle(fontWeight: FontWeight.bold)),
+                label: Text(l10n?.recordExpedition ?? 'RECORD EXPEDITION', style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ],
           );
@@ -242,6 +244,7 @@ class _CastleScreenState extends State<CastleScreen> {
   }
 
   void _confirmDeleteLog(BuildContext context, MysteryLog log) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -254,17 +257,21 @@ class _CastleScreenState extends State<CastleScreen> {
           children: [
             const Icon(Icons.warning_amber_rounded, color: AppColors.crimsonBright, size: 22),
             const SizedBox(width: 8),
-            Text('REMOVE EXPEDITION LOG', style: AppTypography.titleSmall.copyWith(color: AppColors.crimsonBright)),
+            Text(
+              l10n?.removeExpeditionLogTitle ?? 'REMOVE EXPEDITION LOG',
+              style: AppTypography.titleSmall.copyWith(color: AppColors.crimsonBright),
+            ),
           ],
         ),
         content: Text(
-          'Are you sure you wish to remove "${log.title}" from the Castle Gyllencreutz chronicles?',
+          l10n?.removeExpeditionLogPrompt(log.title) ??
+              'Are you sure you wish to remove "${log.title}" from the Castle Gyllencreutz chronicles?',
           style: AppTypography.bodySmall,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(l10n?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -275,7 +282,7 @@ class _CastleScreenState extends State<CastleScreen> {
               backgroundColor: AppColors.crimsonDark,
               foregroundColor: Colors.white,
             ),
-            child: const Text('REMOVE'),
+            child: Text(l10n?.remove ?? 'REMOVE'),
           ),
         ],
       ),
@@ -432,7 +439,7 @@ class _CastleScreenState extends State<CastleScreen> {
                             border: Border.all(color: AppColors.goldDim, width: 0.6),
                           ),
                           child: Text(
-                            'CHAPTER HQ',
+                            AppLocalizations.of(context)?.chapterHq ?? 'CHAPTER HQ',
                             style: AppTypography.labelSmall.copyWith(
                               color: AppColors.gold,
                               fontSize: 9,
@@ -445,7 +452,7 @@ class _CastleScreenState extends State<CastleScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'SOCIETY HEADQUARTERS • UPSALA, SWEDEN • ESTABLISHED 1882',
+                      context.l10n?.castleSubtitle ?? 'SOCIETY HEADQUARTERS • UPSALA, SWEDEN • ESTABLISHED 1882',
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMuted,
                         fontSize: 10,
@@ -460,7 +467,8 @@ class _CastleScreenState extends State<CastleScreen> {
 
           const SizedBox(height: 12),
           Text(
-            'The ancient Gothic fortress of the Society in Upsala. Here, investigators consult dusty archives, recover from traumatic injuries, craft protective talismans, and plan expeditions across the Scandinavian provinces.',
+            context.l10n?.castleDescription ??
+                'The ancient Gothic fortress of the Society in Upsala. Here, investigators consult dusty archives, recover from traumatic injuries, craft protective talismans, and plan expeditions across the Scandinavian provinces.',
             style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary, height: 1.35),
           ),
 
@@ -470,10 +478,11 @@ class _CastleScreenState extends State<CastleScreen> {
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 720;
+              final l10n = context.l10n;
 
               final devPointsPod = _buildStatPod(
                 icon: Icons.auto_awesome,
-                label: 'DEV POINTS',
+                label: l10n?.devPoints ?? 'DEV POINTS',
                 valueWidget: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -517,30 +526,30 @@ class _CastleScreenState extends State<CastleScreen> {
                     ),
                   ],
                 ),
-                subtext: 'To renovate & expand HQ',
+                subtext: l10n?.toRenovateHq ?? 'To renovate & expand HQ',
               );
 
               final facilitiesPod = _buildStatPod(
                 icon: Icons.account_balance,
-                label: 'FACILITIES',
+                label: l10n?.facilities ?? 'FACILITIES',
                 value: '$builtCount / $totalFacilities',
-                subtext: '$builtCount operational upgrades',
+                subtext: l10n?.operationalUpgrades(builtCount) ?? '$builtCount operational upgrades',
                 valueColor: builtCount > 0 ? AppColors.goldBright : AppColors.textPrimary,
               );
 
               final staffPod = _buildStatPod(
                 icon: Icons.people_outline,
-                label: 'RETAINERS',
+                label: l10n?.staff ?? 'RETAINERS',
                 value: '$hiredCount / $totalStaff',
-                subtext: 'Staff active on grounds',
+                subtext: l10n?.staffActiveOnGrounds ?? 'Staff active on grounds',
                 valueColor: hiredCount > 0 ? AppColors.goldBright : AppColors.textPrimary,
               );
 
               final expeditionsPod = _buildStatPod(
                 icon: Icons.menu_book,
-                label: 'EXPEDITIONS',
+                label: l10n?.expeditionChronicles ?? 'EXPEDITIONS',
                 value: '${castle.mysteryLogs.length}',
-                subtext: '+$totalXp total XP rewarded',
+                subtext: l10n?.totalXpRewarded(totalXp) ?? '+$totalXp total XP rewarded',
                 valueColor: castle.mysteryLogs.isNotEmpty ? AppColors.goldBright : AppColors.textPrimary,
               );
 
@@ -655,6 +664,7 @@ class _CastleScreenState extends State<CastleScreen> {
       filteredFacilities = castle.facilities.where((f) => !f.isBuilt).toList();
     }
 
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -667,7 +677,7 @@ class _CastleScreenState extends State<CastleScreen> {
                 const Icon(Icons.architecture, color: AppColors.goldBright, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  'FACILITIES & UPGRADES',
+                  l10n?.facilitiesAndUpgrades ?? 'FACILITIES & UPGRADES',
                   style: AppTypography.titleMedium.copyWith(
                     color: AppColors.goldBright,
                     letterSpacing: 1.0,
@@ -683,7 +693,8 @@ class _CastleScreenState extends State<CastleScreen> {
                 border: Border.all(color: AppColors.gold.withAlpha(100), width: 0.6),
               ),
               child: Text(
-                '$builtCount / ${castle.facilities.length} BUILT',
+                l10n?.facilitiesBuilt(builtCount, castle.facilities.length) ??
+                    '$builtCount / ${castle.facilities.length} BUILT',
                 style: AppTypography.labelSmall.copyWith(color: AppColors.gold, fontWeight: FontWeight.bold),
               ),
             ),
@@ -698,25 +709,26 @@ class _CastleScreenState extends State<CastleScreen> {
           child: Row(
             children: [
               _buildFilterChip(
-                label: 'ALL (${castle.facilities.length})',
+                label: l10n?.filterAll(castle.facilities.length) ?? 'ALL (${castle.facilities.length})',
                 isSelected: _facilityFilterIndex == 0,
                 onTap: () => setState(() => _facilityFilterIndex = 0),
               ),
               const SizedBox(width: 8),
               _buildFilterChip(
-                label: 'OPERATIONAL ($builtCount)',
+                label: l10n?.filterOperational(builtCount) ?? 'OPERATIONAL ($builtCount)',
                 isSelected: _facilityFilterIndex == 1,
                 onTap: () => setState(() => _facilityFilterIndex = 1),
               ),
               const SizedBox(width: 8),
               _buildFilterChip(
-                label: 'CAN BUILD ($canAffordCount)',
+                label: l10n?.filterCanBuild(canAffordCount) ?? 'CAN BUILD ($canAffordCount)',
                 isSelected: _facilityFilterIndex == 2,
                 onTap: () => setState(() => _facilityFilterIndex = 2),
               ),
               const SizedBox(width: 8),
               _buildFilterChip(
-                label: 'UNBUILT (${castle.facilities.length - builtCount})',
+                label: l10n?.filterUnbuilt(castle.facilities.length - builtCount) ??
+                    'UNBUILT (${castle.facilities.length - builtCount})',
                 isSelected: _facilityFilterIndex == 3,
                 onTap: () => setState(() => _facilityFilterIndex = 3),
               ),
@@ -739,7 +751,7 @@ class _CastleScreenState extends State<CastleScreen> {
               children: [
                 const Icon(Icons.filter_alt_off, color: AppColors.textMuted, size: 28),
                 const SizedBox(height: 8),
-                Text('No facilities match this filter.', style: AppTypography.bodyMedium),
+                Text(l10n?.noFacilitiesMatch ?? 'No facilities match this filter.', style: AppTypography.bodyMedium),
               ],
             ),
           )
@@ -817,7 +829,7 @@ class _CastleScreenState extends State<CastleScreen> {
                                       const Icon(Icons.check, size: 10, color: Color(0xFF2CE8C5)),
                                       const SizedBox(width: 4),
                                       Text(
-                                        'BUILT',
+                                        l10n?.builtStatus ?? 'BUILT',
                                         style: AppTypography.labelSmall.copyWith(
                                           color: const Color(0xFF2CE8C5),
                                           fontSize: 9,
@@ -836,7 +848,7 @@ class _CastleScreenState extends State<CastleScreen> {
                                     border: Border.all(color: AppColors.crimsonLight, width: 0.8),
                                   ),
                                   child: Text(
-                                    'COST: ${fac.devCost} PTS',
+                                    l10n?.costPoints(fac.devCost) ?? 'COST: ${fac.devCost} PTS',
                                     style: AppTypography.labelSmall.copyWith(
                                       color: AppColors.crimsonBright,
                                       fontSize: 9,
@@ -853,7 +865,7 @@ class _CastleScreenState extends State<CastleScreen> {
                                     border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
                                   ),
                                   child: Text(
-                                    'COST: ${fac.devCost} PTS',
+                                    l10n?.costPoints(fac.devCost) ?? 'COST: ${fac.devCost} PTS',
                                     style: AppTypography.labelSmall.copyWith(
                                       color: AppColors.gold,
                                       fontSize: 9,
@@ -921,7 +933,10 @@ class _CastleScreenState extends State<CastleScreen> {
                               if (!success && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Not enough Development Points to build ${fac.name}. Requires ${fac.devCost} PTS.'),
+                                    content: Text(
+                                      l10n?.notEnoughDevPoints(fac.name, fac.devCost) ??
+                                          'Not enough Development Points to build ${fac.name}. Requires ${fac.devCost} PTS.',
+                                    ),
                                     backgroundColor: AppColors.crimsonDark,
                                     duration: const Duration(seconds: 2),
                                   ),
@@ -981,6 +996,7 @@ class _CastleScreenState extends State<CastleScreen> {
 
   // ── Staff Retainers Section ──────────────────────────────────────────────
   Widget _buildStaffSection(BuildContext context, CastleState castle, int hiredCount, int totalStaff) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -992,7 +1008,7 @@ class _CastleScreenState extends State<CastleScreen> {
                 const Icon(Icons.people_alt_outlined, color: AppColors.goldBright, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  'HIRED STAFF ROSTER',
+                  l10n?.hiredStaffRoster ?? 'HIRED STAFF ROSTER',
                   style: AppTypography.titleMedium.copyWith(
                     color: AppColors.goldBright,
                     letterSpacing: 1.0,
@@ -1008,7 +1024,7 @@ class _CastleScreenState extends State<CastleScreen> {
                 border: Border.all(color: AppColors.gold.withAlpha(100), width: 0.6),
               ),
               child: Text(
-                '$hiredCount / $totalStaff ON DUTY',
+                l10n?.staffOnDuty(hiredCount, totalStaff) ?? '$hiredCount / $totalStaff ON DUTY',
                 style: AppTypography.labelSmall.copyWith(color: AppColors.gold, fontWeight: FontWeight.bold),
               ),
             ),
@@ -1113,6 +1129,7 @@ class _CastleScreenState extends State<CastleScreen> {
 
   // ── Mystery Logs Section ─────────────────────────────────────────────────
   Widget _buildMysteryLogsSection(BuildContext context, CastleState castle) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1124,7 +1141,7 @@ class _CastleScreenState extends State<CastleScreen> {
                 const Icon(Icons.menu_book, color: AppColors.goldBright, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  'EXPEDITION CHRONICLES',
+                  l10n?.expeditionChronicles ?? 'EXPEDITION CHRONICLES',
                   style: AppTypography.titleMedium.copyWith(
                     color: AppColors.goldBright,
                     letterSpacing: 1.0,
@@ -1143,7 +1160,7 @@ class _CastleScreenState extends State<CastleScreen> {
               ),
               icon: const Icon(Icons.add, size: 14),
               label: Text(
-                'LOG EXPEDITION',
+                l10n?.recordExpedition ?? 'LOG EXPEDITION',
                 style: AppTypography.labelSmall.copyWith(
                   color: AppColors.goldBright,
                   fontWeight: FontWeight.bold,
@@ -1169,10 +1186,10 @@ class _CastleScreenState extends State<CastleScreen> {
               children: [
                 const Icon(Icons.history_edu, color: AppColors.textMuted, size: 28),
                 const SizedBox(height: 8),
-                Text('No expeditions recorded yet.', style: AppTypography.bodyMedium),
+                Text(l10n?.noExpeditionsRecorded ?? 'No expeditions recorded yet.', style: AppTypography.bodyMedium),
                 const SizedBox(height: 4),
                 Text(
-                  'Tap "Log Expedition" to record your first completed mystery.',
+                  l10n?.tapLogExpeditionPrompt ?? 'Tap "Log Expedition" to record your first completed mystery.',
                   style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
@@ -1259,7 +1276,7 @@ class _CastleScreenState extends State<CastleScreen> {
                               const Icon(Icons.star, size: 11, color: AppColors.goldBright),
                               const SizedBox(width: 4),
                               Text(
-                                '+${log.xpAwarded} XP AWARDED',
+                                l10n?.xpAwardedBadge(log.xpAwarded) ?? '+${log.xpAwarded} XP AWARDED',
                                 style: AppTypography.labelSmall.copyWith(
                                   color: AppColors.goldBright,
                                   fontSize: 9.5,
@@ -1271,7 +1288,7 @@ class _CastleScreenState extends State<CastleScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Awarded to participating Society investigators',
+                          l10n?.awardedToInvestigators ?? 'Awarded to participating Society investigators',
                           style: AppTypography.bodySmall.copyWith(
                             color: AppColors.textMuted,
                             fontSize: 10,

@@ -8,6 +8,7 @@ import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 
 class ActionDetailSheet extends StatefulWidget {
   final Character character;
@@ -157,7 +158,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
                   ),
                   child: Column(
                     children: [
-                      Text('DAMAGE', style: AppTypography.titleSmall.copyWith(fontSize: 9, color: AppColors.lethal)),
+                      Text(AppLocalizations.of(context)?.damage ?? 'DAMAGE', style: AppTypography.titleSmall.copyWith(fontSize: 9, color: AppColors.lethal)),
                       Text('${widget.baseDamage}', style: AppTypography.statNumber.copyWith(fontSize: 16)),
                     ],
                   ),
@@ -213,7 +214,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'DICE POOL BREAKDOWN',
+                  AppLocalizations.of(context)?.dicePoolBreakdown ?? 'DICE POOL BREAKDOWN',
                   style: AppTypography.titleSmall.copyWith(fontSize: 10, color: AppColors.goldDim),
                 ),
                 const SizedBox(height: 6),
@@ -246,7 +247,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('SITUATIONAL MODIFIER', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+              Text(AppLocalizations.of(context)?.situationalModifier ?? 'SITUATIONAL MODIFIER', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
               Row(
                 children: [
                   IconButton.outlined(
@@ -313,7 +314,7 @@ class _ActionDetailSheetState extends State<ActionDetailSheet> {
               },
               icon: const Icon(Icons.casino, color: AppColors.goldBright, size: 20),
               label: Text(
-                'ROLL $totalDice DICE',
+                AppLocalizations.of(context)?.rollNDice(totalDice) ?? 'ROLL $totalDice DICE',
                 style: AppTypography.titleMedium.copyWith(
                   letterSpacing: 1.2,
                   color: AppColors.goldBright,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
@@ -13,6 +14,7 @@ class SolaceDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final character = viewModel.activeCharacter;
     if (character == null) return const SizedBox.shrink();
+    final l10n = context.l10n;
 
     return AlertDialog(
       backgroundColor: AppColors.surface,
@@ -20,7 +22,7 @@ class SolaceDialog extends StatelessWidget {
         children: [
           const Icon(Icons.auto_awesome, color: AppColors.goldBright),
           const SizedBox(width: 8),
-          Text('Draw Solace', style: AppTypography.titleLarge),
+          Text(l10n?.drawSolaceTitle ?? 'Draw Solace', style: AppTypography.titleLarge),
         ],
       ),
       content: Column(
@@ -33,13 +35,14 @@ class SolaceDialog extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'You hold your memento close, breathing slowly in the cold dark. The memory of what it represents steadies your trembling hands and quiets the haunting visions.',
+            l10n?.mementoSolaceLore ??
+                'You hold your memento close, breathing slowly in the cold dark. The memory of what it represents steadies your trembling hands and quiets the haunting visions.',
             style: AppTypography.bodyMedium,
           ),
           const SizedBox(height: 12),
           const OrnateDivider(height: 16),
           Text(
-            'Rest and heal up to 2 conditions with your memento:',
+            l10n?.restAndHealPrompt ?? 'Rest and heal up to 2 conditions with your memento:',
             style: AppTypography.titleSmall,
           ),
           const SizedBox(height: 12),
@@ -52,7 +55,7 @@ class SolaceDialog extends StatelessWidget {
                     if (context.mounted) Navigator.of(context).pop();
                   },
                   icon: const Icon(Icons.favorite, color: AppColors.physicalCondition, size: 16),
-                  label: const Text('HEAL 2 PHYSICAL'),
+                  label: Text(l10n?.healTwoPhysical ?? 'HEAL 2 PHYSICAL'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surfaceLight,
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -67,7 +70,7 @@ class SolaceDialog extends StatelessWidget {
                     if (context.mounted) Navigator.of(context).pop();
                   },
                   icon: const Icon(Icons.psychology, color: AppColors.mentalCondition, size: 16),
-                  label: const Text('HEAL 2 MENTAL'),
+                  label: Text(l10n?.healTwoMental ?? 'HEAL 2 MENTAL'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surfaceLight,
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -81,7 +84,7 @@ class SolaceDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('CANCEL', style: AppTypography.bodySmall),
+          child: Text(l10n?.cancel ?? 'CANCEL', style: AppTypography.bodySmall),
         ),
       ],
     );

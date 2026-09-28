@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
@@ -73,7 +74,7 @@ class PartyManagementDialog extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'SOCIETY ROSTER',
+                                AppLocalizations.of(context)?.societyRoster ?? 'SOCIETY ROSTER',
                                 style: AppTypography.titleMedium.copyWith(
                                   color: AppColors.goldBright,
                                   letterSpacing: 1.0,
@@ -81,7 +82,8 @@ class PartyManagementDialog extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '${characters.length} Investigator${characters.length != 1 ? "s" : ""} Enrolled • Castle Gyllencreutz',
+                                AppLocalizations.of(context)?.investigatorsEnrolled(characters.length) ??
+                                    '${characters.length} Investigator${characters.length != 1 ? "s" : ""} Enrolled • Castle Gyllencreutz',
                                 style: AppTypography.bodySmall.copyWith(
                                   color: AppColors.goldDim,
                                   fontSize: 11,
@@ -92,7 +94,7 @@ class PartyManagementDialog extends StatelessWidget {
                         ),
                         IconButton(
                           icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
-                          tooltip: 'Close',
+                          tooltip: AppLocalizations.of(context)?.close ?? 'Close',
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                       ],
@@ -132,7 +134,10 @@ class PartyManagementDialog extends StatelessWidget {
                         OutlinedButton.icon(
                           onPressed: () => _openImportDialog(context),
                           icon: const Icon(Icons.file_download_outlined, size: 14, color: AppColors.gold),
-                          label: const Text('IMPORT JSON', style: TextStyle(color: AppColors.gold, fontSize: 11)),
+                          label: Text(
+                            AppLocalizations.of(context)?.importJson ?? 'IMPORT JSON',
+                            style: const TextStyle(color: AppColors.gold, fontSize: 11),
+                          ),
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: AppColors.goldDim),
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -154,9 +159,9 @@ class PartyManagementDialog extends StatelessWidget {
                             );
                           },
                           icon: const Icon(Icons.person_add, size: 14, color: Colors.black),
-                          label: const Text(
-                            'NEW INVESTIGATOR',
-                            style: TextStyle(color: Colors.black, fontSize: 11, fontWeight: FontWeight.bold),
+                          label: Text(
+                            AppLocalizations.of(context)?.newInvestigator ?? 'NEW INVESTIGATOR',
+                            style: const TextStyle(color: Colors.black, fontSize: 11, fontWeight: FontWeight.bold),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.goldBright,
@@ -177,6 +182,7 @@ class PartyManagementDialog extends StatelessWidget {
   }
 
   Widget _buildEmptyRoster(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -186,12 +192,13 @@ class PartyManagementDialog extends StatelessWidget {
             const Icon(Icons.folder_open, color: AppColors.goldDim, size: 48),
             const SizedBox(height: 12),
             Text(
-              'No Investigators Enrolled',
+              l10n?.noInvestigatorsEnrolled ?? 'No Investigators Enrolled',
               style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright),
             ),
             const SizedBox(height: 6),
             Text(
-              'The Society archives are currently vacant. Enroll a new investigator or reload the pregenerated roster to begin.',
+              l10n?.archivesVacantDesc ??
+                  'The Society archives are currently vacant. Enroll a new investigator or reload the pregenerated roster to begin.',
               style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, height: 1.4),
               textAlign: TextAlign.center,
             ),
@@ -201,12 +208,15 @@ class PartyManagementDialog extends StatelessWidget {
                 await viewModel.loadPregenCharacters();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Standard pregenerated investigators restored.')),
+                    SnackBar(content: Text(l10n?.pregensRestoredSnackbar ?? 'Standard pregenerated investigators restored.')),
                   );
                 }
               },
               icon: const Icon(Icons.restart_alt, size: 16, color: AppColors.gold),
-              label: const Text('RESTORE PREGENERATED ROSTER', style: TextStyle(color: AppColors.gold, fontSize: 11)),
+              label: Text(
+                l10n?.restorePregenRoster ?? 'RESTORE PREGENERATED ROSTER',
+                style: const TextStyle(color: AppColors.gold, fontSize: 11),
+              ),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppColors.gold),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -219,6 +229,7 @@ class PartyManagementDialog extends StatelessWidget {
   }
 
   Widget _buildInvestigatorCard(BuildContext context, Character char, bool isActive) {
+    final l10n = AppLocalizations.of(context);
     final isBroken = char.conditions.isBroken;
     final hasConditions = char.conditions.physicalPenalty > 0 || char.conditions.mentalPenalty > 0;
 
@@ -269,9 +280,9 @@ class PartyManagementDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(color: AppColors.gold),
                         ),
-                        child: const Text(
-                          'ACTIVE',
-                          style: TextStyle(color: AppColors.goldBright, fontSize: 8.5, fontWeight: FontWeight.bold),
+                        child: Text(
+                          l10n?.active ?? 'ACTIVE',
+                          style: const TextStyle(color: AppColors.goldBright, fontSize: 8.5, fontWeight: FontWeight.bold),
                         ),
                       ),
                   ],
@@ -288,7 +299,7 @@ class PartyManagementDialog extends StatelessWidget {
                   spacing: 6,
                   children: [
                     if (isBroken)
-                      _statusChip('BROKEN', AppColors.crimsonLight, AppColors.crimsonDark)
+                      _statusChip(l10n?.broken ?? 'BROKEN', AppColors.crimsonLight, AppColors.crimsonDark)
                     else if (hasConditions)
                       _statusChip(
                         'P: -${char.conditions.physicalPenalty} / M: -${char.conditions.mentalPenalty}',
@@ -296,9 +307,13 @@ class PartyManagementDialog extends StatelessWidget {
                         AppColors.surfaceLight,
                       )
                     else
-                      _statusChip('HEALTHY', AppColors.goldDim, AppColors.surfaceLight),
+                      _statusChip(l10n?.healthy ?? 'HEALTHY', AppColors.goldDim, AppColors.surfaceLight),
                     if (char.activeInjuries.isNotEmpty)
-                      _statusChip('${char.activeInjuries.length} INJURIES', AppColors.crimsonLight, AppColors.surfaceLight),
+                      _statusChip(
+                        l10n?.injuriesCount(char.activeInjuries.length) ?? '${char.activeInjuries.length} INJURIES',
+                        AppColors.crimsonLight,
+                        AppColors.surfaceLight,
+                      ),
                   ],
                 ),
 
@@ -311,7 +326,7 @@ class PartyManagementDialog extends StatelessWidget {
                       TextButton.icon(
                         onPressed: () => viewModel.switchCharacter(char.id),
                         icon: const Icon(Icons.check_circle_outline, size: 13, color: AppColors.gold),
-                        label: const Text('ACTIVATE', style: TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.bold)),
+                        label: Text(l10n?.activate ?? 'ACTIVATE', style: const TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.bold)),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           visualDensity: VisualDensity.compact,
@@ -320,7 +335,7 @@ class PartyManagementDialog extends StatelessWidget {
                     TextButton.icon(
                       onPressed: () => _exportCharacter(context, char),
                       icon: const Icon(Icons.copy_outlined, size: 13, color: AppColors.textMuted),
-                      label: const Text('EXPORT', style: TextStyle(color: AppColors.textMuted, fontSize: 10.5)),
+                      label: Text(l10n?.export ?? 'EXPORT', style: const TextStyle(color: AppColors.textMuted, fontSize: 10.5)),
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         visualDensity: VisualDensity.compact,
@@ -329,7 +344,7 @@ class PartyManagementDialog extends StatelessWidget {
                     const Spacer(),
                     IconButton(
                       icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),
-                      tooltip: 'Retire / Delete Investigator',
+                      tooltip: l10n?.retireInvestigatorTooltip ?? 'Retire / Delete Investigator',
                       constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
                       padding: EdgeInsets.zero,
                       onPressed: () => _confirmRetirement(context, char),
@@ -377,7 +392,8 @@ class PartyManagementDialog extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                '${char.name} exported! JSON copied to clipboard.',
+                AppLocalizations.of(context)?.exportedSnackbar(char.name) ??
+                    '${char.name} exported! JSON copied to clipboard.',
                 style: const TextStyle(color: AppColors.goldBright, fontSize: 12),
               ),
             ),
@@ -388,6 +404,7 @@ class PartyManagementDialog extends StatelessWidget {
   }
 
   void _confirmRetirement(BuildContext context, Character char) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -400,18 +417,22 @@ class PartyManagementDialog extends StatelessWidget {
           children: [
             const Icon(Icons.warning_amber_rounded, color: AppColors.crimsonLight, size: 20),
             const SizedBox(width: 8),
-            const Text('RETIRE INVESTIGATOR', style: TextStyle(color: AppColors.crimsonLight, fontSize: 16)),
+            Text(
+              l10n?.retireInvestigatorTitle ?? 'RETIRE INVESTIGATOR',
+              style: const TextStyle(color: AppColors.crimsonLight, fontSize: 16),
+            ),
           ],
         ),
         content: Text(
-          'Are you certain you wish to retire ${char.name}?\n\n'
-          'This will permanently remove their records, gear, and field notes from the Society archives.',
+          l10n?.retireInvestigatorPrompt(char.name) ??
+              'Are you certain you wish to retire ${char.name}?\n\n'
+              'This will permanently remove their records, gear, and field notes from the Society archives.',
           style: AppTypography.bodyMedium.copyWith(fontSize: 13, height: 1.4),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(l10n?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -419,7 +440,7 @@ class PartyManagementDialog extends StatelessWidget {
               await viewModel.deleteCharacter(char.id);
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${char.name} has been retired from the Society.')),
+                  SnackBar(content: Text(l10n?.retiredSnackbar(char.name) ?? '${char.name} has been retired from the Society.')),
                 );
               }
             },
@@ -427,7 +448,7 @@ class PartyManagementDialog extends StatelessWidget {
               backgroundColor: AppColors.crimson,
               foregroundColor: Colors.white,
             ),
-            child: const Text('RETIRE INVESTIGATOR'),
+            child: Text(l10n?.retireInvestigatorTitle ?? 'RETIRE INVESTIGATOR'),
           ),
         ],
       ),
@@ -435,6 +456,7 @@ class PartyManagementDialog extends StatelessWidget {
   }
 
   void _openImportDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final ctrl = TextEditingController();
     String? errorText;
 
@@ -451,7 +473,7 @@ class PartyManagementDialog extends StatelessWidget {
             children: [
               const Icon(Icons.file_download_outlined, color: AppColors.goldBright, size: 20),
               const SizedBox(width: 8),
-              Text('IMPORT INVESTIGATOR JSON', style: AppTypography.titleMedium),
+              Text(l10n?.importInvestigatorJsonTitle ?? 'IMPORT INVESTIGATOR JSON', style: AppTypography.titleMedium),
             ],
           ),
           content: ConstrainedBox(
@@ -461,7 +483,7 @@ class PartyManagementDialog extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Paste a valid Vaesen Beyond character JSON export below:',
+                  l10n?.importJsonPrompt ?? 'Paste a valid Vaesen Beyond character JSON export below:',
                   style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
                 const SizedBox(height: 8),
@@ -496,7 +518,7 @@ class PartyManagementDialog extends StatelessWidget {
                       }
                     },
                     icon: const Icon(Icons.paste, size: 13, color: AppColors.gold),
-                    label: const Text('PASTE FROM CLIPBOARD', style: TextStyle(color: AppColors.gold, fontSize: 10)),
+                    label: Text(l10n?.pasteFromClipboard ?? 'PASTE FROM CLIPBOARD', style: const TextStyle(color: AppColors.gold, fontSize: 10)),
                   ),
                 ),
               ],
@@ -505,13 +527,13 @@ class PartyManagementDialog extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+              child: Text(l10n?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
             ),
             ElevatedButton(
               onPressed: () async {
                 final text = ctrl.text.trim();
                 if (text.isEmpty) {
-                  setState(() => errorText = 'Please enter or paste character JSON.');
+                  setState(() => errorText = l10n?.enterValidJsonError ?? 'Please enter or paste character JSON.');
                   return;
                 }
                 try {
@@ -525,12 +547,12 @@ class PartyManagementDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                           side: const BorderSide(color: AppColors.gold),
                         ),
-                        content: Text('Imported and activated ${imported.name}!'),
+                        content: Text(l10n?.importedSnackbar(imported.name) ?? 'Imported and activated ${imported.name}!'),
                       ),
                     );
                   }
                 } catch (e) {
-                  setState(() => errorText = 'Invalid character JSON format: $e');
+                  setState(() => errorText = l10n?.invalidJsonError(e.toString()) ?? 'Invalid character JSON format: $e');
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -538,7 +560,7 @@ class PartyManagementDialog extends StatelessWidget {
                 foregroundColor: AppColors.goldBright,
                 side: const BorderSide(color: AppColors.gold),
               ),
-              child: const Text('IMPORT INVESTIGATOR'),
+              child: Text(l10n?.importInvestigatorBtn ?? 'IMPORT INVESTIGATOR'),
             ),
           ],
         ),

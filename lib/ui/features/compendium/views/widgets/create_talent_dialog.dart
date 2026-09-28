@@ -4,6 +4,7 @@ import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/data/repositories/character_repository.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 
 class CreateTalentDialog extends StatefulWidget {
@@ -109,6 +110,7 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
       backgroundColor: AppColors.surface,
       shape: RoundedRectangleBorder(
@@ -133,7 +135,7 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'FORGE HOMEBREW TALENT',
+                          l10n?.forgeHomebrewTalent ?? 'FORGE HOMEBREW TALENT',
                           style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright),
                         ),
                       ),
@@ -144,7 +146,7 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
                     ],
                   ),
                   Text(
-                    'Record a unique homebrew talent for your investigators or chapter house.',
+                    l10n?.forgeHomebrewTalentDesc ?? 'Record a unique homebrew talent for your investigators or chapter house.',
                     style: AppTypography.bodySmall,
                   ),
                   const SizedBox(height: 12),
@@ -152,7 +154,7 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
                   const SizedBox(height: 12),
 
                   // Talent Name
-                  Text('TALENT NAME', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                  Text(l10n?.talentName ?? 'TALENT NAME', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _nameController,
@@ -187,7 +189,7 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
                   const SizedBox(height: 14),
 
                   // Archetype requirement
-                  Text('ARCHETYPE REQUIREMENT', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                  Text(l10n?.archetypeRequirement ?? 'ARCHETYPE REQUIREMENT', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
                   const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
@@ -228,7 +230,7 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
                   const SizedBox(height: 14),
 
                   // Mechanical Effect
-                  Text('MECHANICAL EFFECT / RULE BENEFIT', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                  Text(l10n?.mechanicalEffectRule ?? 'MECHANICAL EFFECT / RULE BENEFIT', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _effectController,
@@ -264,7 +266,7 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
                   const SizedBox(height: 14),
 
                   // Flavor Description
-                  Text('NARRATIVE FLAVOR / DESCRIPTION (OPTIONAL)', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                  Text(l10n?.narrativeFlavorOptional ?? 'NARRATIVE FLAVOR / DESCRIPTION (OPTIONAL)', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _descController,
@@ -298,15 +300,15 @@ class _CreateTalentDialogState extends State<CreateTalentDialog> {
                     children: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+                        child: Text(l10n?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
                       ),
                       const SizedBox(width: 8),
                       ElevatedButton.icon(
                         onPressed: _saveTalent,
                         icon: const Icon(Icons.check, size: 16, color: Colors.black),
-                        label: const Text(
-                          'FORGE TALENT',
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                        label: Text(
+                          l10n?.forgeTalent ?? 'FORGE TALENT',
+                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.gold,

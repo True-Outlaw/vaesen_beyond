@@ -394,7 +394,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.pop(dialogCtx),
-                  child: const Text('CLOSE', style: TextStyle(color: AppColors.goldDim)),
+                  child: Text(AppLocalizations.of(dialogCtx)?.close ?? 'CLOSE', style: const TextStyle(color: AppColors.goldDim)),
                 ),
               ),
             ],

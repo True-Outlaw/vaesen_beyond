@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
@@ -74,6 +75,7 @@ class _DossierSheetState extends State<DossierSheet> {
   @override
   Widget build(BuildContext context) {
     final entries = widget.viewModel.getJournalEntries();
+    final l10n = AppLocalizations.of(context);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.92,
@@ -113,7 +115,7 @@ class _DossierSheetState extends State<DossierSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('INVESTIGATOR DOSSIER',
+                          Text(l10n?.investigatorDossier ?? 'INVESTIGATOR DOSSIER',
                               style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
                           Text(widget.character.name,
                               style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
@@ -136,15 +138,15 @@ class _DossierSheetState extends State<DossierSheet> {
                   controller: controller,
                   padding: const EdgeInsets.all(16),
                   children: [
-                    _SectionTitle(icon: Icons.person_outlined, label: 'NARRATIVE FOUNDATIONS'),
+                    _SectionTitle(icon: Icons.person_outlined, label: l10n?.narrativeFoundations ?? 'NARRATIVE FOUNDATIONS'),
                     const SizedBox(height: 8),
 
                     _DossierField(
-                      label: 'MOTIVATION',
+                      label: l10n?.motivation ?? 'MOTIVATION',
                       icon: Icons.star_outline,
                       controller: _motivationCtrl,
                       isEditing: _editing == 'motivation',
-                      placeholder: 'What drives this investigator?',
+                      placeholder: l10n?.whatDrivesInvestigator ?? 'What drives this investigator?',
                       onEdit: () => setState(() => _editing = 'motivation'),
                       onSave: () => _saveField('motivation'),
                       onCancel: () {
@@ -155,11 +157,11 @@ class _DossierSheetState extends State<DossierSheet> {
                     const SizedBox(height: 8),
 
                     _DossierField(
-                      label: 'TRAUMA',
+                      label: l10n?.trauma ?? 'TRAUMA',
                       icon: Icons.psychology_outlined,
                       controller: _traumaCtrl,
                       isEditing: _editing == 'trauma',
-                      placeholder: 'A wound that never fully healed\u2026',
+                      placeholder: l10n?.traumaPlaceholder ?? 'A wound that never fully healed\u2026',
                       accentColor: AppColors.violet,
                       onEdit: () => setState(() => _editing = 'trauma'),
                       onSave: () => _saveField('trauma'),
@@ -171,11 +173,11 @@ class _DossierSheetState extends State<DossierSheet> {
                     const SizedBox(height: 8),
 
                     _DossierField(
-                      label: 'DARK SECRET',
+                      label: l10n?.darkSecret ?? 'DARK SECRET',
                       icon: Icons.lock_outline,
                       controller: _darkSecretCtrl,
                       isEditing: _editing == 'darkSecret',
-                      placeholder: 'Something you dare not speak aloud\u2026',
+                      placeholder: l10n?.darkSecretPlaceholder ?? 'Something you dare not speak aloud\u2026',
                       accentColor: AppColors.crimson,
                       onEdit: () => setState(() => _editing = 'darkSecret'),
                       onSave: () => _saveField('darkSecret'),
@@ -187,11 +189,11 @@ class _DossierSheetState extends State<DossierSheet> {
                     const SizedBox(height: 8),
 
                     _DossierField(
-                      label: 'MEMENTO',
+                      label: l10n?.memento ?? 'MEMENTO',
                       icon: Icons.auto_awesome_outlined,
                       controller: _mementoCtrl,
                       isEditing: _editing == 'memento',
-                      placeholder: 'A cherished keepsake\u2026',
+                      placeholder: l10n?.mementoPlaceholder ?? 'A cherished keepsake\u2026',
                       accentColor: AppColors.gold,
                       onEdit: () => setState(() => _editing = 'memento'),
                       onSave: () => _saveField('memento'),
@@ -208,12 +210,12 @@ class _DossierSheetState extends State<DossierSheet> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const _SectionTitle(icon: Icons.edit_note_outlined, label: 'FIELD NOTES'),
+                        _SectionTitle(icon: Icons.edit_note_outlined, label: l10n?.fieldNotes ?? 'FIELD NOTES'),
                         ElevatedButton.icon(
                           onPressed: () => _addEntryDialog(context),
                           icon: const Icon(Icons.add, size: 13, color: AppColors.goldBright),
-                          label: const Text('ADD NOTE',
-                              style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                          label: Text(l10n?.addNote ?? 'ADD NOTE',
+                              style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.surfaceOverlay,
                             foregroundColor: AppColors.goldBright,
@@ -238,7 +240,8 @@ class _DossierSheetState extends State<DossierSheet> {
                               const Icon(Icons.book_outlined, color: AppColors.textMuted, size: 32),
                               const SizedBox(height: 8),
                               Text(
-                                'No field notes yet.\nRecord clues, rumours, and NPC details here.',
+                                l10n?.noFieldNotesYet ??
+                                    'No field notes yet.\nRecord clues, rumours, and NPC details here.',
                                 style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                                 textAlign: TextAlign.center,
                               ),
@@ -268,6 +271,7 @@ class _DossierSheetState extends State<DossierSheet> {
   }
 
   Future<void> _addEntryDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final ctrl = TextEditingController();
     final saved = await showDialog<String>(
       context: context,
@@ -281,7 +285,7 @@ class _DossierSheetState extends State<DossierSheet> {
           children: [
             const Icon(Icons.edit_note, color: AppColors.gold, size: 20),
             const SizedBox(width: 8),
-            Text('ADD FIELD NOTE', style: AppTypography.titleSmall),
+            Text(l10n?.addFieldNote ?? 'ADD FIELD NOTE', style: AppTypography.titleSmall),
           ],
         ),
         content: TextField(
@@ -290,7 +294,7 @@ class _DossierSheetState extends State<DossierSheet> {
           maxLines: 5,
           style: AppTypography.bodyMedium,
           decoration: InputDecoration(
-            hintText: 'Record clues, rumours, NPC details\u2026',
+            hintText: l10n?.fieldNoteHint ?? 'Record clues, rumours, NPC details\u2026',
             hintStyle: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             filled: true,
             fillColor: AppColors.surfaceLight,
@@ -307,7 +311,7 @@ class _DossierSheetState extends State<DossierSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('CANCEL', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
+            child: Text(l10n?.cancel ?? 'CANCEL', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(ctrl.text),
@@ -315,7 +319,7 @@ class _DossierSheetState extends State<DossierSheet> {
               backgroundColor: AppColors.surfaceOverlay,
               side: const BorderSide(color: AppColors.gold),
             ),
-            child: const Text('SAVE', style: TextStyle(color: AppColors.goldBright)),
+            child: Text(l10n?.save ?? 'SAVE', style: const TextStyle(color: AppColors.goldBright)),
           ),
         ],
       ),
@@ -463,12 +467,12 @@ class _JournalEntryRow extends StatelessWidget {
     required this.onDelete,
   });
 
-  String _prefixLabel() {
+  String _prefixLabel(BuildContext context) {
     if (text.startsWith('[')) {
       final end = text.indexOf(']');
       if (end > 0) return text.substring(1, end);
     }
-    return 'Note ${index + 1}';
+    return AppLocalizations.of(context)?.noteNumber(index + 1) ?? 'Note ${index + 1}';
   }
 
   String _bodyText() {
@@ -523,7 +527,7 @@ class _JournalEntryRow extends StatelessWidget {
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    _prefixLabel(),
+                    _prefixLabel(context),
                     style: AppTypography.labelSmall.copyWith(
                       fontSize: 9,
                       color: isAutoLog ? AppColors.gold : AppColors.textMuted,

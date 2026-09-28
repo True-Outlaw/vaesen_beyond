@@ -10,6 +10,7 @@
   },
   "castleTooltip": "Castle Gyllencreutz Headquarters",
   "compendiumTooltip": "The Society Compendium",
+  "societyCompendium": "SOCIETY COMPENDIUM",
   "startNewMysteryTooltip": "Start New Mystery (Reset Solace)",
   "newMysteryStarted": "A new mystery begins. Memento solace has been restored.",
 
@@ -55,5 +56,1057 @@
 
   "selectLanguage": "Select Language",
   "english": "English",
-  "swedish": "Svenska (Swedish)"
+  "swedish": "Svenska (Swedish)",
+
+  "physique": "Physique",
+  "precision": "Precision",
+  "logic": "Logic",
+  "empathy": "Empathy",
+
+  "agility": "Agility",
+  "closeCombat": "Close Combat",
+  "force": "Force",
+  "medicine": "Medicine",
+  "rangedCombat": "Ranged Combat",
+  "stealth": "Stealth",
+  "investigation": "Investigation",
+  "learning": "Learning",
+  "vigilance": "Vigilance",
+  "inspiration": "Inspiration",
+  "manipulation": "Manipulation",
+  "observation": "Observation",
+
+  "exhausted": "Exhausted",
+  "battered": "Battered",
+  "wounded": "Wounded",
+  "brokenPhys": "Broken (Phys)",
+  "angry": "Angry",
+  "frightened": "Frightened",
+  "hopeless": "Hopeless",
+  "brokenMental": "Broken (Mental)",
+
+  "solace": "SOLACE",
+  "drawSolace": "DRAW SOLACE",
+  "mementoSolaceUsed": "Memento solace already drawn for this mystery.\n(\"{memento}\")",
+  "@mementoSolaceUsed": {
+    "placeholders": {
+      "memento": { "type": "String" }
+    }
+  },
+  "mementoPrompt": "Once per session, you can spend a moment resting with your memento to heal up to two Conditions (Chapter 2, p. 22).",
+  "mementoHealed": "You drew solace from your memento. Mental conditions healed.",
+  "mainHand": "MAIN HAND",
+  "offHand": "OFF HAND",
+  "unarmedStrike": "Unarmed Strike",
+  "quickThrow": "Quick Throw",
+  "cancel": "CANCEL",
+  "close": "CLOSE",
+  "delete": "DELETE",
+  "save": "SAVE",
+  "back": "BACK",
+  "nextStep": "NEXT STEP",
+  "enrollInvestigator": "ENROLL INVESTIGATOR",
+  "newInvestigatorRegistry": "NEW INVESTIGATOR REGISTRY",
+
+  "stepIdentity": "Identity",
+  "stepAge": "Age",
+  "stepStats": "Stats",
+  "stepTalent": "Talent",
+  "stepLore": "Lore",
+  "stepEnroll": "Enroll",
+
+  "stepIdentityTitle": "1. IDENTITY",
+  "stepIdentitySubtitle": "Name & Archetype",
+  "stepAgeTitle": "2. AGE GROUP",
+  "stepAgeSubtitle": "Vigor vs Wisdom",
+  "stepStatsTitle": "3. ATTRIBUTES & SKILLS",
+  "stepStatsSubtitle": "Point Budget",
+  "stepTalentTitle": "4. STARTING TALENT",
+  "stepTalentSubtitle": "Special Power",
+  "stepLoreTitle": "5. NARRATIVE LORE",
+  "stepLoreSubtitle": "Trauma & Secrets",
+  "stepEnrollTitle": "6. REVIEW & ENROLL",
+  "stepEnrollSubtitle": "Final Folio",
+
+  "diceTrayTitle": "TABLETOP DICE ROLL",
+  "pushRoll": "PUSH THE ROLL",
+  "pushRollWithCondition": "PUSH THE ROLL (+1 Condition)",
+  "rollDice": "ROLL DICE",
+  "rollDiceCount": "ROLL {count} DICE",
+  "@rollDiceCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "reRollDiceCount": "RE-ROLL ({count} DICE)",
+  "@reRollDiceCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "rollDiceWithModifiers": "ROLL {targetPool} DICE WITH MODIFIERS ({basePool} Base{modifierStr})",
+  "@rollDiceWithModifiers": {
+    "placeholders": {
+      "targetPool": { "type": "int" },
+      "basePool": { "type": "int" },
+      "modifierStr": { "type": "String" }
+    }
+  },
+  "chooseConditionToSuffer": "CHOOSE CONDITION TO SUFFER:",
+  "rollPushedSuffered": "ROLL PUSHED • Suffered {condition}",
+  "@rollPushedSuffered": {
+    "placeholders": {
+      "condition": { "type": "String" }
+    }
+  },
+  "configurePoolPrompt": "Configure pool & tap ROLL below",
+  "singleSuccess": "1 SUCCESS!",
+  "multipleSuccesses": "{count} SUCCESSES ({stunts, plural, =1{1 STUNT} other{{stunts} STUNTS}})",
+  "@multipleSuccesses": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "stunts": { "type": "int" }
+    }
+  },
+  "failureOutcome": "FAILURE (0 SIXES)",
+  "advantageChip": "+2 ADVANTAGE",
+  "advantagePrepChip": "+2 ADVANTAGE (PREP)",
+  "modifierLabel": "MODIFIER: ",
+  "advIncluded": "+2 Adv Included",
+  "helpMod": "+1 Help",
+  "setupMod": "+2 Setup",
+  "dimMod": "-1 Dim",
+  "direMod": "-2 Dire",
+
+  "attributesAndSkills": "ATTRIBUTES & SKILLS",
+  "physicalAttribute": "Physical Attribute",
+  "mentalAttribute": "Mental Attribute",
+  "rollRawAttribute": "ROLL RAW {attribute} ({pool} D6)",
+  "@rollRawAttribute": {
+    "placeholders": {
+      "attribute": { "type": "String" },
+      "pool": { "type": "int" }
+    }
+  },
+  "rank": "Rank {rank}",
+  "@rank": {
+    "placeholders": {
+      "rank": { "type": "int" }
+    }
+  },
+  "score": "Score: {score}",
+  "@score": {
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
+  "scoreWithPenalty": "Score: {score} (-{penalty})",
+  "@scoreWithPenalty": {
+    "placeholders": {
+      "score": { "type": "int" },
+      "penalty": { "type": "int" }
+    }
+  },
+
+  "fearTestTitle": "FEAR TEST",
+  "fearTestIntro": "You come face-to-face with an uncanny horror from Scandinavian folklore.",
+  "chooseResistanceAttribute": "CHOOSE RESISTANCE ATTRIBUTE",
+  "creatureFearValue": "CREATURE FEAR VALUE",
+  "fearLevel": "FEAR {level}",
+  "@fearLevel": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "alliesInZone": "Allies in zone (+1 die, max +3):",
+  "plusDice": "+{count} dice",
+  "@plusDice": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "totalDicePool": "Total Dice Pool: {count} d6",
+  "@totalDicePool": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "rollFearTest": "ROLL FEAR TEST",
+  "steadyNervesPassed": "STEADY NERVES: PASSED!",
+  "terrified": "TERRIFIED!",
+  "panickedDuration": "• Panicked Duration: {rounds} rounds\n• Suffers {conditions} Mental Condition(s)",
+  "@panickedDuration": {
+    "placeholders": {
+      "rounds": { "type": "int" },
+      "conditions": { "type": "int" }
+    }
+  },
+  "rollAgain": "ROLL AGAIN",
+  "conditionsApplied": "CONDITIONS APPLIED",
+  "applyMentalConditions": "APPLY {count} MENTAL CONDITION(S)",
+  "@applyMentalConditions": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "mentalConditionsAppliedSnackbar": "{count} mental condition(s) applied.",
+  "@mentalConditionsAppliedSnackbar": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "drawSolaceTitle": "Draw Solace",
+  "mementoSolaceLore": "You hold your memento close, breathing slowly in the cold dark. The memory of what it represents steadies your trembling hands and quiets the haunting visions.",
+  "restAndHealPrompt": "Rest and heal up to 2 conditions with your memento:",
+  "healTwoPhysical": "HEAL 2 PHYSICAL",
+  "healTwoMental": "HEAL 2 MENTAL",
+
+  "initiativeCardRack": "INITIATIVE CARD RACK",
+  "initiativeTurnOrderSubtitle": "Vaesen Combat Turn Order • Lowest Card Acts First",
+  "roundNumber": "ROUND {round}",
+  "@roundNumber": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "closeTrackerTooltip": "Close Tracker",
+  "selectCombatantToSwap": "SELECT ANOTHER COMBATANT TO SWAP CARDS",
+  "redealCards": "RE-DEAL (1–10)",
+  "nextRound": "NEXT ROUND",
+  "addAdversaryBtn": "+ ADVERSARY",
+  "clearAllBtn": "CLEAR ALL",
+  "addAdversaryTitle": "ADD ADVERSARY",
+  "addAdversaryPrompt": "Enter the name of the beast, creature, or foe entering combat:",
+  "adversaryHint": "e.g., Church Grim, Highwayman, Troll",
+  "dealCard": "DEAL CARD",
+  "adversaryDefault": "Adversary",
+
+  "concludeMystery": "CONCLUDE MYSTERY",
+  "stepOf": "Step {current} of {total}: {title}",
+  "@stepOf": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" },
+      "title": { "type": "String" }
+    }
+  },
+  "debriefQuestionnaire": "Debrief Questionnaire",
+  "castleRewards": "Castle Rewards & Solace",
+  "summaryConfirmation": "Summary & Confirmation",
+  "participatedQuestion": "1. Did you participate in the session? (Always at least 1 XP)",
+  "confrontedVaesenQuestion": "2. Did you confront any vaesen? (+1 XP)",
+  "identifiedVaesenQuestion": "3. Did you identify a previously unknown vaesen? (+1 XP)",
+  "darkSecretQuestion": "4. Were you affected by your dark secret? (+1 XP)",
+  "protectPeopleQuestion": "5. Did you take risks to protect other people? (+1 XP)",
+  "learnedAnythingQuestion": "6. Have you learned anything? (+1 XP)",
+  "developedHqQuestion": "7. Did you develop something in your headquarters? (+1 XP)",
+  "extraordinaryActionQuestion": "8. Did you perform an extraordinary action? (+1 XP)",
+  "mysteryConcludedSnackbar": "Mystery Concluded! +{xp} XP awarded to {name} · +{dev} Castle Dev Points added.",
+  "@mysteryConcludedSnackbar": {
+    "placeholders": {
+      "xp": { "type": "int" },
+      "name": { "type": "String" },
+      "dev": { "type": "int" }
+    }
+  },
+
+  "castleSubtitle": "SOCIETY HEADQUARTERS • UPSALA, SWEDEN • ESTABLISHED 1882",
+  "castleDescription": "The ancient Gothic fortress of the Society in Upsala. Here, investigators consult dusty archives, recover from traumatic injuries, craft protective talismans, and plan expeditions across the Scandinavian provinces.",
+  "devPoints": "DEV POINTS",
+  "facilitiesAndUpgrades": "FACILITIES & UPGRADES",
+  "facilitiesBuilt": "{built} / {total} BUILT",
+  "@facilitiesBuilt": {
+    "placeholders": {
+      "built": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "filterAll": "ALL ({count})",
+  "@filterAll": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "filterOperational": "OPERATIONAL ({count})",
+  "@filterOperational": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "filterCanBuild": "CAN BUILD ({count})",
+  "@filterCanBuild": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "filterUnbuilt": "UNBUILT ({count})",
+  "@filterUnbuilt": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noFacilitiesMatch": "No facilities match this filter.",
+  "staffAndRetainers": "STAFF & RETAINERS",
+  "staffActive": "{count} ACTIVE",
+  "@staffActive": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hireStaff": "HIRE STAFF",
+  "logExpeditionPrompt": "Log the conclusion of a Vaesen mystery into the Society annals.",
+  "mysteryTitle": "Mystery Title",
+  "dateRecorded": "Date Recorded",
+  "chronicleSummary": "Chronicle Summary",
+  "xpAwarded": "XP Awarded",
+  "logExpeditionBtn": "LOG EXPEDITION",
+  "deleteExpeditionConfirm": "Delete this expedition record?",
+
+  "searchCompendium": "Search compendium...",
+  "deleteHomebrewTalentTitle": "Delete Homebrew Talent?",
+  "deleteHomebrewTalentPrompt": "Are you sure you want to permanently remove \"{name}\" from the Compendium?",
+  "@deleteHomebrewTalentPrompt": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "gmModeEnabled": "Gamemaster Mode enabled: Society Bestiary unlocked.",
+  "playerLoreEnabled": "Player Folklore Archive enabled: Creature lore unlocked with fog-of-war.",
+  "gmModeDisabled": "Gamemaster Mode disabled: Bestiary locked (spoiler protection active).",
+
+  "equippedWeapons": "EQUIPPED WEAPONS",
+  "equippedArmor": "EQUIPPED ARMOR",
+  "carriedGear": "CARRIED GEAR",
+  "addItem": "+ ADD ITEM",
+  "encumbrance": "ENCUMBRANCE: {current} / {max}",
+  "@encumbrance": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "overburdened": "OVERBURDENED",
+  "experiencePoints": "EXPERIENCE POINTS",
+  "availableXp": "AVAILABLE XP: {count}",
+  "@availableXp": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "spendXp": "SPEND XP",
+  "talents": "TALENTS",
+  "criticalInjuries": "CRITICAL INJURIES",
+  "noCriticalInjuries": "No critical injuries sustained.",
+
+  "success": "SUCCESS",
+  "failure": "FAILURE",
+  "criticalInjuryTable": "CRITICAL INJURY TABLE",
+  "rollD66": "ROLL D66",
+  "lethal": "LETHAL",
+  "healingTime": "Healing Time: {days} days",
+  "@healingTime": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+
+  "societyRoster": "SOCIETY ROSTER",
+  "investigatorsEnrolled": "{count, plural, =1{1 Investigator Enrolled} other{{count} Investigators Enrolled}} • Castle Gyllencreutz",
+  "@investigatorsEnrolled": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "compendiumTitle": "THE SOCIETY COMPENDIUM",
+  "tabBestiary": "BESTIARY",
+  "tabArchetypes": "ARCHETYPES",
+  "tabTalents": "TALENTS",
+  "tabInjuries": "CRITICAL INJURIES",
+  "tabGear": "WEAPONS & GEAR",
+  "tabRules": "RULES REFERENCE",
+
+  "facilities": "FACILITIES",
+  "staff": "STAFF",
+  "expeditionChronicles": "EXPEDITION CHRONICLES",
+  "recordExpedition": "RECORD EXPEDITION",
+  "chapterHq": "CHAPTER HQ",
+
+  "advanceTurn": "ADVANCE TURN",
+  "activeTurn": "ACTIVE TURN",
+  "noCombatantsInRack": "No combatants in initiative rack.",
+  "dealPartyCards": "DEAL PARTY CARDS",
+  "swapInitiativeTooltip": "Swap initiative card",
+  "markAsActedTooltip": "Mark as Acted",
+  "markAsNotActedTooltip": "Mark as Not Acted",
+  "removeFromCombatTooltip": "Remove from combat",
+  "investigatorLabel": "Investigator",
+  "cardBadge": "Card #{number}",
+  "@cardBadge": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+
+  "finalizeExpedition": "FINALIZE EXPEDITION",
+  "next": "NEXT",
+  "headquartersAndSolace": "Headquarters & Solace",
+  "reviewAndCommit": "Review & Commit",
+  "debriefPrompt": "Answer the official Vaesen session questions. Each affirmative answer awards +1 Advancement Point (XP) to {name}:",
+  "@debriefPrompt": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "xpToBeAwarded": "XP TO BE AWARDED:",
+  "advancementPointsAwarded": "+{xp} ADVANCEMENT POINTS",
+  "@advancementPointsAwarded": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "castleDevHeader": "CASTLE GYLLENCREUTZ DEVELOPMENT",
+  "castleDevPrompt": "Headquarters gains Development Points upon completing a mystery, enabling new facilities, upgrades, and contacts.",
+  "pointsAwarded": "Points Awarded:",
+  "personalMementoSolace": "PERSONAL MEMENTO SOLACE",
+  "personalMementoDesc": "Personal token of comfort and healing.",
+  "restoreMementoLabel": "Restore Memento for Next Mystery",
+  "restoreMementoSpentDesc": "Currently spent. Restores ability to draw solace next mystery.",
+  "restoreMementoReadyDesc": "Memento is already ready to use.",
+  "expeditionLogSynopsis": "EXPEDITION LOG SYNOPSIS",
+  "expeditionLogSynopsisPrompt": "Optional summary to record in {name}'s Field Notes journal:",
+  "@expeditionLogSynopsisPrompt": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "expeditionLogHint": "e.g. Banished the Grim at Lake Mälaren. Discovered the cursed amulet.",
+  "confirmMysteryConclusion": "Confirm mystery conclusion. The following rewards and records will be finalized:",
+  "investigator": "Investigator",
+  "advancementPoints": "Advancement Points",
+  "advancementPointsValue": "+{xp} XP (Total: {total})",
+  "@advancementPointsValue": {
+    "placeholders": {
+      "xp": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "headquartersDevPoints": "Headquarters Dev Points",
+  "devPointsValue": "+{points} Dev Points",
+  "@devPointsValue": {
+    "placeholders": {
+      "points": { "type": "int" }
+    }
+  },
+  "mementoSolace": "Memento Solace",
+  "mementoRestoredReady": "Restored & Ready",
+  "mementoSpent": "Spent",
+  "mementoReady": "Ready",
+  "journalNote": "Journal Note",
+  "advancementSpendNote": "Advancement points can be spent on Skills and Talents in the Experience tab at any time.",
+
+  "toRenovateHq": "To renovate & expand HQ",
+  "operationalUpgrades": "{count} operational upgrades",
+  "@operationalUpgrades": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "staffOnDuty": "{hired} / {total} ON DUTY",
+  "@staffOnDuty": {
+    "placeholders": {
+      "hired": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "staffActiveOnGrounds": "Staff active on grounds",
+  "totalXpRewarded": "+{xp} total XP rewarded",
+  "@totalXpRewarded": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "hiredStaffRoster": "HIRED STAFF ROSTER",
+  "noExpeditionsRecorded": "No expeditions recorded yet.",
+  "tapLogExpeditionPrompt": "Tap \"Log Expedition\" to record your first completed mystery.",
+  "removeExpeditionLogTitle": "REMOVE EXPEDITION LOG",
+  "removeExpeditionLogPrompt": "Are you sure you wish to remove \"{title}\" from the Castle Gyllencreutz chronicles?",
+  "@removeExpeditionLogPrompt": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "remove": "REMOVE",
+  "xpAwardedBadge": "+{xp} XP AWARDED",
+  "@xpAwardedBadge": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "awardedToInvestigators": "Awarded to participating Society investigators",
+  "builtStatus": "BUILT",
+  "costPoints": "COST: {cost} PTS",
+  "@costPoints": {
+    "placeholders": {
+      "cost": { "type": "int" }
+    }
+  },
+  "notEnoughDevPoints": "Not enough Development Points to build {name}. Requires {cost} PTS.",
+  "@notEnoughDevPoints": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "cost": { "type": "int" }
+    }
+  },
+  "expeditionDate": "Expedition Date",
+  "expeditionDateHint": "e.g. November 14, 1882",
+  "expeditionSummaryLabel": "Expedition Summary & Secrets Unveiled",
+  "expeditionSummaryHint": "Describe the encounter, rituals performed, or vaesen banished...",
+  "experienceAwarded": "Experience Awarded:",
+
+  "gearAndFinances": "GEAR & FINANCES",
+  "addGear": "ADD GEAR",
+  "resources": "RESOURCES",
+  "capital": "CAPITAL",
+  "carryingSlots": "Carrying: {carry} / {maxCarry} slots (Physique + 2)",
+  "@carryingSlots": {
+    "placeholders": {
+      "carry": { "type": "int" },
+      "maxCarry": { "type": "int" }
+    }
+  },
+  "encumberedPenalty": "ENCUMBERED (-2 Agility)",
+  "weaponsAndArsenal": "WEAPONS & ARSENAL",
+  "experience": "EXPERIENCE",
+  "debriefButton": "DEBRIEF (+XP)",
+  "currentXp": "CURRENT XP",
+  "mysteryPreparationAndAdvantages": "MYSTERY PREPARATION & ADVANTAGES",
+  "prepare": "PREPARE",
+  "conclude": "CONCLUDE",
+
+  "activeAdvantageBonus": "ACTIVE ADVANTAGE (+2 DICE)",
+  "dismissAdvantage": "Dismiss Advantage",
+  "advantageSpentSnackbar": "Advantage spent for +2 dice!",
+  "spendAdvantageBonus": "SPEND ADVANTAGE (+2 DICE)",
+  "noActiveAdvantageDesc": "No active Advantage. Before departing for a mystery, prepare at Castle Gyllencreutz or Upsala to gain +2 dice on a key test.",
+  "investigatorDossier": "INVESTIGATOR DOSSIER",
+  "viewDossier": "VIEW DOSSIER",
+  "motivation": "MOTIVATION",
+  "traumaAndTheSight": "TRAUMA & THE SIGHT",
+  "darkSecret": "DARK SECRET",
+  "personalMemento": "PERSONAL MEMENTO",
+  "drewSolaceSnackbar": "Drew solace from memento! Healed up to 2 conditions.",
+  "solaceUsed": "SOLACE USED",
+  "fieldNotesAndExpeditionLog": "FIELD NOTES & EXPEDITION LOG",
+  "openJournal": "OPEN JOURNAL ({count}) →",
+  "@openJournal": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noFieldNotesRecorded": "No field notes recorded yet. Tap \"OPEN JOURNAL\" or \"VIEW DOSSIER\" to write notes.",
+  "talentsAndAbilities": "TALENTS & ABILITIES",
+  "talentsCountBadge": "{count} TALENTS",
+  "@talentsCountBadge": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noTalentsAcquired": "No talents acquired yet.",
+  "choosePreparation": "CHOOSE PREPARATION",
+  "select": "SELECT",
+  "preparedSnackbar": "Prepared: {title} (+2 Advantage active)!",
+  "@preparedSnackbar": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+
+  "narrativeFoundations": "NARRATIVE FOUNDATIONS",
+  "trauma": "TRAUMA",
+  "memento": "MEMENTO",
+  "whatDrivesInvestigator": "What drives this investigator?",
+  "traumaPlaceholder": "A wound that never fully healed\u2026",
+  "darkSecretPlaceholder": "Something you dare not speak aloud\u2026",
+  "mementoPlaceholder": "A cherished keepsake\u2026",
+  "fieldNotes": "FIELD NOTES",
+  "addNote": "ADD NOTE",
+  "noFieldNotesYet": "No field notes yet.\nRecord clues, rumours, and NPC details here.",
+  "addFieldNote": "ADD FIELD NOTE",
+  "fieldNoteHint": "Record clues, rumours, NPC details\u2026",
+  "noteNumber": "Note {number}",
+  "@noteNumber": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+
+  "importJson": "IMPORT JSON",
+  "newInvestigator": "NEW INVESTIGATOR",
+  "active": "ACTIVE",
+  "healthy": "HEALTHY",
+  "broken": "BROKEN",
+  "activate": "ACTIVATE",
+  "export": "EXPORT",
+  "retireInvestigatorTooltip": "Retire / Delete Investigator",
+  "exportedSnackbar": "{name} exported! JSON copied to clipboard.",
+  "@exportedSnackbar": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "retireInvestigatorTitle": "RETIRE INVESTIGATOR",
+  "retireInvestigatorPrompt": "Are you certain you wish to retire {name}?\n\nThis will permanently remove their records, gear, and field notes from the Society archives.",
+  "@retireInvestigatorPrompt": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "retiredSnackbar": "{name} has been retired from the Society.",
+  "@retiredSnackbar": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "importInvestigatorJsonTitle": "IMPORT INVESTIGATOR JSON",
+  "importJsonPrompt": "Paste a valid Vaesen Beyond character JSON export below:",
+  "pasteFromClipboard": "PASTE FROM CLIPBOARD",
+  "importInvestigatorBtn": "IMPORT INVESTIGATOR",
+  "importedSnackbar": "Imported and activated {name}!",
+  "@importedSnackbar": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "enterValidJsonError": "Please enter or paste character JSON.",
+  "invalidJsonError": "Invalid character JSON format: {error}",
+  "@invalidJsonError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "brokenBothDesc": "Both body and mind have collapsed. Incapacitated.",
+  "brokenPhysicalDesc": "Physical trauma has shattered your endurance.",
+  "brokenMentalDesc": "Psychological terror has overwhelmed your sanity.",
+  "activeCriticalInjuries": "ACTIVE CRITICAL INJURIES",
+  "treatInjuryTooltip": "Treat / Remove Injury",
+  "physicalInjury": "PHYSICAL INJURY",
+  "mentalInjury": "MENTAL INJURY",
+  "rollD66Value": "ROLL: {value}",
+  "@rollD66Value": {
+    "placeholders": {
+      "value": { "type": "int" }
+    }
+  },
+  "timeLimitToSave": "Time Limit to Save",
+  "treatmentSkill": "Treatment Skill",
+  "healingTimeLabel": "Healing Time",
+  "reRollD66": "RE-ROLL D66",
+  "applyInjury": "APPLY INJURY",
+
+  "restoreSampleInvestigators": "RESTORE SAMPLE INVESTIGATORS",
+  "pregensRestoredSnackbar": "Standard pregenerated investigators restored.",
+  "ageLabel": "AGE {age}",
+  "@ageLabel": {
+    "placeholders": {
+      "age": { "type": "int" }
+    }
+  },
+  "resLabel": "RES",
+  "capLabel": "CAP",
+
+  "legalAndCopyrightNotice": "LEGAL & COPYRIGHT NOTICE",
+  "societyArchivesUpsalaChapter": "The Society Archives · Upsala Chapter",
+  "closeNoticeTooltip": "Close notice",
+  "legalQuote": "\"In the shadows of the ancient forests and cobblestone alleys of nineteenth-century Scandinavia, those with The Sight uncover mysteries the world prefers to forget.\"",
+  "vaesenCopyrightTitle": "Vaesen – Nordic Horror Roleplaying",
+  "vaesenCopyrightContent": "Vaesen – Nordic Horror Roleplaying is copyright © Fria Ligan AB (Free League Publishing). All rights reserved.",
+  "originalWorkTitle": "Original Work & Concept",
+  "originalWorkContent": "Vaesen is based on the illustrated book \"Vaesen: Spirits and Monsters of Scandinavian Folklore\" by acclaimed author and illustrator Johan Egerkrans.",
+  "unofficialFanCompanionTitle": "Unofficial Fan Companion",
+  "unofficialFanCompanionContent": "Vaesen Beyond is an unofficial, non-commercial fan-made companion application created for personal tabletop play in accordance with Free League's community and workshop guidelines.\n\nThis project is not affiliated with, endorsed, sponsored, or specifically approved by Fria Ligan AB or Johan Egerkrans.",
+  "yearZeroEngineTitle": "Year Zero Engine",
+  "yearZeroEngineContent": "All game mechanics, skill structures, condition tracking, and rules references are based on the Year Zero Engine by Free League Publishing.",
+  "offlinePrivateTitle": "100% Offline & Private",
+  "offlinePrivateContent": "All investigator dossiers, Castle Gyllencreutz headquarters progress, and session notes are stored strictly on your local device. No telemetry, account requirements, or remote data collection.",
+  "iUnderstandBtn": "I UNDERSTAND & ENTER SOCIETY",
+
+  "weaponsAndCombat": "WEAPONS & COMBAT",
+  "armorRating": "ARMOR: {rating}",
+  "@armorRating": {
+    "placeholders": {
+      "rating": { "type": "int" }
+    }
+  },
+  "noWeaponsEquipped": "No weapons equipped. Unarmed attacks deal 1 damage at Engaged range.",
+  "strike": "STRIKE",
+  "damage": "DAMAGE",
+  "switchInvestigator": "Switch Investigator",
+  "cherishedKeepsake": "Cherished Keepsake",
+  "solaceAlreadyUsedTooltip": "Solace Already Used",
+  "drawSolaceTooltip": "Draw Solace from Memento",
+  "initiativeQuickCheck": "+{value} INIT",
+  "@initiativeQuickCheck": {
+    "placeholders": {
+      "value": { "type": "int" }
+    }
+  },
+
+  "acquireItemAndGear": "ACQUIRE ITEM & GEAR",
+  "tabWeapons": "WEAPONS",
+  "tabArmor": "ARMOR",
+  "tabGear": "GEAR",
+  "tabCustom": "CUSTOM",
+  "add": "ADD",
+  "addedItemSnackbar": "Added {name} to inventory.",
+  "@addedItemSnackbar": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "itemType": "Item Type:",
+  "equipment": "Equipment",
+  "weapon": "Weapon",
+  "armor": "Armor",
+  "itemName": "Item Name",
+  "slotsCarryWeight": "Slots / Carry Weight: ",
+  "protectionRating": "Protection Rating: ",
+  "descriptionNotes": "Description / Notes",
+  "createAndAddToInventory": "CREATE & ADD TO INVENTORY",
+  "editGearTitle": "EDIT {type}",
+  "@editGearTitle": {
+    "placeholders": {
+      "type": { "type": "String" }
+    }
+  },
+  "name": "NAME",
+  "saveChanges": "SAVE CHANGES",
+  "qualities": "QUALITIES (comma-separated)",
+  "agilityPenalty": "AGILITY PENALTY",
+  "slots": "SLOTS",
+  "heavy": "Heavy",
+  "noInvestigatorsEnrolled": "No Investigators Enrolled",
+  "archivesVacantDesc": "The Society archives are currently vacant. Enroll a new investigator or reload the pregenerated roster to begin.",
+  "restorePregenRoster": "RESTORE PREGENERATED ROSTER",
+  "injuriesCount": "{count} INJURIES",
+  "@injuriesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "cancel": "CANCEL",
+  "close": "Close",
+  "dicePenalty": "-{count} Dice",
+  "@dicePenalty": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "lethal": "LETHAL",
+  "noEquippedArmor": "No equipped armor to absorb damage.",
+  "armorProtectionRoll": "Armor Protection Roll",
+  "rollingArmorDice": "Rolling {count} Armor dice. Each 6 absorbs 1 damage.",
+  "@rollingArmorDice": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "unharmed": "UNHARMED",
+  "conditionPenalty": "-{count} PENALTY",
+  "@conditionPenalty": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "lethalInjurySingle": "LETHAL: {name} — treat within {timeLimit}",
+  "@lethalInjurySingle": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "timeLimit": { "type": "String" }
+    }
+  },
+  "lethalInjuriesMultiple": "{count} LETHAL INJURIES — immediate treatment required!",
+  "@lethalInjuriesMultiple": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "initiativeDrawTitle": "{name} — Initiative Draw",
+  "@initiativeDrawTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "rollingAgilityBreakdown": "Rolling Agility ({count} D6) for turn priority.",
+  "@rollingAgilityBreakdown": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "societyRosterTooltip": "Society Roster & Party Management",
+  "rollAgilityTooltip": "Roll Agility Initiative Check ({count} D6)",
+  "@rollAgilityTooltip": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "initiativeCardRackTooltip": "1–10 Combat Initiative Card Rack",
+
+  "mementoLabel": "Memento: \"{memento}\"",
+  "@mementoLabel": {
+    "placeholders": {
+      "memento": { "type": "String" }
+    }
+  },
+  "weaponAttackTitle": "{weapon} Attack",
+  "@weaponAttackTitle": {
+    "placeholders": {
+      "weapon": { "type": "String" }
+    }
+  },
+  "weaponAttackBreakdown": "{skill} ({basePool}) + Weapon Bonus (+{bonus}) = {totalPool} D6. Damage: {damage}. Range: {range}.",
+  "@weaponAttackBreakdown": {
+    "placeholders": {
+      "skill": { "type": "String" },
+      "basePool": { "type": "int" },
+      "bonus": { "type": "int" },
+      "totalPool": { "type": "int" },
+      "damage": { "type": "int" },
+      "range": { "type": "String" }
+    }
+  },
+  "unarmedStrikeBrawl": "Unarmed Strike / Brawl",
+  "unarmedBreakdown": "Close Combat ({pool} D6). Damage: 1. Range: Engaged.",
+  "@unarmedBreakdown": {
+    "placeholders": {
+      "pool": { "type": "int" }
+    }
+  },
+  "societyTalismanD6": "Society Talisman D6",
+  "freeTabletopDicePool": "Free tabletop dice pool builder.",
+  "investigatorTalents": "INVESTIGATOR TALENTS",
+  "noTalentsCurrently": "No talents currently acquired.",
+  "dicePoolBreakdown": "DICE POOL BREAKDOWN",
+  "situationalModifier": "SITUATIONAL MODIFIER",
+  "rangedWeapon": "Ranged Weapon",
+  "meleeWeapon": "Melee Weapon",
+  "weaponDescription": "Damage: {damage} • Range: {range} • Bonus: +{bonus}",
+  "@weaponDescription": {
+    "placeholders": {
+      "damage": { "type": "int" },
+      "range": { "type": "String" },
+      "bonus": { "type": "int" }
+    }
+  },
+  "governedBy": "Governed by {attribute}",
+  "@governedBy": {
+    "placeholders": {
+      "attribute": { "type": "String" }
+    }
+  },
+  "rollNDice": "ROLL {count} DICE",
+  "@rollNDice": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dmgLabel": "DMG {damage}",
+  "@dmgLabel": {
+    "placeholders": {
+      "damage": { "type": "int" }
+    }
+  },
+  "bonusDie": "+{bonus} Die",
+  "@bonusDie": {
+    "placeholders": {
+      "bonus": { "type": "int" }
+    }
+  },
+
+  "sessionDebrief": "SESSION DEBRIEF",
+  "raiseSkillXp": "RAISE SKILL (5 XP)",
+  "learnTalentXp": "LEARN TALENT (5 XP)",
+  "claimXp": "CLAIM XP",
+  "awardedXp": "Awarded +{earned} XP to {name}!",
+  "@awardedXp": {
+    "placeholders": {
+      "earned": { "type": "int" },
+      "name": { "type": "String" }
+    }
+  },
+  "raiseSkillTitle": "RAISE {skill}",
+  "@raiseSkillTitle": {
+    "placeholders": {
+      "skill": { "type": "String" }
+    }
+  },
+  "xpCost": "XP Cost: {cost}",
+  "@xpCost": {
+    "placeholders": {
+      "cost": { "type": "int" }
+    }
+  },
+  "spendXp": "SPEND {cost} XP",
+  "@spendXp": {
+    "placeholders": {
+      "cost": { "type": "int" }
+    }
+  },
+  "raisedSkillSnackbar": "Raised {skill} to Rank {rank}! (-5 XP)",
+  "@raisedSkillSnackbar": {
+    "placeholders": {
+      "skill": { "type": "String" },
+      "rank": { "type": "int" }
+    }
+  },
+  "raiseASkill": "RAISE A SKILL (5 XP)",
+  "currentRankOf": "Current Rank: {rank} / 5  ({attribute})",
+  "@currentRankOf": {
+    "placeholders": {
+      "rank": { "type": "int" },
+      "attribute": { "type": "String" }
+    }
+  },
+  "raisedSkillBrief": "Raised {skill} to rank {rank}!",
+  "@raisedSkillBrief": {
+    "placeholders": {
+      "skill": { "type": "String" },
+      "rank": { "type": "int" }
+    }
+  },
+  "learnNewTalent": "LEARN NEW TALENT (5 XP)",
+  "allTalentsAcquired": "All talents acquired!",
+  "acquiredTalent": "Acquired talent: {name}!",
+  "@acquiredTalent": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "learn": "LEARN",
+  "forgeHomebrew": "FORGE HOMEBREW",
+  "saveChanges": "SAVE CHANGES",
+  "editType": "EDIT {type}",
+  "@editType": {
+    "placeholders": {
+      "type": { "type": "String" }
+    }
+  },
+  "heavy": "Heavy",
+  "add": "ADD",
+  "addedToInventory": "Added {name} to inventory.",
+  "@addedToInventory": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "itemType": "Item Type:",
+  "slotsCarryWeight": "Slots / Carry Weight: ",
+  "dmg": "Dmg: ",
+  "bonus": "Bonus: ",
+  "protectionRating": "Protection Rating: ",
+  "createAndAdd": "CREATE & ADD TO INVENTORY",
+  "solaceAlreadyUsedTooltip": "Solace Already Used",
+  "drawSolaceTooltip": "Draw Solace from Memento",
+  "damage": "DAMAGE",
+  "active": "ACTIVE",
+  "ready": "READY",
+  "adventuringGear": "ADVENTURING GEAR",
+
+  "noArmorProtectionToAbsorb": "No armor protection to absorb damage.",
+  "itemsCount": "{count, plural, =1{1 ITEM} other{{count} ITEMS}}",
+  "@itemsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noWeaponsEquippedPrompt": "No weapons equipped. Tap \"+ ADD GEAR\" to equip weapons.",
+  "noArmorEquippedPrompt": "No armor equipped. Ordinary Clothing (0 Protection).",
+  "typesCount": "{count, plural, =1{1 TYPE} other{{count} TYPES}}",
+  "@typesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noEquipmentCarriedPrompt": "No general equipment carried. Tap \"+ ADD GEAR\" to pack items.",
+  "weightSlot": "Weight: {slots} {slots, plural, =1{slot} other{slots}} {heavyLabel}",
+  "@weightSlot": {
+    "placeholders": {
+      "slots": { "type": "int" },
+      "heavyLabel": { "type": "String" }
+    }
+  },
+
+  "talentName": "TALENT NAME",
+  "archetypeRequirement": "ARCHETYPE REQUIREMENT",
+  "mechanicalEffectRule": "MECHANICAL EFFECT / RULE BENEFIT",
+  "narrativeFlavorOptional": "NARRATIVE FLAVOR / DESCRIPTION (OPTIONAL)",
+
+  "noArchetypesFoundMatching": "No archetypes found matching query.",
+  "noTalentsFoundMatching": "No talents found matching query.",
+  "noInjuriesFoundMatching": "No critical injuries found matching query.",
+  "noGearFoundInCategory": "No gear found in this category.",
+  "noRulesFoundMatching": "No rules found matching query.",
+
+  "step1Title": "Step 1: Choose Archetype & Name",
+  "investigatorFullName": "INVESTIGATOR FULL NAME",
+  "gothicPortrait": "GOTHIC PORTRAIT",
+  "replaceCustom": "REPLACE CUSTOM",
+  "selectArchetype": "SELECT ARCHETYPE",
+  "selectGothicPortrait": "SELECT GOTHIC PORTRAIT",
+  "replace": "REPLACE",
+  "step2Title": "Step 2: Choose Age Group",
+  "exactInvestigatorAge": "EXACT INVESTIGATOR AGE",
+  "exactAgeYearsOld": "Exact Age: {age} years old",
+  "@exactAgeYearsOld": {
+    "placeholders": {
+      "age": { "type": "int" }
+    }
+  },
+  "step3Title": "Step 3: Point Allocation",
+  "attributePointsBudget": "ATTRIBUTE POINTS BUDGET",
+  "pointsSpent": "{spent} / {total} Points Spent",
+  "@pointsSpent": {
+    "placeholders": {
+      "spent": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "skillResourcePointsBudget": "SKILL & RESOURCE POINTS BUDGET",
+  "coreAttributes": "CORE ATTRIBUTES",
+  "baselinePoints": "Baseline: 2",
+  "investigatorSkills": "INVESTIGATOR SKILLS",
+  "rangeSkills": "Range: 0–2 (Main: 3)",
+  "step4Title": "Step 4: Starting Talent",
+  "forge": "FORGE",
+  "step5Title": "Step 5: Narrative Foundations",
+  "finalStepTitle": "Final Step: Review & Enroll",
+  "finalStepSubtitle": "Verify your investigator folio before signing the Society enrollment register.",
+  "startingGearPack": "STARTING GEAR PACK",
+  "startingTalent": "STARTING TALENT",
+  "attributesMatrix": "ATTRIBUTES MATRIX",
+  "trainedSkills": "TRAINED SKILLS",
+  "narrativeFoundations": "NARRATIVE FOUNDATIONS",
+  "attributesLabel": "ATTRIBUTES",
+  "skillsLabel": "SKILLS",
+  "lodgingLabel": "Lodging: ",
+  "clothesLabel": "Clothes: ",
+  "suggestionsTapToSelect": "SUGGESTIONS (TAP TO SELECT):",
+  "mementoD66Table": "MEMENTO (D66 TABLE)",
+  "mementoSolaceDesc": "Solace: Heal up to 2 Conditions once per mystery.",
+  "investigatorNameRequiredValidation": "• Investigator Name is required (Step 1)",
+  "forgeHomebrewTalent": "FORGE HOMEBREW TALENT",
+  "forgeHomebrewTalentDesc": "Record a unique homebrew talent for your investigators or chapter house.",
+  "forgeTalent": "FORGE TALENT",
+  "unknownInvestigator": "Unknown Investigator",
+  "notRecorded": "Not recorded",
+  "rollD66": "ROLL D66",
+  "enrollmentRequirementsIncomplete": "ENROLLMENT REQUIREMENTS INCOMPLETE",
+  "goToStep1Name": "GO TO STEP 1 (NAME)",
+  "goToStep3Stats": "GO TO STEP 3 (STATS)",
+  "resourcesAndLiving": "RESOURCES & LIVING",
+  "motivationTitle": "MOTIVATION",
+  "traumaTheSightTitle": "TRAUMA (THE SIGHT)",
+  "darkSecretTitle": "DARK SECRET"
 }

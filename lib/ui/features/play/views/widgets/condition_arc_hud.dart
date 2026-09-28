@@ -11,6 +11,7 @@ import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_mode
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/conditions_card.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 
 class ConditionArcHud extends StatefulWidget {
   final Character character;
@@ -67,18 +68,18 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
     final protection = _getEquippedArmorProtection(activeCharacter);
     if (protection <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No equipped armor to absorb damage.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)?.noEquippedArmor ?? 'No equipped armor to absorb damage.'),
           backgroundColor: AppColors.surfaceOverlay,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
     }
     widget.diceViewModel.rollCustomPool(
       poolSize: protection,
-      title: 'Armor Protection Roll',
-      breakdown: 'Rolling $protection Armor dice. Each 6 absorbs 1 damage.',
+      title: AppLocalizations.of(context)?.armorProtectionRoll ?? 'Armor Protection Roll',
+      breakdown: AppLocalizations.of(context)?.rollingArmorDice(protection) ?? 'Rolling $protection Armor dice. Each 6 absorbs 1 damage.',
     );
     showDialog(
       context: context,
@@ -267,7 +268,7 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
                                 const Icon(Icons.shield_outlined, color: AppColors.goldBright, size: 14),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '$armorProt ARMOR',
+                                  AppLocalizations.of(context)?.armorRating(armorProt) ?? '$armorProt ARMOR',
                                   style: AppTypography.statValue.copyWith(
                                     fontSize: 10,
                                     color: AppColors.goldBright,
@@ -302,10 +303,10 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
                             ),
                             child: Text(
                               isBroken
-                                  ? 'BROKEN'
+                                  ? (AppLocalizations.of(context)?.broken ?? 'BROKEN')
                                   : (physPenalty > 0 || mntPenalty > 0)
-                                      ? '-${physPenalty + mntPenalty} PENALTY'
-                                      : 'UNHARMED',
+                                      ? (AppLocalizations.of(context)?.conditionPenalty(physPenalty + mntPenalty) ?? '-${physPenalty + mntPenalty} PENALTY')
+                                      : (AppLocalizations.of(context)?.unharmed ?? 'UNHARMED'),
                               style: AppTypography.labelSmall.copyWith(
                                 fontSize: 9,
                                 color: isBroken
@@ -343,8 +344,8 @@ class _ConditionArcHudState extends State<ConditionArcHud> with SingleTickerProv
                     Expanded(
                       child: Text(
                         lethalInjuries.length == 1
-                            ? 'LETHAL: ${lethalInjuries.first.injury.name} — treat within ${lethalInjuries.first.injury.timeLimit}'
-                            : '${lethalInjuries.length} LETHAL INJURIES — immediate treatment required!',
+                            ? (AppLocalizations.of(context)?.lethalInjurySingle(lethalInjuries.first.injury.name, lethalInjuries.first.injury.timeLimit) ?? 'LETHAL: ${lethalInjuries.first.injury.name} — treat within ${lethalInjuries.first.injury.timeLimit}')
+                            : (AppLocalizations.of(context)?.lethalInjuriesMultiple(lethalInjuries.length) ?? '${lethalInjuries.length} LETHAL INJURIES — immediate treatment required!'),
                         style: AppTypography.labelSmall.copyWith(
                           color: AppColors.lethal,
                           fontSize: 9.5,

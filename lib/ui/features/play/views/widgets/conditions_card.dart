@@ -55,10 +55,10 @@ class ConditionsCard extends StatelessWidget {
                           ),
                           Text(
                             cond.brokenPhysical && cond.brokenMental
-                                ? 'Both body and mind have collapsed. Incapacitated.'
+                                ? (AppLocalizations.of(context)?.brokenBothDesc ?? 'Both body and mind have collapsed. Incapacitated.')
                                 : cond.brokenPhysical
-                                    ? 'Physical trauma has shattered your endurance.'
-                                    : 'Psychological terror has overwhelmed your sanity.',
+                                    ? (AppLocalizations.of(context)?.brokenPhysicalDesc ?? 'Physical trauma has shattered your endurance.')
+                                    : (AppLocalizations.of(context)?.brokenMentalDesc ?? 'Psychological terror has overwhelmed your sanity.'),
                             style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary),
                           ),
                         ],
@@ -151,7 +151,7 @@ class ConditionsCard extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    '-${cond.physicalPenalty} Dice',
+                                    AppLocalizations.of(context)?.dicePenalty(cond.physicalPenalty) ?? '-${cond.physicalPenalty} Dice',
                                     style: AppTypography.bodySmall.copyWith(
                                       color: AppColors.physicalCondition,
                                       fontWeight: FontWeight.bold,
@@ -163,23 +163,23 @@ class ConditionsCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           _buildConditionTile(
-                            label: 'Exhausted',
+                            label: AppLocalizations.of(context)?.exhausted ?? 'Exhausted',
                             value: cond.exhausted,
                             onChanged: (val) => viewModel.toggleCondition(exhausted: val),
                           ),
                           _buildConditionTile(
-                            label: 'Battered',
+                            label: AppLocalizations.of(context)?.battered ?? 'Battered',
                             value: cond.battered,
                             onChanged: (val) => viewModel.toggleCondition(battered: val),
                           ),
                           _buildConditionTile(
-                            label: 'Wounded',
+                            label: AppLocalizations.of(context)?.wounded ?? 'Wounded',
                             value: cond.wounded,
                             onChanged: (val) => viewModel.toggleCondition(wounded: val),
                           ),
                           const Divider(color: AppColors.surfaceOverlay, height: 12),
                           _buildConditionTile(
-                            label: 'Broken (Phys)',
+                            label: AppLocalizations.of(context)?.brokenPhys ?? 'Broken (Phys)',
                             value: cond.brokenPhysical,
                             isBroken: true,
                             onChanged: (val) => viewModel.setBroken(isPhysical: true, broken: val ?? false),
@@ -225,7 +225,7 @@ class ConditionsCard extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    '-${cond.mentalPenalty} Dice',
+                                    AppLocalizations.of(context)?.dicePenalty(cond.mentalPenalty) ?? '-${cond.mentalPenalty} Dice',
                                     style: AppTypography.bodySmall.copyWith(
                                       color: AppColors.mentalCondition,
                                       fontWeight: FontWeight.bold,
@@ -237,23 +237,23 @@ class ConditionsCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           _buildConditionTile(
-                            label: 'Angry',
+                            label: AppLocalizations.of(context)?.angry ?? 'Angry',
                             value: cond.angry,
                             onChanged: (val) => viewModel.toggleCondition(angry: val),
                           ),
                           _buildConditionTile(
-                            label: 'Frightened',
+                            label: AppLocalizations.of(context)?.frightened ?? 'Frightened',
                             value: cond.frightened,
                             onChanged: (val) => viewModel.toggleCondition(frightened: val),
                           ),
                           _buildConditionTile(
-                            label: 'Hopeless',
+                            label: AppLocalizations.of(context)?.hopeless ?? 'Hopeless',
                             value: cond.hopeless,
                             onChanged: (val) => viewModel.toggleCondition(hopeless: val),
                           ),
                           const Divider(color: AppColors.surfaceOverlay, height: 12),
                           _buildConditionTile(
-                            label: 'Broken (Ment)',
+                            label: AppLocalizations.of(context)?.brokenMental ?? 'Broken (Ment)',
                             value: cond.brokenMental,
                             isBroken: true,
                             onChanged: (val) => viewModel.setBroken(isPhysical: false, broken: val ?? false),
@@ -268,7 +268,7 @@ class ConditionsCard extends StatelessWidget {
               // Active Critical Injuries List (if any)
               if (activeChar.activeInjuries.isNotEmpty) ...[
                 const SizedBox(height: 12),
-                Text('ACTIVE CRITICAL INJURIES', style: AppTypography.titleSmall.copyWith(fontSize: 12)),
+                Text(AppLocalizations.of(context)?.activeCriticalInjuries ?? 'ACTIVE CRITICAL INJURIES', style: AppTypography.titleSmall.copyWith(fontSize: 12)),
                 const SizedBox(height: 6),
                 ...activeChar.activeInjuries.map((inj) => Container(
                       margin: const EdgeInsets.only(bottom: 6),
@@ -293,7 +293,7 @@ class ConditionsCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${inj.injury.d66}: ${inj.injury.name} ${inj.injury.isLethal ? "[LETHAL]" : ""}',
+                                  '${inj.injury.d66}: ${inj.injury.name} ${inj.injury.isLethal ? "[${AppLocalizations.of(context)?.lethal ?? 'LETHAL'}]" : ""}',
                                   style: AppTypography.titleSmall.copyWith(
                                     fontSize: 12,
                                     color: inj.injury.isLethal ? AppColors.lethal : AppColors.goldBright,
@@ -308,7 +308,7 @@ class ConditionsCard extends StatelessWidget {
                           ),
                           IconButton(
                             icon: const Icon(Icons.check_circle_outline, size: 18, color: AppColors.gold),
-                            tooltip: 'Treat / Remove Injury',
+                            tooltip: AppLocalizations.of(context)?.treatInjuryTooltip ?? 'Treat / Remove Injury',
                             onPressed: () => viewModel.removeCriticalInjury(inj.id),
                           ),
                         ],

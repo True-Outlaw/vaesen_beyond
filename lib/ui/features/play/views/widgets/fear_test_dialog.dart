@@ -6,6 +6,7 @@ import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/d6_dice_widget.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 
 class FearTestDialog extends StatefulWidget {
@@ -36,6 +37,8 @@ class _FearTestDialogState extends State<FearTestDialog> {
     final attrVal = char.getAttribute(_chosenAttr);
     final totalPool = (attrVal + _companionsCount - mentalPenalty).clamp(1, 30);
 
+    final l10n = context.l10n;
+
     return ListenableBuilder(
       listenable: _diceVm,
       builder: (context, _) {
@@ -63,7 +66,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'FEAR TEST',
+                            l10n?.fearTestTitle ?? 'FEAR TEST',
                             style: AppTypography.titleLarge.copyWith(color: AppColors.crimsonLight),
                           ),
                         ),
@@ -74,20 +77,26 @@ class _FearTestDialogState extends State<FearTestDialog> {
                       ],
                     ),
                     Text(
-                      'You come face-to-face with an uncanny horror from Scandinavian folklore.',
+                      l10n?.fearTestIntro ??
+                          'You come face-to-face with an uncanny horror from Scandinavian folklore.',
                       style: AppTypography.bodySmall,
                     ),
                     const SizedBox(height: 12),
 
                     if (result == null) ...[
                       // Attribute Choice
-                      Text('CHOOSE RESISTANCE ATTRIBUTE', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                      Text(
+                        l10n?.chooseResistanceAttribute ?? 'CHOOSE RESISTANCE ATTRIBUTE',
+                        style: AppTypography.titleSmall.copyWith(fontSize: 11),
+                      ),
                       const SizedBox(height: 6),
                       Row(
                         children: [
                           Expanded(
                             child: ChoiceChip(
-                              label: Text('LOGIC (${char.getAttribute(AttributeType.logic)})'),
+                              label: Text(
+                                '${AttributeType.logic.localizedName(context).toUpperCase()} (${char.getAttribute(AttributeType.logic)})',
+                              ),
                               selected: _chosenAttr == AttributeType.logic,
                               selectedColor: AppColors.goldBright,
                               labelStyle: TextStyle(
@@ -100,7 +109,9 @@ class _FearTestDialogState extends State<FearTestDialog> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: ChoiceChip(
-                              label: Text('EMPATHY (${char.getAttribute(AttributeType.empathy)})'),
+                              label: Text(
+                                '${AttributeType.empathy.localizedName(context).toUpperCase()} (${char.getAttribute(AttributeType.empathy)})',
+                              ),
                               selected: _chosenAttr == AttributeType.empathy,
                               selectedColor: AppColors.goldBright,
                               labelStyle: TextStyle(
@@ -116,7 +127,10 @@ class _FearTestDialogState extends State<FearTestDialog> {
                       const SizedBox(height: 12),
 
                       // Fear Value Picker
-                      Text('CREATURE FEAR VALUE', style: AppTypography.titleSmall.copyWith(fontSize: 11)),
+                      Text(
+                        l10n?.creatureFearValue ?? 'CREATURE FEAR VALUE',
+                        style: AppTypography.titleSmall.copyWith(fontSize: 11),
+                      ),
                       const SizedBox(height: 6),
                       Row(
                         children: [1, 2, 3].map((fv) {
@@ -128,7 +142,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
                                 showCheckmark: false,
                                 label: Center(
                                   child: Text(
-                                    'FEAR $fv',
+                                    l10n?.fearLevel(fv) ?? 'FEAR $fv',
                                     style: TextStyle(
                                       color: isSelected ? Colors.white : AppColors.textPrimary,
                                       fontWeight: FontWeight.bold,
@@ -160,7 +174,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
                           children: [
                             Expanded(
                               child: Text(
-                                'Allies in zone (+1 die, max +3):',
+                                l10n?.alliesInZone ?? 'Allies in zone (+1 die, max +3):',
                                 style: AppTypography.bodyMedium.copyWith(fontSize: 13),
                               ),
                             ),
@@ -172,7 +186,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
                                 items: [0, 1, 2, 3].map((n) {
                                   return DropdownMenuItem(
                                     value: n,
-                                    child: Text('+$n dice', style: AppTypography.titleSmall),
+                                    child: Text(l10n?.plusDice(n) ?? '+$n dice', style: AppTypography.titleSmall),
                                   );
                                 }).toList(),
                                 onChanged: (val) => setState(() => _companionsCount = val ?? 0),
@@ -188,7 +202,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
 
                     Center(
                       child: Text(
-                        'Total Dice Pool: $totalPool d6',
+                        l10n?.totalDicePool(totalPool) ?? 'Total Dice Pool: $totalPool d6',
                         style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright),
                       ),
                     ),
@@ -207,7 +221,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
                           );
                         },
                         icon: const Icon(Icons.casino, color: Colors.white),
-                        label: const Text('ROLL FEAR TEST'),
+                        label: Text(l10n?.rollFearTest ?? 'ROLL FEAR TEST'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.crimson,
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -238,7 +252,9 @@ class _FearTestDialogState extends State<FearTestDialog> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            result.passed ? 'STEADY NERVES: PASSED!' : 'TERRIFIED!',
+                            result.passed
+                                ? (l10n?.steadyNervesPassed ?? 'STEADY NERVES: PASSED!')
+                                : (l10n?.terrified ?? 'TERRIFIED!'),
                             style: AppTypography.titleMedium.copyWith(
                               color: result.passed ? AppColors.goldBright : AppColors.crimsonLight,
                               fontWeight: FontWeight.bold,
@@ -253,7 +269,8 @@ class _FearTestDialogState extends State<FearTestDialog> {
                           if (!result.passed) ...[
                             const SizedBox(height: 8),
                             Text(
-                              '• Panicked Duration: ${result.panickedRounds} rounds\n• Suffers ${result.conditionsSuffered} Mental Condition(s)',
+                              l10n?.panickedDuration(result.panickedRounds, result.conditionsSuffered) ??
+                                  '• Panicked Duration: ${result.panickedRounds} rounds\n• Suffers ${result.conditionsSuffered} Mental Condition(s)',
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.lethal,
                                 fontWeight: FontWeight.bold,
@@ -285,7 +302,7 @@ class _FearTestDialogState extends State<FearTestDialog> {
                           _diceVm.clearRoll();
                           setState(() => _conditionsApplied = false);
                         },
-                        child: const Text('ROLL AGAIN'),
+                        child: Text(l10n?.rollAgain ?? 'ROLL AGAIN'),
                       ),
                     ),
 
@@ -305,7 +322,8 @@ class _FearTestDialogState extends State<FearTestDialog> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          '${result.conditionsSuffered} mental condition(s) applied.',
+                                          l10n?.mentalConditionsAppliedSnackbar(result.conditionsSuffered) ??
+                                              '${result.conditionsSuffered} mental condition(s) applied.',
                                         ),
                                         backgroundColor: AppColors.crimsonDark,
                                         duration: const Duration(seconds: 2),
@@ -320,8 +338,9 @@ class _FearTestDialogState extends State<FearTestDialog> {
                           ),
                           label: Text(
                             _conditionsApplied
-                                ? 'CONDITIONS APPLIED'
-                                : 'APPLY ${result.conditionsSuffered} MENTAL CONDITION(S)',
+                                ? (l10n?.conditionsApplied ?? 'CONDITIONS APPLIED')
+                                : (l10n?.applyMentalConditions(result.conditionsSuffered) ??
+                                    'APPLY ${result.conditionsSuffered} MENTAL CONDITION(S)'),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _conditionsApplied

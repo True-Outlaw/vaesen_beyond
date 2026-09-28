@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
@@ -44,17 +45,17 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
 
-  // Step 1: Debrief Questions (Chapter 2, p. 25 official debrief)
-  final List<String> _questions = const [
-    '1. Did you participate in the session? (Always at least 1 XP)',
-    '2. Did you confront any vaesen? (+1 XP)',
-    '3. Did you identify a previously unknown vaesen? (+1 XP)',
-    '4. Were you affected by your dark secret? (+1 XP)',
-    '5. Did you take risks to protect other people? (+1 XP)',
-    '6. Have you learned anything? (+1 XP)',
-    '7. Did you develop something in your headquarters? (+1 XP)',
-    '8. Did you perform an extraordinary action? (+1 XP)',
+  List<String> _getQuestions(AppLocalizations? l10n) => [
+    l10n?.participatedQuestion ?? '1. Did you participate in the session? (Always at least 1 XP)',
+    l10n?.confrontedVaesenQuestion ?? '2. Did you confront any vaesen? (+1 XP)',
+    l10n?.identifiedVaesenQuestion ?? '3. Did you identify a previously unknown vaesen? (+1 XP)',
+    l10n?.darkSecretQuestion ?? '4. Were you affected by your dark secret? (+1 XP)',
+    l10n?.protectPeopleQuestion ?? '5. Did you take risks to protect other people? (+1 XP)',
+    l10n?.learnedAnythingQuestion ?? '6. Have you learned anything? (+1 XP)',
+    l10n?.developedHqQuestion ?? '7. Did you develop something in your headquarters? (+1 XP)',
+    l10n?.extraordinaryActionQuestion ?? '8. Did you perform an extraordinary action? (+1 XP)',
   ];
+
   late final List<bool> _answers;
 
   // Step 2: Castle & Solace
@@ -65,7 +66,7 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
   @override
   void initState() {
     super.initState();
-    _answers = List.filled(_questions.length, true);
+    _answers = List.filled(8, true);
     _restoreMemento = widget.character.isMementoUsed;
   }
 
@@ -91,6 +92,7 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
     final xp = _xpEarned;
     final dev = _devPointsEarned;
     final logText = _logCtrl.text.trim();
+    final l10n = context.l10n;
 
     await widget.viewModel.concludeMystery(
       xpEarned: xp,
@@ -114,7 +116,8 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Mystery Concluded! +$xp XP awarded to ${widget.character.name} · +$dev Castle Dev Points added.',
+                  l10n?.mysteryConcludedSnackbar(xp, widget.character.name, dev) ??
+                      'Mystery Concluded! +$xp XP awarded to ${widget.character.name} · +$dev Castle Dev Points added.',
                   style: AppTypography.bodySmall.copyWith(color: AppColors.goldBright),
                 ),
               ),
@@ -174,7 +177,7 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'CONCLUDE MYSTERY',
+                            context.l10n?.concludeMystery ?? 'CONCLUDE MYSTERY',
                             style: AppTypography.titleMedium.copyWith(
                               color: AppColors.goldBright,
                               letterSpacing: 1.0,
@@ -182,7 +185,8 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                             ),
                           ),
                           Text(
-                            'Step ${_currentStep + 1} of 3: ${_stepTitle(_currentStep)}',
+                            context.l10n?.stepOf(_currentStep + 1, 3, _stepTitle(context, _currentStep)) ??
+                                'Step ${_currentStep + 1} of 3: ${_stepTitle(context, _currentStep)}',
                             style: AppTypography.bodySmall.copyWith(
                               color: AppColors.goldDim,
                               fontSize: 11,
@@ -193,7 +197,7 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
-                      tooltip: 'Cancel',
+                      tooltip: context.l10n?.cancel ?? 'Cancel',
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -247,21 +251,27 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                       TextButton.icon(
                         onPressed: () => _goToStep(_currentStep - 1),
                         icon: const Icon(Icons.arrow_back, size: 14, color: AppColors.textMuted),
-                        label: const Text('BACK', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                        label: Text(
+                          context.l10n?.back ?? 'BACK',
+                          style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+                        ),
                       )
                     else
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                        child: Text(
+                          context.l10n?.cancel ?? 'CANCEL',
+                          style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+                        ),
                       ),
 
                     if (_currentStep < 2)
                       ElevatedButton.icon(
                         onPressed: () => _goToStep(_currentStep + 1),
                         icon: const Icon(Icons.arrow_forward, size: 14, color: Colors.black),
-                        label: const Text(
-                          'NEXT',
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
+                        label: Text(
+                          context.l10n?.next ?? 'NEXT',
+                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.goldBright,
@@ -273,9 +283,9 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                       ElevatedButton.icon(
                         onPressed: _commitConclude,
                         icon: const Icon(Icons.check_circle_outline, size: 16, color: Colors.black),
-                        label: const Text(
-                          'FINALIZE EXPEDITION',
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
+                        label: Text(
+                          context.l10n?.finalizeExpedition ?? 'FINALIZE EXPEDITION',
+                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.goldBright,
@@ -293,14 +303,15 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
     );
   }
 
-  String _stepTitle(int step) {
+  String _stepTitle(BuildContext context, int step) {
+    final l10n = context.l10n;
     switch (step) {
       case 0:
-        return 'Debrief Questionnaire';
+        return l10n?.debriefQuestionnaire ?? 'Debrief Questionnaire';
       case 1:
-        return 'Headquarters & Solace';
+        return l10n?.headquartersAndSolace ?? 'Headquarters & Solace';
       case 2:
-        return 'Review & Commit';
+        return l10n?.reviewAndCommit ?? 'Review & Commit';
       default:
         return '';
     }
@@ -308,16 +319,20 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
 
   // ── Step 1: Debrief ────────────────────────────────────────────────────────
   Widget _buildStep1Debrief() {
+    final l10n = context.l10n;
+    final questions = _getQuestions(l10n);
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
       children: [
         Text(
-          'Answer the 5 official Vaesen session questions. Each affirmative answer awards +1 Advancement Point (XP) to ${widget.character.name}:',
+          l10n?.debriefPrompt(widget.character.name) ??
+              'Answer the official Vaesen session questions. Each affirmative answer awards +1 Advancement Point (XP) to ${widget.character.name}:',
           style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, height: 1.4),
         ),
         const SizedBox(height: 12),
 
-        ...List.generate(_questions.length, (i) {
+        ...List.generate(questions.length, (i) {
           final isChecked = _answers[i];
           return Container(
             margin: const EdgeInsets.only(bottom: 8),
@@ -336,7 +351,7 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
               checkColor: Colors.black,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
               title: Text(
-                _questions[i],
+                questions[i],
                 style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: isChecked ? FontWeight.w600 : FontWeight.normal,
@@ -362,9 +377,12 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('XP TO BE AWARDED:', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim)),
               Text(
-                '+$_xpEarned ADVANCEMENT POINTS',
+                l10n?.xpToBeAwarded ?? 'XP TO BE AWARDED:',
+                style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim),
+              ),
+              Text(
+                l10n?.advancementPointsAwarded(_xpEarned) ?? '+$_xpEarned ADVANCEMENT POINTS',
                 style: const TextStyle(
                   color: AppColors.goldBright,
                   fontWeight: FontWeight.bold,
@@ -380,6 +398,8 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
 
   // ── Step 2: Castle & Solace ────────────────────────────────────────────────
   Widget _buildStep2Castle() {
+    final l10n = context.l10n;
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
       children: [
@@ -393,19 +413,26 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                 children: [
                   const Icon(Icons.castle_outlined, color: AppColors.gold, size: 18),
                   const SizedBox(width: 8),
-                  Text('CASTLE GYLLENCREUTZ DEVELOPMENT', style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright)),
+                  Text(
+                    l10n?.castleDevHeader ?? 'CASTLE GYLLENCREUTZ DEVELOPMENT',
+                    style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),
               Text(
-                'Headquarters gains Development Points upon completing a mystery, enabling new facilities, upgrades, and contacts.',
+                l10n?.castleDevPrompt ??
+                    'Headquarters gains Development Points upon completing a mystery, enabling new facilities, upgrades, and contacts.',
                 style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
               ),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Points Awarded:', style: AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary)),
+                  Text(
+                    l10n?.pointsAwarded ?? 'Points Awarded:',
+                    style: AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary),
+                  ),
                   Row(
                     children: [
                       IconButton(
@@ -447,14 +474,17 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                 children: [
                   const Icon(Icons.card_giftcard, color: AppColors.gold, size: 18),
                   const SizedBox(width: 8),
-                  Text('PERSONAL MEMENTO SOLACE', style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright)),
+                  Text(
+                    l10n?.personalMementoSolace ?? 'PERSONAL MEMENTO SOLACE',
+                    style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),
               Text(
                 widget.character.memento.isNotEmpty
                     ? 'Memento: "${widget.character.memento}"'
-                    : 'Personal token of comfort and healing.',
+                    : (l10n?.personalMementoDesc ?? 'Personal token of comfort and healing.'),
                 style: AppTypography.bodySmall.copyWith(color: AppColors.goldDim, fontSize: 11),
               ),
               const SizedBox(height: 8),
@@ -464,13 +494,13 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                 activeThumbColor: AppColors.goldBright,
                 activeTrackColor: AppColors.gold.withAlpha(120),
                 title: Text(
-                  'Restore Memento for Next Mystery',
+                  l10n?.restoreMementoLabel ?? 'Restore Memento for Next Mystery',
                   style: AppTypography.bodyMedium.copyWith(fontSize: 13, color: AppColors.textPrimary),
                 ),
                 subtitle: Text(
                   widget.character.isMementoUsed
-                      ? 'Currently spent. Restores ability to draw solace next mystery.'
-                      : 'Memento is already ready to use.',
+                      ? (l10n?.restoreMementoSpentDesc ?? 'Currently spent. Restores ability to draw solace next mystery.')
+                      : (l10n?.restoreMementoReadyDesc ?? 'Memento is already ready to use.'),
                   style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted),
                 ),
                 onChanged: (v) => setState(() => _restoreMemento = v),
@@ -490,12 +520,16 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                 children: [
                   const Icon(Icons.history_edu_outlined, color: AppColors.gold, size: 18),
                   const SizedBox(width: 8),
-                  Text('EXPEDITION LOG SYNOPSIS', style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright)),
+                  Text(
+                    l10n?.expeditionLogSynopsis ?? 'EXPEDITION LOG SYNOPSIS',
+                    style: AppTypography.titleSmall.copyWith(color: AppColors.goldBright),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),
               Text(
-                'Optional summary to record in ${widget.character.name}\'s Field Notes journal:',
+                l10n?.expeditionLogSynopsisPrompt(widget.character.name) ??
+                    'Optional summary to record in ${widget.character.name}\'s Field Notes journal:',
                 style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
               ),
               const SizedBox(height: 8),
@@ -504,7 +538,7 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
                 maxLines: 2,
                 style: AppTypography.bodyMedium.copyWith(fontSize: 12),
                 decoration: InputDecoration(
-                  hintText: 'e.g. Banished the Grim at Lake Mälaren. Discovered the cursed amulet.',
+                  hintText: l10n?.expeditionLogHint ?? 'e.g. Banished the Grim at Lake Mälaren. Discovered the cursed amulet.',
                   hintStyle: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
                   filled: true,
                   fillColor: AppColors.surfaceLight,
@@ -528,11 +562,14 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
 
   // ── Step 3: Summary ────────────────────────────────────────────────────────
   Widget _buildStep3Summary() {
+    final l10n = context.l10n;
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
       children: [
         Text(
-          'Confirm mystery conclusion. The following rewards and records will be finalized:',
+          l10n?.confirmMysteryConclusion ??
+              'Confirm mystery conclusion. The following rewards and records will be finalized:',
           style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, height: 1.4),
         ),
         const SizedBox(height: 14),
@@ -543,36 +580,39 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
             children: [
               _summaryRow(
                 icon: Icons.person_outline,
-                label: 'Investigator',
+                label: l10n?.investigator ?? 'Investigator',
                 value: widget.character.name,
                 valueColor: AppColors.goldBright,
               ),
               const OrnateDivider(height: 16),
               _summaryRow(
                 icon: Icons.military_tech_outlined,
-                label: 'Advancement Points',
-                value: '+$_xpEarned XP (Total: ${widget.character.experiencePoints + _xpEarned})',
+                label: l10n?.advancementPoints ?? 'Advancement Points',
+                value: l10n?.advancementPointsValue(_xpEarned, widget.character.experiencePoints + _xpEarned) ??
+                    '+$_xpEarned XP (Total: ${widget.character.experiencePoints + _xpEarned})',
                 valueColor: AppColors.goldBright,
               ),
               const OrnateDivider(height: 16),
               _summaryRow(
                 icon: Icons.castle_outlined,
-                label: 'Headquarters Dev Points',
-                value: '+$_devPointsEarned Dev Points',
+                label: l10n?.headquartersDevPoints ?? 'Headquarters Dev Points',
+                value: l10n?.devPointsValue(_devPointsEarned) ?? '+$_devPointsEarned Dev Points',
                 valueColor: AppColors.gold,
               ),
               const OrnateDivider(height: 16),
               _summaryRow(
                 icon: Icons.card_giftcard,
-                label: 'Memento Solace',
-                value: _restoreMemento ? 'Restored & Ready' : (widget.character.isMementoUsed ? 'Spent' : 'Ready'),
+                label: l10n?.mementoSolace ?? 'Memento Solace',
+                value: _restoreMemento
+                    ? (l10n?.mementoRestoredReady ?? 'Restored & Ready')
+                    : (widget.character.isMementoUsed ? (l10n?.mementoSpent ?? 'Spent') : (l10n?.mementoReady ?? 'Ready')),
                 valueColor: _restoreMemento || !widget.character.isMementoUsed ? AppColors.gold : AppColors.crimsonLight,
               ),
               if (_logCtrl.text.trim().isNotEmpty) ...[
                 const OrnateDivider(height: 16),
                 _summaryRow(
                   icon: Icons.edit_note,
-                  label: 'Journal Note',
+                  label: l10n?.journalNote ?? 'Journal Note',
                   value: _logCtrl.text.trim(),
                   valueColor: AppColors.textPrimary,
                 ),
@@ -595,7 +635,8 @@ class _ConcludeMysteryDialogState extends State<ConcludeMysteryDialog> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Advancement points can be spent on Skills and Talents in the Experience tab at any time.',
+                  l10n?.advancementSpendNote ??
+                      'Advancement points can be spent on Skills and Talents in the Experience tab at any time.',
                   style: AppTypography.bodySmall.copyWith(color: AppColors.goldBright, fontSize: 11),
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/data/seed/injuries_data.dart';
 import 'package:vaesen_beyond/domain/models/critical_injury.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
@@ -40,6 +41,7 @@ class _CriticalInjuryDialogState extends State<CriticalInjuryDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final inj = _currentInjury;
 
     return AlertDialog(
@@ -54,7 +56,7 @@ class _CriticalInjuryDialogState extends State<CriticalInjuryDialog> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'CRITICAL INJURY TABLE',
+              l10n?.criticalInjuryTable ?? 'CRITICAL INJURY TABLE',
               style: AppTypography.titleLarge.copyWith(color: AppColors.lethal),
             ),
           ),
@@ -75,7 +77,7 @@ class _CriticalInjuryDialogState extends State<CriticalInjuryDialog> {
               children: [
                 Expanded(
                   child: ChoiceChip(
-                    label: const Text('PHYSICAL INJURY'),
+                    label: Text(l10n?.physicalInjury ?? 'PHYSICAL INJURY'),
                     selected: _isPhysical,
                     selectedColor: AppColors.physicalCondition,
                     labelStyle: TextStyle(
@@ -93,7 +95,7 @@ class _CriticalInjuryDialogState extends State<CriticalInjuryDialog> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ChoiceChip(
-                    label: const Text('MENTAL INJURY'),
+                    label: Text(l10n?.mentalInjury ?? 'MENTAL INJURY'),
                     selected: !_isPhysical,
                     selectedColor: AppColors.mentalCondition,
                     labelStyle: TextStyle(
@@ -192,7 +194,7 @@ class _CriticalInjuryDialogState extends State<CriticalInjuryDialog> {
                   child: OutlinedButton.icon(
                     onPressed: _rollRandom,
                     icon: const Icon(Icons.casino, size: 16),
-                    label: const Text('RE-ROLL D66'),
+                    label: Text(l10n?.reRollD66 ?? 'RE-ROLL D66'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -208,7 +210,7 @@ class _CriticalInjuryDialogState extends State<CriticalInjuryDialog> {
                       backgroundColor: AppColors.crimson,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('APPLY INJURY'),
+                    child: Text(l10n?.applyInjury ?? 'APPLY INJURY'),
                   ),
                 ),
               ],

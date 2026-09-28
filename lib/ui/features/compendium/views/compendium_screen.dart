@@ -11,6 +11,7 @@ import 'package:vaesen_beyond/domain/models/critical_injury.dart';
 import 'package:vaesen_beyond/domain/models/gear.dart';
 import 'package:vaesen_beyond/domain/models/talent.dart';
 import 'package:vaesen_beyond/domain/models/vaesen_creature.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/utils/responsive.dart';
@@ -193,17 +194,17 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
           borderRadius: BorderRadius.circular(12),
           side: const BorderSide(color: AppColors.crimsonLight),
         ),
-        title: Text('Delete Homebrew Talent?', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
-        content: Text('Are you sure you want to permanently remove "${talent.name}" from the Compendium?'),
+        title: Text(AppLocalizations.of(context)?.deleteHomebrewTalentTitle ?? 'Delete Homebrew Talent?', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
+        content: Text(AppLocalizations.of(context)?.deleteHomebrewTalentPrompt(talent.name) ?? 'Are you sure you want to permanently remove "${talent.name}" from the Compendium?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.crimson),
-            child: const Text('DELETE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text(AppLocalizations.of(context)?.delete ?? 'DELETE', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -299,7 +300,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                 children: [
                   const Icon(Icons.auto_stories, color: AppColors.goldBright, size: 22),
                   const SizedBox(width: 10),
-                  Text('SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
+                  Text(AppLocalizations.of(context)?.societyCompendium ?? 'SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
                   const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -320,7 +321,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                   ),
                 ],
               )
-            : Text('SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
+            : Text(AppLocalizations.of(context)?.societyCompendium ?? 'SOCIETY COMPENDIUM', style: AppTypography.titleLarge),
         actions: [
           PopupMenuButton<String>(
             tooltip: 'Compendium Access Level: ${_bestiaryMode == "gamemaster" ? "Gamemaster" : _bestiaryMode == "playerLore" ? "Player Lore" : "Locked"}',
@@ -454,39 +455,49 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
                     ],
                     _tabChip(
                       isSearching
-                          ? 'BESTIARY (${bestiaryMatches.length})'
-                          : 'BESTIARY',
+                          ? '${AppLocalizations.of(context)?.tabBestiary ?? "BESTIARY"} (${bestiaryMatches.length})'
+                          : (AppLocalizations.of(context)?.tabBestiary ?? 'BESTIARY'),
                       0,
                       isSelected: _selectedTab == 0,
                       isLocked: !_isBestiaryActive,
                     ),
                     const SizedBox(width: 8),
                     _tabChip(
-                      isSearching ? 'ARCHETYPES (${archetypeMatches.length})' : 'ARCHETYPES',
+                      isSearching
+                          ? '${AppLocalizations.of(context)?.tabArchetypes ?? "ARCHETYPES"} (${archetypeMatches.length})'
+                          : (AppLocalizations.of(context)?.tabArchetypes ?? 'ARCHETYPES'),
                       1,
                       isSelected: _selectedTab == 1,
                     ),
                     const SizedBox(width: 8),
                     _tabChip(
-                      isSearching ? 'TALENTS (${talentMatches.length})' : 'TALENTS',
+                      isSearching
+                          ? '${AppLocalizations.of(context)?.tabTalents ?? "TALENTS"} (${talentMatches.length})'
+                          : (AppLocalizations.of(context)?.tabTalents ?? 'TALENTS'),
                       2,
                       isSelected: _selectedTab == 2,
                     ),
                     const SizedBox(width: 8),
                     _tabChip(
-                      isSearching ? 'CRITICAL INJURIES (${injuryMatches.length})' : 'CRITICAL INJURIES',
+                      isSearching
+                          ? '${AppLocalizations.of(context)?.tabInjuries ?? "CRITICAL INJURIES"} (${injuryMatches.length})'
+                          : (AppLocalizations.of(context)?.tabInjuries ?? 'CRITICAL INJURIES'),
                       3,
                       isSelected: _selectedTab == 3,
                     ),
                     const SizedBox(width: 8),
                     _tabChip(
-                      isSearching ? 'WEAPONS & GEAR ($gearMatchesCount)' : 'WEAPONS & GEAR',
+                      isSearching
+                          ? '${AppLocalizations.of(context)?.tabGear ?? "WEAPONS & GEAR"} ($gearMatchesCount)'
+                          : (AppLocalizations.of(context)?.tabGear ?? 'WEAPONS & GEAR'),
                       4,
                       isSelected: _selectedTab == 4,
                     ),
                     const SizedBox(width: 8),
                     _tabChip(
-                      isSearching ? 'RULES REFERENCE (${ruleMatches.length})' : 'RULES REFERENCE',
+                      isSearching
+                          ? '${AppLocalizations.of(context)?.tabRules ?? "RULES REFERENCE"} (${ruleMatches.length})'
+                          : (AppLocalizations.of(context)?.tabRules ?? 'RULES REFERENCE'),
                       5,
                       isSelected: _selectedTab == 5,
                     ),
@@ -1776,7 +1787,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Center(
-            child: Text('No archetypes found matching query.', style: AppTypography.bodySmall),
+            child: Text(AppLocalizations.of(context)?.noArchetypesFoundMatching ?? 'No archetypes found matching query.', style: AppTypography.bodySmall),
           ),
         ),
       ];
@@ -1865,7 +1876,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Center(
-            child: Text('No talents found matching query.', style: AppTypography.bodySmall),
+            child: Text(AppLocalizations.of(context)?.noTalentsFoundMatching ?? 'No talents found matching query.', style: AppTypography.bodySmall),
           ),
         ),
       ];
@@ -1938,7 +1949,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Center(
-            child: Text('No critical injuries found matching query.', style: AppTypography.bodySmall),
+            child: Text(AppLocalizations.of(context)?.noInjuriesFoundMatching ?? 'No critical injuries found matching query.', style: AppTypography.bodySmall),
           ),
         ),
       ];
@@ -2078,7 +2089,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Center(
-            child: Text('No gear found in this category.', style: AppTypography.bodySmall),
+            child: Text(AppLocalizations.of(context)?.noGearFoundInCategory ?? 'No gear found in this category.', style: AppTypography.bodySmall),
           ),
         ),
       ];
@@ -2209,7 +2220,7 @@ class _CompendiumScreenState extends State<CompendiumScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Center(
-            child: Text('No rules found matching query.', style: AppTypography.bodySmall),
+            child: Text(AppLocalizations.of(context)?.noRulesFoundMatching ?? 'No rules found matching query.', style: AppTypography.bodySmall),
           ),
         ),
       ];

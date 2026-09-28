@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:vaesen_beyond/domain/models/talent.dart';
-import 'package:vaesen_beyond/ui/features/compendium/views/widgets/create_talent_dialog.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
+import 'package:vaesen_beyond/domain/models/talent.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
+import 'package:vaesen_beyond/ui/features/compendium/views/widgets/create_talent_dialog.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
@@ -24,6 +25,7 @@ class AdvancementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -44,7 +46,7 @@ class AdvancementCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
-                            'EXPERIENCE',
+                            l10n?.experience ?? 'EXPERIENCE',
                             style: AppTypography.titleMedium.copyWith(fontSize: 13),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -56,7 +58,7 @@ class AdvancementCard extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () => _openSessionDebriefDialog(context),
                     icon: const Icon(Icons.quiz_outlined, size: 13, color: AppColors.goldBright),
-                    label: const Text('DEBRIEF (+XP)', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                    label: Text(l10n?.debriefButton ?? 'DEBRIEF (+XP)', style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.surfaceOverlay,
                       foregroundColor: AppColors.goldBright,
@@ -86,7 +88,7 @@ class AdvancementCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('CURRENT XP', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 9)),
+                        Text(l10n?.currentXp ?? 'CURRENT XP', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 9)),
                         const SizedBox(height: 4),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -134,7 +136,7 @@ class AdvancementCard extends StatelessWidget {
                                 ? () => _openRaiseSkillDialog(context)
                                 : null,
                             icon: const Icon(Icons.upgrade, size: 16),
-                            label: const Text('RAISE SKILL (5 XP)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            label: Text(AppLocalizations.of(context)?.raiseSkillXp ?? 'RAISE SKILL (5 XP)', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.gold.withAlpha(40),
                               foregroundColor: AppColors.goldBright,
@@ -156,7 +158,7 @@ class AdvancementCard extends StatelessWidget {
                                 ? () => _openLearnTalentDialog(context)
                                 : null,
                             icon: const Icon(Icons.auto_awesome, size: 16),
-                            label: const Text('LEARN TALENT (5 XP)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            label: Text(AppLocalizations.of(context)?.learnTalentXp ?? 'LEARN TALENT (5 XP)', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.surfaceLight,
                               foregroundColor: AppColors.goldBright,
@@ -398,7 +400,7 @@ class AdvancementCard extends StatelessWidget {
               children: [
                 const Icon(Icons.auto_stories, color: AppColors.gold, size: 20),
                 const SizedBox(width: 8),
-                Text('SESSION DEBRIEF', style: AppTypography.titleMedium),
+                Text(AppLocalizations.of(context)?.sessionDebrief ?? 'SESSION DEBRIEF', style: AppTypography.titleMedium),
               ],
             ),
             content: ConstrainedBox(
@@ -446,7 +448,7 @@ class AdvancementCard extends StatelessWidget {
           actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+                child: Text(AppLocalizations.of(context)?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -455,7 +457,7 @@ class AdvancementCard extends StatelessWidget {
                   }
                   Navigator.of(ctx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Awarded +$earned XP to ${character.name}!')),
+                    SnackBar(content: Text(AppLocalizations.of(context)?.awardedXp(earned, character.name) ?? 'Awarded +$earned XP to ${character.name}!')),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -463,7 +465,7 @@ class AdvancementCard extends StatelessWidget {
                   foregroundColor: AppColors.goldBright,
                   side: const BorderSide(color: AppColors.gold),
                 ),
-                child: const Text('CLAIM XP'),
+                child: Text(AppLocalizations.of(context)?.claimXp ?? 'CLAIM XP'),
               ),
             ],
           );
@@ -485,7 +487,7 @@ class AdvancementCard extends StatelessWidget {
           children: [
             const Icon(Icons.upgrade, color: AppColors.gold, size: 20),
             const SizedBox(width: 8),
-            Text('RAISE ${skill.label.toUpperCase()}', style: AppTypography.titleMedium),
+            Text(AppLocalizations.of(context)?.raiseSkillTitle(skill.label.toUpperCase()) ?? 'RAISE ${skill.label.toUpperCase()}', style: AppTypography.titleMedium),
           ],
         ),
         content: Column(
@@ -507,7 +509,7 @@ class AdvancementCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('XP Cost: 5', style: AppTypography.bodySmall.copyWith(color: AppColors.gold)),
+                  Text(AppLocalizations.of(context)?.xpCost(5) ?? 'XP Cost: 5', style: AppTypography.bodySmall.copyWith(color: AppColors.gold)),
                   Text(
                     'Remaining: ${character.experiencePoints - 5} XP',
                     style: AppTypography.bodySmall.copyWith(color: AppColors.goldBright, fontWeight: FontWeight.bold),
@@ -520,7 +522,7 @@ class AdvancementCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('CANCEL', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'CANCEL', style: const TextStyle(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -529,7 +531,7 @@ class AdvancementCard extends StatelessWidget {
               if (success && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Raised ${skill.label} to Rank ${currentRank + 1}! (-5 XP)'),
+                    content: Text(AppLocalizations.of(context)?.raisedSkillSnackbar(skill.label, currentRank + 1) ?? 'Raised ${skill.label} to Rank ${currentRank + 1}! (-5 XP)'),
                     backgroundColor: AppColors.surfaceOverlay,
                     action: SnackBarAction(
                       label: 'UNDO',
@@ -547,7 +549,7 @@ class AdvancementCard extends StatelessWidget {
               backgroundColor: AppColors.gold,
               foregroundColor: AppColors.backgroundDark,
             ),
-            child: const Text('SPEND 5 XP'),
+            child: Text(AppLocalizations.of(context)?.spendXp(5) ?? 'SPEND 5 XP'),
           ),
         ],
       ),
@@ -567,7 +569,7 @@ class AdvancementCard extends StatelessWidget {
           children: [
             const Icon(Icons.upgrade, color: AppColors.gold, size: 20),
             const SizedBox(width: 8),
-            Text('RAISE A SKILL (5 XP)', style: AppTypography.titleMedium),
+            Text(AppLocalizations.of(context)?.raiseASkill ?? 'RAISE A SKILL (5 XP)', style: AppTypography.titleMedium),
           ],
         ),
         content: SizedBox(
@@ -580,7 +582,7 @@ class AdvancementCard extends StatelessWidget {
               return ListTile(
                 dense: true,
                 title: Text(s.label, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13)),
-                subtitle: Text('Current Rank: $rank / 5  (${s.attribute.label})', style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
+                subtitle: Text(AppLocalizations.of(context)?.currentRankOf(rank, s.attribute.label) ?? 'Current Rank: $rank / 5  (${s.attribute.label})', style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
                 trailing: ElevatedButton(
                   onPressed: canRaise
                       ? () async {
@@ -588,7 +590,7 @@ class AdvancementCard extends StatelessWidget {
                           if (ctx.mounted) Navigator.of(ctx).pop();
                           if (success && context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Raised ${s.label} to rank ${rank + 1}!')),
+                              SnackBar(content: Text(AppLocalizations.of(context)?.raisedSkillBrief(s.label, rank + 1) ?? 'Raised ${s.label} to rank ${rank + 1}!')),
                             );
                           }
                         }
@@ -607,7 +609,7 @@ class AdvancementCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('CLOSE', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(AppLocalizations.of(context)?.close ?? 'CLOSE', style: const TextStyle(color: AppColors.textMuted)),
           ),
         ],
       ),
@@ -632,14 +634,14 @@ class AdvancementCard extends StatelessWidget {
           children: [
             const Icon(Icons.auto_awesome, color: AppColors.gold, size: 20),
             const SizedBox(width: 8),
-            Text('LEARN NEW TALENT (5 XP)', style: AppTypography.titleMedium),
+            Text(AppLocalizations.of(context)?.learnNewTalent ?? 'LEARN NEW TALENT (5 XP)', style: AppTypography.titleMedium),
           ],
         ),
         content: SizedBox(
           width: 440,
           height: 420,
           child: available.isEmpty
-              ? const Center(child: Text('All talents acquired!'))
+              ? Center(child: Text(AppLocalizations.of(context)?.allTalentsAcquired ?? 'All talents acquired!'))
               : ListView.separated(
                   itemCount: available.length,
                   separatorBuilder: (_, _) => const Divider(color: AppColors.border, height: 1),
@@ -700,7 +702,7 @@ class AdvancementCard extends StatelessWidget {
                               if (ctx.mounted) Navigator.of(ctx).pop();
                               if (success && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Acquired talent: ${t.name}!')),
+                                  SnackBar(content: Text(AppLocalizations.of(context)?.acquiredTalent(t.name) ?? 'Acquired talent: ${t.name}!')),
                                 );
                               }
                             },
@@ -709,7 +711,7 @@ class AdvancementCard extends StatelessWidget {
                               foregroundColor: AppColors.gold,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             ),
-                            child: const Text('LEARN', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: Text(AppLocalizations.of(context)?.learn ?? 'LEARN', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),
@@ -720,7 +722,7 @@ class AdvancementCard extends StatelessWidget {
         actions: [
           TextButton.icon(
             icon: const Icon(Icons.add, size: 14, color: AppColors.goldBright),
-            label: const Text('FORGE HOMEBREW', style: TextStyle(color: AppColors.goldBright, fontSize: 11)),
+            label: Text(AppLocalizations.of(context)?.forgeHomebrew ?? 'FORGE HOMEBREW', style: const TextStyle(color: AppColors.goldBright, fontSize: 11)),
             onPressed: () async {
               Navigator.of(ctx).pop();
               final created = await showDialog<Talent>(
@@ -737,7 +739,7 @@ class AdvancementCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('CLOSE', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(AppLocalizations.of(context)?.close ?? 'CLOSE', style: const TextStyle(color: AppColors.textMuted)),
           ),
         ],
       ),

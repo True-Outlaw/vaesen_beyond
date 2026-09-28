@@ -3,6 +3,7 @@ import 'package:vaesen_beyond/domain/models/character.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 
 class DossierCompactHeader extends StatelessWidget {
   final Character character;
@@ -72,7 +73,7 @@ class DossierCompactHeader extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'AGE ${character.actualAge}',
+                      AppLocalizations.of(context)?.ageLabel(character.actualAge) ?? 'AGE ${character.actualAge}',
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMuted,
                         fontSize: 10,
@@ -86,9 +87,9 @@ class DossierCompactHeader extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _financePill('RES', character.resources),
+              _financePill(AppLocalizations.of(context)?.resLabel ?? 'RES', character.resources),
               const SizedBox(width: 6),
-              _financePill('CAP', character.capital),
+              _financePill(AppLocalizations.of(context)?.capLabel ?? 'CAP', character.capital),
             ],
           ),
         ],

@@ -12,6 +12,7 @@ import 'package:vaesen_beyond/ui/core/widgets/ornate_divider.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dial_painter.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/fear_test_dialog.dart';
 
@@ -119,10 +120,11 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
   }
 
   void _openCenterDiceRoller() {
+    final l10n = AppLocalizations.of(context);
     widget.diceViewModel.rollCustomPool(
       poolSize: widget.character.getEffectiveAttribute(AttributeType.logic),
-      title: 'Society Talisman D6',
-      breakdown: 'Free tabletop dice pool builder.',
+      title: l10n?.societyTalismanD6 ?? 'Society Talisman D6',
+      breakdown: l10n?.freeTabletopDicePool ?? 'Free tabletop dice pool builder.',
     );
     showDialog(
       context: context,
@@ -186,7 +188,7 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
                   children: [
                     const Icon(Icons.auto_awesome, color: AppColors.goldBright, size: 20),
                     const SizedBox(width: 8),
-                    Text('INVESTIGATOR TALENTS', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
+                    Text(AppLocalizations.of(context)?.investigatorTalents ?? 'INVESTIGATOR TALENTS', style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright)),
                   ],
                 ),
                 IconButton(
@@ -202,7 +204,7 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(
-                  child: Text('No talents currently acquired.', style: AppTypography.bodyMedium.copyWith(color: AppColors.textMuted)),
+                  child: Text(AppLocalizations.of(context)?.noTalentsCurrently ?? 'No talents currently acquired.', style: AppTypography.bodyMedium.copyWith(color: AppColors.textMuted)),
                 ),
               )
             else
@@ -233,7 +235,7 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
                             ),
-                            child: const Text('ACTIVE', style: TextStyle(fontSize: 10, color: AppColors.goldBright, fontWeight: FontWeight.bold)),
+                            child: Text(AppLocalizations.of(context)?.active ?? 'ACTIVE', style: const TextStyle(fontSize: 10, color: AppColors.goldBright, fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),
@@ -272,185 +274,191 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header: Attribute Name + Penalty + Close
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      isPhysical ? Icons.fitness_center : Icons.psychology,
-                      color: AppColors.goldBright,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      attribute.label.toUpperCase(),
-                      style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright, letterSpacing: 1.2),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceLight,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
+      builder: (sheetContext) {
+        final l10n = sheetContext.l10n;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header: Attribute Name + Penalty + Close
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        isPhysical ? Icons.fitness_center : Icons.psychology,
+                        color: AppColors.goldBright,
+                        size: 20,
                       ),
-                      child: Text(
-                        'Score: $rawAttrVal${penalty > 0 ? " (-$penalty)" : ""}',
-                        style: AppTypography.labelSmall.copyWith(
-                          color: penalty > 0 ? AppColors.crimsonBright : AppColors.gold,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      const SizedBox(width: 8),
+                      Text(
+                        attribute.localizedName(sheetContext).toUpperCase(),
+                        style: AppTypography.titleMedium.copyWith(color: AppColors.goldBright, letterSpacing: 1.2),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.close, size: 18, color: AppColors.textMuted),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              attribute.description,
-              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
-            ),
-            const OrnateDivider(height: 18),
-
-            // 3 Skills Cards with 1-Tap Roll buttons
-            ...skills.map((skill) {
-              final skillLevel = widget.character.skills[skill] ?? 0;
-              final effectivePool = widget.character.getEffectiveSkill(skill);
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.border, width: 0.8),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                skill.label,
-                                style: AppTypography.titleSmall.copyWith(fontSize: 13, color: AppColors.textPrimary),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                '(Rank $skillLevel)',
-                                style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            skill.description,
-                            style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textSecondary),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        widget.diceViewModel.rollSkill(
-                          character: widget.character,
-                          skill: skill,
-                        );
-                        showDialog(
-                          context: context,
-                          builder: (_) => DiceTrayDialog(
-                            diceViewModel: widget.diceViewModel,
-                            playViewModel: widget.playViewModel,
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.surfaceOverlay,
-                        foregroundColor: AppColors.goldBright,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        shape: RoundedRectangleBorder(
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
                           borderRadius: BorderRadius.circular(6),
-                          side: BorderSide(color: AppColors.gold.withAlpha(160), width: 0.8),
+                          border: Border.all(color: AppColors.gold.withAlpha(120), width: 0.8),
+                        ),
+                        child: Text(
+                          penalty > 0
+                              ? (l10n?.scoreWithPenalty(rawAttrVal, penalty) ?? 'Score: $rawAttrVal (-$penalty)')
+                              : (l10n?.score(rawAttrVal) ?? 'Score: $rawAttrVal'),
+                          style: AppTypography.labelSmall.copyWith(
+                            color: penalty > 0 ? AppColors.crimsonBright : AppColors.gold,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '$effectivePool D6',
-                            style: AppTypography.statValue.copyWith(fontSize: 11, color: AppColors.goldBright),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.casino_outlined, size: 14, color: AppColors.goldBright),
-                        ],
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 18, color: AppColors.textMuted),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () => Navigator.pop(sheetContext),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                attribute.description,
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
+              ),
+              const OrnateDivider(height: 18),
 
-            const SizedBox(height: 6),
+              // 3 Skills Cards with 1-Tap Roll buttons
+              ...skills.map((skill) {
+                final skillLevel = widget.character.skills[skill] ?? 0;
+                final effectivePool = widget.character.getEffectiveSkill(skill);
 
-            // Raw Attribute Roll Button
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  widget.diceViewModel.rollAttribute(
-                    character: widget.character,
-                    attribute: attribute,
-                  );
-                  showDialog(
-                    context: context,
-                    builder: (_) => DiceTrayDialog(
-                      diceViewModel: widget.diceViewModel,
-                      playViewModel: widget.playViewModel,
-                    ),
-                  );
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.gold,
-                  side: BorderSide(color: AppColors.gold.withAlpha(120), width: 0.8),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                icon: const Icon(Icons.casino, size: 16),
-                label: Text(
-                  'ROLL RAW ${attribute.label.toUpperCase()} ($attrPool D6)',
-                  style: AppTypography.tabLabel.copyWith(fontSize: 11, letterSpacing: 1.0),
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.border, width: 0.8),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  skill.localizedName(sheetContext),
+                                  style: AppTypography.titleSmall.copyWith(fontSize: 13, color: AppColors.textPrimary),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  l10n?.rank(skillLevel) ?? '(Rank $skillLevel)',
+                                  style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              skill.description,
+                              style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textSecondary),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(sheetContext);
+                          widget.diceViewModel.rollSkill(
+                            character: widget.character,
+                            skill: skill,
+                          );
+                          showDialog(
+                            context: sheetContext,
+                            builder: (_) => DiceTrayDialog(
+                              diceViewModel: widget.diceViewModel,
+                              playViewModel: widget.playViewModel,
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.surfaceOverlay,
+                          foregroundColor: AppColors.goldBright,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            side: BorderSide(color: AppColors.gold.withAlpha(160), width: 0.8),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$effectivePool D6',
+                              style: AppTypography.statValue.copyWith(fontSize: 11, color: AppColors.goldBright),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.casino_outlined, size: 14, color: AppColors.goldBright),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+
+              const SizedBox(height: 6),
+
+              // Raw Attribute Roll Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(sheetContext);
+                    widget.diceViewModel.rollAttribute(
+                      character: widget.character,
+                      attribute: attribute,
+                    );
+                    showDialog(
+                      context: sheetContext,
+                      builder: (_) => DiceTrayDialog(
+                        diceViewModel: widget.diceViewModel,
+                        playViewModel: widget.playViewModel,
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.gold,
+                    side: BorderSide(color: AppColors.gold.withAlpha(120), width: 0.8),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  icon: const Icon(Icons.casino, size: 16),
+                  label: Text(
+                    l10n?.rollRawAttribute(attribute.localizedName(sheetContext).toUpperCase(), attrPool) ??
+                        'ROLL RAW ${attribute.localizedName(sheetContext).toUpperCase()} ($attrPool D6)',
+                    style: AppTypography.tabLabel.copyWith(fontSize: 11, letterSpacing: 1.0),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
     );
   }
 

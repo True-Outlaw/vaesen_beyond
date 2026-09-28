@@ -13,6 +13,7 @@ import 'package:vaesen_beyond/ui/features/play/views/widgets/dossier_compact_hea
 import 'package:vaesen_beyond/ui/features/play/views/widgets/inventory_card.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/investigator_party_bar.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/prep_and_lore_card.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/tactile_weapon_cards.dart';
 
 class ActScreen extends StatefulWidget {
@@ -245,7 +246,11 @@ class _ActScreenState extends State<ActScreen> {
   }
 
   Widget _buildRightTabControl(Character character) {
-    final tabs = ['INVENTORY', 'PREP & LORE'];
+    final l10n = context.l10n;
+    final tabs = [
+      l10n?.sheetInventory ?? 'INVENTORY',
+      l10n?.sheetPrepAndLore ?? 'PREP & LORE',
+    ];
 
     return Container(
       height: 42,
@@ -267,10 +272,10 @@ class _ActScreenState extends State<ActScreen> {
           final isSelected = _rightTabIndex == index;
           final label = tabs[index];
           String badgeText = '';
-          if (label == 'INVENTORY') {
+          if (index == 0) {
             final total = character.equipment.length + character.weapons.length + character.armor.length;
             badgeText = '$total';
-          } else if (label == 'PREP & LORE' && character.hasActiveAdvantage) {
+          } else if (index == 1 && character.hasActiveAdvantage) {
             badgeText = '+2';
           }
 

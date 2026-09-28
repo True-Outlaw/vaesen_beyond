@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vaesen_beyond/domain/models/initiative_combatant.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_button.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/initiative_view_model.dart';
@@ -33,6 +34,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
 
   void _showAddAdversaryDialog(BuildContext context, InitiativeViewModel initVm) {
     _adversaryNameController.clear();
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -45,7 +47,10 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
           children: [
             const Icon(Icons.dangerous, color: AppColors.crimson, size: 22),
             const SizedBox(width: 8),
-            Text('ADD ADVERSARY', style: AppTypography.titleMedium.copyWith(color: AppColors.crimsonLight)),
+            Text(
+              l10n?.addAdversaryTitle ?? 'ADD ADVERSARY',
+              style: AppTypography.titleMedium.copyWith(color: AppColors.crimsonLight),
+            ),
           ],
         ),
         content: Column(
@@ -53,7 +58,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Enter the name of the beast, creature, or foe entering combat:',
+              l10n?.addAdversaryPrompt ?? 'Enter the name of the beast, creature, or foe entering combat:',
               style: AppTypography.bodySmall,
             ),
             const SizedBox(height: 12),
@@ -61,11 +66,11 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
               controller: _adversaryNameController,
               autofocus: true,
               style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                hintText: 'e.g., Church Grim, Highwayman, Troll',
+              decoration: InputDecoration(
+                hintText: l10n?.adversaryHint ?? 'e.g., Church Grim, Highwayman, Troll',
                 filled: true,
                 fillColor: AppColors.surfaceLight,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 isDense: true,
               ),
               onSubmitted: (val) {
@@ -80,15 +85,18 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('CANCEL', style: TextStyle(color: AppColors.goldDim)),
+            child: Text(
+              l10n?.cancel ?? 'CANCEL',
+              style: const TextStyle(color: AppColors.goldDim),
+            ),
           ),
           GothicButton(
-            label: 'DEAL CARD',
+            label: l10n?.dealCard ?? 'DEAL CARD',
             icon: Icons.add_circle_outline,
             color: AppColors.crimson,
             onPressed: () {
               final name = _adversaryNameController.text.trim();
-              initVm.addAdversary(name.isEmpty ? 'Adversary' : name);
+              initVm.addAdversary(name.isEmpty ? (l10n?.adversaryDefault ?? 'Adversary') : name);
               Navigator.pop(ctx);
             },
           ),
@@ -113,6 +121,8 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
 
     final turnOrder = initVm.turnOrder;
     final swappingId = initVm.selectedCombatantIdForSwap;
+
+    final l10n = context.l10n;
 
     return Dialog(
       backgroundColor: AppColors.backgroundDark,
@@ -145,7 +155,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'INITIATIVE CARD RACK',
+                        l10n?.initiativeCardRack ?? 'INITIATIVE CARD RACK',
                         style: AppTypography.titleLarge.copyWith(
                           fontSize: 17,
                           color: AppColors.goldBright,
@@ -153,7 +163,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                         ),
                       ),
                       Text(
-                        'Vaesen Combat Turn Order • Lowest Card Acts First',
+                        l10n?.initiativeTurnOrderSubtitle ?? 'Vaesen Combat Turn Order • Lowest Card Acts First',
                         style: AppTypography.bodySmall.copyWith(
                           fontSize: 11,
                           color: AppColors.goldDim,
@@ -171,7 +181,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                     border: Border.all(color: AppColors.goldBright, width: 1.0),
                   ),
                   child: Text(
-                    'ROUND ${initVm.round}',
+                    l10n?.roundNumber(initVm.round) ?? 'ROUND ${initVm.round}',
                     style: AppTypography.statValue.copyWith(
                       fontSize: 12,
                       color: AppColors.goldBright,
@@ -183,7 +193,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                 IconButton(
                   icon: const Icon(Icons.close, color: AppColors.goldDim, size: 20),
                   onPressed: () => Navigator.pop(context),
-                  tooltip: 'Close Tracker',
+                  tooltip: l10n?.closeTrackerTooltip ?? 'Close Tracker',
                 ),
               ],
             ),
@@ -207,7 +217,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'SELECT ANOTHER COMBATANT TO SWAP CARDS',
+                        l10n?.selectCombatantToSwap ?? 'SELECT ANOTHER COMBATANT TO SWAP CARDS',
                         style: AppTypography.titleSmall.copyWith(
                           fontSize: 11,
                           color: AppColors.goldBright,
@@ -217,7 +227,10 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                     ),
                     TextButton(
                       onPressed: () => initVm.selectCombatantForSwap(swappingId),
-                      child: const Text('CANCEL', style: TextStyle(color: AppColors.goldDim, fontSize: 11)),
+                      child: Text(
+                        l10n?.cancel ?? 'CANCEL',
+                        style: const TextStyle(color: AppColors.goldDim, fontSize: 11),
+                      ),
                     ),
                   ],
                 ),
@@ -236,7 +249,10 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
                     icon: const Icon(Icons.shuffle, size: 15),
-                    label: const Text('RE-DEAL (1–10)', style: TextStyle(fontSize: 11)),
+                    label: Text(
+                      l10n?.redealCards ?? 'RE-DEAL (1–10)',
+                      style: const TextStyle(fontSize: 11),
+                    ),
                     onPressed: () => initVm.drawInitiative(),
                   ),
                 ),
@@ -249,7 +265,10 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
                     icon: const Icon(Icons.person_add, size: 15),
-                    label: const Text('+ ADVERSARY', style: TextStyle(fontSize: 11)),
+                    label: Text(
+                      l10n?.addAdversaryBtn ?? '+ ADVERSARY',
+                      style: const TextStyle(fontSize: 11),
+                    ),
                     onPressed: initVm.combatants.length >= 10
                         ? null
                         : () => _showAddAdversaryDialog(context, initVm),
@@ -269,10 +288,13 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                         children: [
                           const Icon(Icons.style_outlined, size: 48, color: AppColors.goldDim),
                           const SizedBox(height: 8),
-                          Text('No combatants in initiative rack.', style: AppTypography.bodySmall),
+                          Text(
+                            l10n?.noCombatantsInRack ?? 'No combatants in initiative rack.',
+                            style: AppTypography.bodySmall,
+                          ),
                           const SizedBox(height: 12),
                           GothicButton(
-                            label: 'DEAL PARTY CARDS',
+                            label: l10n?.dealPartyCards ?? 'DEAL PARTY CARDS',
                             icon: Icons.play_arrow,
                             onPressed: () => initVm.initializeFromParty(playVm.characters),
                           ),
@@ -308,7 +330,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                 Expanded(
                   flex: 2,
                   child: GothicButton(
-                    label: 'ADVANCE TURN',
+                    label: l10n?.advanceTurn ?? 'ADVANCE TURN',
                     icon: Icons.fast_forward,
                     color: AppColors.gold,
                     onPressed: () => initVm.advanceTurn(),
@@ -324,9 +346,9 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     icon: const Icon(Icons.arrow_forward, size: 16),
-                    label: const Text(
-                      'NEXT ROUND',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    label: Text(
+                      l10n?.nextRound ?? 'NEXT ROUND',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                     onPressed: () => initVm.nextRound(),
                   ),
@@ -346,6 +368,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
     bool isCurrentTurn,
     bool isSelectedForSwap,
   ) {
+    final l10n = AppLocalizations.of(context);
     final roman = (combatant.cardNumber >= 1 && combatant.cardNumber <= 10)
         ? _romanNumerals[combatant.cardNumber - 1]
         : '${combatant.cardNumber}';
@@ -507,9 +530,9 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                                 color: AppColors.goldBright,
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                'ACTIVE TURN',
-                                style: TextStyle(
+                              child: Text(
+                                l10n?.activeTurn ?? 'ACTIVE TURN',
+                                style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
@@ -524,13 +547,13 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: combatant.archetypeOrType ?? (isAdversary ? 'Adversary' : 'Investigator'),
+                              text: combatant.archetypeOrType ?? (isAdversary ? (l10n?.adversaryDefault ?? 'Adversary') : (l10n?.investigatorLabel ?? 'Investigator')),
                               style: TextStyle(
                                 color: isAdversary ? AppColors.crimsonLight : AppColors.goldDim,
                               ),
                             ),
                             TextSpan(
-                              text: ' • Card #${combatant.cardNumber}',
+                              text: ' • ${l10n?.cardBadge(combatant.cardNumber) ?? "Card #${combatant.cardNumber}"}',
                               style: const TextStyle(
                                 color: AppColors.textSecondary,
                               ),
@@ -554,7 +577,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                     color: isSelectedForSwap ? const Color(0xFF00E5FF) : AppColors.goldDim,
                     size: 18,
                   ),
-                  tooltip: 'Swap initiative card',
+                  tooltip: l10n?.swapInitiativeTooltip ?? 'Swap initiative card',
                   onPressed: () => initVm.selectCombatantForSwap(combatant.id),
                 ),
 
@@ -565,7 +588,9 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                     color: isActed ? AppColors.gold : AppColors.textSecondary,
                     size: 20,
                   ),
-                  tooltip: isActed ? 'Mark as Not Acted' : 'Mark as Acted',
+                  tooltip: isActed
+                      ? (l10n?.markAsNotActedTooltip ?? 'Mark as Not Acted')
+                      : (l10n?.markAsActedTooltip ?? 'Mark as Acted'),
                   onPressed: () => initVm.toggleActed(combatant.id),
                 ),
 
@@ -573,7 +598,7 @@ class _InitiativeTrackerDialogState extends State<InitiativeTrackerDialog> {
                 if (isAdversary)
                   IconButton(
                     icon: const Icon(Icons.remove_circle_outline, color: AppColors.crimsonLight, size: 18),
-                    tooltip: 'Remove from combat',
+                    tooltip: l10n?.removeFromCombatTooltip ?? 'Remove from combat',
                     onPressed: () => initVm.removeCombatant(combatant.id),
                   ),
               ],

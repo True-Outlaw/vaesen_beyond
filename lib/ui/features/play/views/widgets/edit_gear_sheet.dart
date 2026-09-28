@@ -3,6 +3,7 @@ import 'package:vaesen_beyond/domain/models/gear.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 
 /// Shows the [EditGearSheet] as a modal bottom sheet for a [Weapon].
 void showEditWeaponSheet(BuildContext context, Weapon weapon, PlayViewModel vm) {
@@ -187,7 +188,7 @@ class _EditGearSheetState extends State<EditGearSheet> {
                 children: [
                   Icon(_typeIcon, color: AppColors.gold, size: 18),
                   const SizedBox(width: 8),
-                  Text('EDIT ${_typeLabel.toUpperCase()}', style: AppTypography.titleMedium),
+                  Text(AppLocalizations.of(context)?.editType(_typeLabel.toUpperCase()) ?? 'EDIT ${_typeLabel.toUpperCase()}', style: AppTypography.titleMedium),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
@@ -218,7 +219,7 @@ class _EditGearSheetState extends State<EditGearSheet> {
                     side: const BorderSide(color: AppColors.gold),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text('SAVE CHANGES', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                  child: Text(AppLocalizations.of(context)?.saveChanges ?? 'SAVE CHANGES', style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
                 ),
               ),
             ],
@@ -389,7 +390,7 @@ class _EditGearSheetState extends State<EditGearSheet> {
                     activeTrackColor: AppColors.gold.withAlpha(120),
                   ),
                   const SizedBox(width: 6),
-                  Text('Heavy', style: AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary)),
+                  Text(AppLocalizations.of(context)?.heavy ?? 'Heavy', style: AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary)),
                 ],
               ),
             ),

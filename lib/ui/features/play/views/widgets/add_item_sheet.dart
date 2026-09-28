@@ -4,6 +4,7 @@ import 'package:vaesen_beyond/domain/models/gear.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 
 class AddItemSheet extends StatefulWidget {
   final PlayViewModel playViewModel;
@@ -187,7 +188,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Added ${w.name} to inventory.'),
+                      content: Text(AppLocalizations.of(context)?.addedToInventory(w.name) ?? 'Added ${w.name} to inventory.'),
                       duration: const Duration(seconds: 2),
                     ),
                   );
@@ -201,7 +202,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
                     side: BorderSide(color: AppColors.gold.withAlpha(100)),
                   ),
                 ),
-                child: const Text('ADD', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                child: Text(AppLocalizations.of(context)?.add ?? 'ADD', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -245,7 +246,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Added ${a.name} to inventory.'),
+                      content: Text(AppLocalizations.of(context)?.addedToInventory(a.name) ?? 'Added ${a.name} to inventory.'),
                       duration: const Duration(seconds: 2),
                     ),
                   );
@@ -259,7 +260,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
                     side: BorderSide(color: AppColors.gold.withAlpha(100)),
                   ),
                 ),
-                child: const Text('ADD', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                child: Text(AppLocalizations.of(context)?.add ?? 'ADD', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -303,7 +304,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Added ${eq.name} to inventory.'),
+                      content: Text(AppLocalizations.of(context)?.addedToInventory(eq.name) ?? 'Added ${eq.name} to inventory.'),
                       duration: const Duration(seconds: 2),
                     ),
                   );
@@ -317,7 +318,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
                     side: BorderSide(color: AppColors.gold.withAlpha(100)),
                   ),
                 ),
-                child: const Text('ADD', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                child: Text(AppLocalizations.of(context)?.add ?? 'ADD', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -333,7 +334,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
         // Item Type selector
         Row(
           children: [
-            const Text('Item Type:', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+            Text(AppLocalizations.of(context)?.itemType ?? 'Item Type:', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
             const SizedBox(width: 12),
             ...['Equipment', 'Weapon', 'Armor'].map((type) {
               final isSel = _customType == type;
@@ -370,7 +371,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
         // Slots / Weight
         Row(
           children: [
-            const Text('Slots / Carry Weight: ', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+            Text(AppLocalizations.of(context)?.slotsCarryWeight ?? 'Slots / Carry Weight: ', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
             IconButton(
               icon: const Icon(Icons.remove_circle_outline, size: 18, color: AppColors.goldDim),
               onPressed: () {
@@ -395,7 +396,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
               Expanded(
                 child: Row(
                   children: [
-                    const Text('Dmg: ', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                    Text(AppLocalizations.of(context)?.dmg ?? 'Dmg: ', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
                     DropdownButton<int>(
                       value: _customDamage,
                       dropdownColor: AppColors.surface,
@@ -408,7 +409,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
               Expanded(
                 child: Row(
                   children: [
-                    const Text('Bonus: ', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                    Text(AppLocalizations.of(context)?.bonus ?? 'Bonus: ', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
                     DropdownButton<int>(
                       value: _customBonus,
                       dropdownColor: AppColors.surface,
@@ -427,7 +428,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
           const SizedBox(height: 8),
           Row(
             children: [
-              const Text('Protection Rating: ', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+              Text(AppLocalizations.of(context)?.protectionRating ?? 'Protection Rating: ', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
               DropdownButton<int>(
                 value: _customProtection,
                 dropdownColor: AppColors.surface,
@@ -492,7 +493,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
 
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Added $name to inventory.')),
+              SnackBar(content: Text(AppLocalizations.of(context)?.addedToInventory(name) ?? 'Added $name to inventory.')),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -501,7 +502,7 @@ class _AddItemSheetState extends State<AddItemSheet> with SingleTickerProviderSt
             side: const BorderSide(color: AppColors.gold),
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
-          child: const Text('CREATE & ADD TO INVENTORY', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
+          child: Text(AppLocalizations.of(context)?.createAndAdd ?? 'CREATE & ADD TO INVENTORY', style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
         ),
       ],
     );

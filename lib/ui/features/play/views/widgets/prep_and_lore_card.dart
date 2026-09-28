@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
@@ -21,6 +22,7 @@ class PrepAndLoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeAdv = character.activeAdvantage;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +44,7 @@ class PrepAndLoreCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
-                            'MYSTERY PREPARATION & ADVANTAGES',
+                            l10n?.mysteryPreparationAndAdvantages ?? 'MYSTERY PREPARATION & ADVANTAGES',
                             style: AppTypography.titleMedium.copyWith(fontSize: 13),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -58,7 +60,7 @@ class PrepAndLoreCard extends StatelessWidget {
                       character: character,
                     ),
                     icon: const Icon(Icons.auto_stories, size: 12, color: AppColors.goldBright),
-                    label: const Text('CONCLUDE', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                    label: Text(l10n?.conclude ?? 'CONCLUDE', style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.crimsonDark,
                       foregroundColor: AppColors.goldBright,
@@ -75,7 +77,7 @@ class PrepAndLoreCard extends StatelessWidget {
                     ElevatedButton.icon(
                       onPressed: () => _openPreparationModal(context),
                       icon: const Icon(Icons.add, size: 13, color: AppColors.goldBright),
-                      label: const Text('PREPARE', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                      label: Text(l10n?.prepare ?? 'PREPARE', style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.surfaceOverlay,
                         foregroundColor: AppColors.goldBright,
@@ -121,7 +123,7 @@ class PrepAndLoreCard extends StatelessWidget {
                                 const SizedBox(width: 6),
                                 Flexible(
                                   child: Text(
-                                    'ACTIVE ADVANTAGE (+2 DICE)',
+                                    l10n?.activeAdvantageBonus ?? 'ACTIVE ADVANTAGE (+2 DICE)',
                                     style: AppTypography.titleSmall.copyWith(
                                       color: AppColors.goldBright,
                                       fontWeight: FontWeight.bold,
@@ -135,7 +137,7 @@ class PrepAndLoreCard extends StatelessWidget {
                           ),
                           IconButton(
                             icon: const Icon(Icons.close, size: 16, color: AppColors.textMuted),
-                            tooltip: 'Dismiss Advantage',
+                            tooltip: l10n?.dismissAdvantage ?? 'Dismiss Advantage',
                             onPressed: () => playViewModel.spendAdvantage(activeAdv.id),
                           ),
                         ],
@@ -159,12 +161,12 @@ class PrepAndLoreCard extends StatelessWidget {
                                 await playViewModel.spendAdvantage(activeAdv.id);
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Advantage spent for +2 dice!')),
+                                    SnackBar(content: Text(l10n?.advantageSpentSnackbar ?? 'Advantage spent for +2 dice!')),
                                   );
                                 }
                               },
                               icon: const Icon(Icons.check, size: 14),
-                              label: const Text('SPEND ADVANTAGE (+2 DICE)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                              label: Text(l10n?.spendAdvantageBonus ?? 'SPEND ADVANTAGE (+2 DICE)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.surfaceOverlay,
                                 foregroundColor: AppColors.goldBright,
@@ -192,7 +194,8 @@ class PrepAndLoreCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'No active Advantage. Before departing for a mystery, prepare at Castle Gyllencreutz or Upsala to gain +2 dice on a key test.',
+                          l10n?.noActiveAdvantageDesc ??
+                              'No active Advantage. Before departing for a mystery, prepare at Castle Gyllencreutz or Upsala to gain +2 dice on a key test.',
                           style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted),
                         ),
                       ),
@@ -223,7 +226,7 @@ class PrepAndLoreCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            'INVESTIGATOR DOSSIER',
+                            l10n?.investigatorDossier ?? 'INVESTIGATOR DOSSIER',
                             style: AppTypography.titleMedium,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -235,7 +238,7 @@ class PrepAndLoreCard extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () => showDossierSheet(context, character, playViewModel),
                     icon: const Icon(Icons.edit_note, size: 13, color: AppColors.goldBright),
-                    label: const Text('VIEW DOSSIER', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
+                    label: Text(l10n?.viewDossier ?? 'VIEW DOSSIER', style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.surfaceOverlay,
                       foregroundColor: AppColors.goldBright,
@@ -251,11 +254,11 @@ class PrepAndLoreCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              _buildLoreField('MOTIVATION', character.motivation.isNotEmpty ? character.motivation : 'Driven by secrets of the unseen world.'),
+              _buildLoreField(l10n?.motivation ?? 'MOTIVATION', character.motivation.isNotEmpty ? character.motivation : 'Driven by secrets of the unseen world.'),
               const SizedBox(height: 10),
-              _buildLoreField('TRAUMA & THE SIGHT', character.trauma.isNotEmpty ? character.trauma : 'Awakened to the Mythic North through near-fatal terror.'),
+              _buildLoreField(l10n?.traumaAndTheSight ?? 'TRAUMA & THE SIGHT', character.trauma.isNotEmpty ? character.trauma : 'Awakened to the Mythic North through near-fatal terror.'),
               const SizedBox(height: 10),
-              _buildLoreField('DARK SECRET', character.darkSecret.isNotEmpty ? character.darkSecret : 'A burden kept hidden from the Society.'),
+              _buildLoreField(l10n?.darkSecret ?? 'DARK SECRET', character.darkSecret.isNotEmpty ? character.darkSecret : 'A burden kept hidden from the Society.'),
               const SizedBox(height: 10),
 
               // Personal Memento
@@ -274,7 +277,7 @@ class PrepAndLoreCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('PERSONAL MEMENTO', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 9)),
+                          Text(l10n?.personalMemento ?? 'PERSONAL MEMENTO', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 9)),
                           Text(
                             character.memento.isNotEmpty ? character.memento : 'An antique token of comfort',
                             style: AppTypography.bodyMedium.copyWith(fontSize: 12, color: AppColors.goldBright),
@@ -288,7 +291,7 @@ class PrepAndLoreCard extends StatelessWidget {
                               final healed = await playViewModel.drawSolaceFromMemento(healPhysical: false);
                               if (context.mounted && healed) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Drew solace from memento! Healed up to 2 conditions.')),
+                                  SnackBar(content: Text(l10n?.drewSolaceSnackbar ?? 'Drew solace from memento! Healed up to 2 conditions.')),
                                 );
                               }
                             }
@@ -301,7 +304,7 @@ class PrepAndLoreCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       ),
                       child: Text(
-                        character.isMementoUsed ? 'SOLACE USED' : 'DRAW SOLACE',
+                        character.isMementoUsed ? (l10n?.solaceUsed ?? 'SOLACE USED') : (l10n?.drawSolace ?? 'DRAW SOLACE'),
                         style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -335,7 +338,7 @@ class PrepAndLoreCard extends StatelessWidget {
                                   const SizedBox(width: 6),
                                   Flexible(
                                     child: Text(
-                                      'FIELD NOTES & EXPEDITION LOG',
+                                      l10n?.fieldNotesAndExpeditionLog ?? 'FIELD NOTES & EXPEDITION LOG',
                                       style: AppTypography.labelSmall.copyWith(
                                         color: AppColors.goldDim,
                                         fontSize: 9,
@@ -352,7 +355,7 @@ class PrepAndLoreCard extends StatelessWidget {
                             GestureDetector(
                               onTap: () => showDossierSheet(context, character, playViewModel),
                               child: Text(
-                                'OPEN JOURNAL (${journalEntries.length}) →',
+                                l10n?.openJournal(journalEntries.length) ?? 'OPEN JOURNAL (${journalEntries.length}) →',
                                 style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -361,7 +364,7 @@ class PrepAndLoreCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         if (journalEntries.isEmpty)
                           Text(
-                            'No field notes recorded yet. Tap "OPEN JOURNAL" or "VIEW DOSSIER" to write notes.',
+                            l10n?.noFieldNotesRecorded ?? 'No field notes recorded yet. Tap "OPEN JOURNAL" or "VIEW DOSSIER" to write notes.',
                             style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
                           )
                         else
@@ -416,7 +419,7 @@ class PrepAndLoreCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            'TALENTS & ABILITIES',
+                            l10n?.talentsAndAbilities ?? 'TALENTS & ABILITIES',
                             style: AppTypography.titleMedium,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -425,14 +428,14 @@ class PrepAndLoreCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${character.talents.length} TALENTS',
+                    l10n?.talentsCountBadge(character.talents.length) ?? '${character.talents.length} TALENTS',
                     style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
               if (character.talents.isEmpty)
-                Text('No talents acquired yet.', style: AppTypography.bodySmall)
+                Text(l10n?.noTalentsAcquired ?? 'No talents acquired yet.', style: AppTypography.bodySmall)
               else
                 ...character.talents.map((t) => Container(
                       margin: const EdgeInsets.only(bottom: 8),
@@ -515,6 +518,7 @@ class PrepAndLoreCard extends StatelessWidget {
   }
 
   void _openPreparationModal(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final preps = [
       {
         'title': 'Grand Library Archival Research',
@@ -560,7 +564,7 @@ class PrepAndLoreCard extends StatelessWidget {
           children: [
             const Icon(Icons.bookmark_added, color: AppColors.gold, size: 20),
             const SizedBox(width: 8),
-            Text('CHOOSE PREPARATION', style: AppTypography.titleMedium),
+            Text(l10n?.choosePreparation ?? 'CHOOSE PREPARATION', style: AppTypography.titleMedium),
           ],
         ),
         content: SizedBox(
@@ -595,7 +599,7 @@ class PrepAndLoreCard extends StatelessWidget {
                         );
                         Navigator.of(ctx).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Prepared: ${p["title"]} (+2 Advantage active)!')),
+                          SnackBar(content: Text(l10n?.preparedSnackbar(p['title'] as String) ?? 'Prepared: ${p["title"]} (+2 Advantage active)!')),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -603,7 +607,7 @@ class PrepAndLoreCard extends StatelessWidget {
                         foregroundColor: AppColors.gold,
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       ),
-                      child: const Text('SELECT', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                      child: Text(l10n?.select ?? 'SELECT', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
@@ -614,10 +618,11 @@ class PrepAndLoreCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('CLOSE', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(l10n?.close ?? 'CLOSE', style: const TextStyle(color: AppColors.textMuted)),
           ),
         ],
       ),
     );
   }
 }
+

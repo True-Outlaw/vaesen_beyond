@@ -7,6 +7,7 @@ import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 
 class CombatCard extends StatelessWidget {
   final Character character;
@@ -30,7 +31,7 @@ class CombatCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('WEAPONS & COMBAT', style: AppTypography.titleMedium),
+              Text(AppLocalizations.of(context)?.weaponsAndCombat ?? 'WEAPONS & COMBAT', style: AppTypography.titleMedium),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -43,7 +44,7 @@ class CombatCard extends StatelessWidget {
                     const Icon(Icons.shield, size: 14, color: AppColors.goldBright),
                     const SizedBox(width: 4),
                     Text(
-                      'ARMOR: ${character.totalArmorProtection}',
+                      AppLocalizations.of(context)?.armorRating(character.totalArmorProtection) ?? 'ARMOR: ${character.totalArmorProtection}',
                       style: AppTypography.titleSmall.copyWith(fontSize: 11),
                     ),
                   ],
@@ -58,7 +59,7 @@ class CombatCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                'No weapons equipped. Unarmed attacks deal 1 damage at Engaged range.',
+                AppLocalizations.of(context)?.noWeaponsEquipped ?? 'No weapons equipped. Unarmed attacks deal 1 damage at Engaged range.',
                 style: AppTypography.bodySmall,
               ),
             )
@@ -121,7 +122,7 @@ class CombatCard extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.flash_on, size: 13, color: AppColors.goldBright),
-            label: const Text('STRIKE'),
+            label: Text(AppLocalizations.of(context)?.strike ?? 'STRIKE'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.surfaceOverlay,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/attribute_skill.dart';
+import 'package:vaesen_beyond/domain/models/condition.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/d6_dice_widget.dart';
@@ -47,6 +49,7 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return ListenableBuilder(
       listenable: widget.diceViewModel,
       builder: (context, _) {
@@ -86,7 +89,7 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                roll != null ? roll.title.toUpperCase() : _rollTitle.toUpperCase(),
+                                roll != null ? roll.title.toUpperCase() : (l10n?.diceTrayTitle ?? _rollTitle.toUpperCase()),
                                 style: AppTypography.titleMedium.copyWith(
                                   color: AppColors.goldBright,
                                   fontSize: 13.5,
@@ -146,9 +149,9 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                             child: Text(
                               isSuccess
                                   ? (stunts > 0
-                                      ? '$successes SUCCESSES ($stunts STUNT${stunts > 1 ? "S" : ""})'
-                                      : '1 SUCCESS!')
-                                  : 'FAILURE (0 SIXES)',
+                                      ? (l10n?.multipleSuccesses(successes, stunts) ?? '$successes SUCCESSES ($stunts STUNT${stunts > 1 ? "S" : ""})')
+                                      : (l10n?.singleSuccess ?? '1 SUCCESS!'))
+                                  : (l10n?.failureOutcome ?? 'FAILURE (0 SIXES)'),
                               style: AppTypography.titleMedium.copyWith(
                                 color: isSuccess ? AppColors.goldBright : AppColors.crimsonLight,
                                 fontWeight: FontWeight.bold,
@@ -181,10 +184,10 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                       ],
                     ),
                     child: (roll == null || roll.dice.isEmpty)
-                        ? const Center(
+                        ? Center(
                             child: Text(
-                              'Configure pool & tap ROLL below',
-                              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                              l10n?.configurePoolPrompt ?? 'Configure pool & tap ROLL below',
+                              style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
                             ),
                           )
                         : SingleChildScrollView(
@@ -208,10 +211,10 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      _modifierChip('+1 Help', 1),
-                      _modifierChip('+2 Setup', 2),
-                      _modifierChip('-1 Dim', -1),
-                      _modifierChip('-2 Dire', -2),
+                      _modifierChip(l10n?.helpMod ?? '+1 Help', 1),
+                      _modifierChip(l10n?.setupMod ?? '+2 Setup', 2),
+                      _modifierChip(l10n?.dimMod ?? '-1 Dim', -1),
+                      _modifierChip(l10n?.direMod ?? '-2 Dire', -2),
                       // Advantage toggle (+2 dice)
                       FilterChip(
                         avatar: Icon(
@@ -220,7 +223,9 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                           color: _useAdvantage ? Colors.black : AppColors.goldBright,
                         ),
                         label: Text(
-                          hasActivePrep ? '+2 ADVANTAGE (PREP)' : '+2 ADVANTAGE',
+                          hasActivePrep
+                              ? (l10n?.advantagePrepChip ?? '+2 ADVANTAGE (PREP)')
+                              : (l10n?.advantageChip ?? '+2 ADVANTAGE'),
                           style: TextStyle(
                             fontSize: 9.5,
                             fontWeight: FontWeight.bold,
@@ -268,9 +273,9 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
-                              'MODIFIER: ',
-                              style: TextStyle(color: AppColors.textMuted, fontSize: 10.5, fontWeight: FontWeight.bold),
+                            Text(
+                              l10n?.modifierLabel ?? 'MODIFIER: ',
+                              style: const TextStyle(color: AppColors.textMuted, fontSize: 10.5, fontWeight: FontWeight.bold),
                             ),
                             IconButton(
                               icon: const Icon(Icons.remove_circle_outline, size: 18, color: AppColors.goldDim),
@@ -313,9 +318,9 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: AppColors.gold, width: 0.6),
                             ),
-                            child: const Text(
-                              '+2 Adv Included',
-                              style: TextStyle(color: AppColors.goldBright, fontSize: 9.5, fontWeight: FontWeight.bold),
+                            child: Text(
+                              l10n?.advIncluded ?? '+2 Adv Included',
+                              style: const TextStyle(color: AppColors.goldBright, fontSize: 9.5, fontWeight: FontWeight.bold),
                             ),
                           ),
                       ],
@@ -332,10 +337,17 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                       icon: const Icon(Icons.casino, size: 16),
                       label: Text(
                         roll == null
-                            ? 'ROLL $targetPool DICE'
+                            ? (l10n?.rollDiceCount(targetPool) ?? 'ROLL $targetPool DICE')
                             : (roll.dice.length == targetPool && totalModifier == 0
-                                ? 'RE-ROLL ($targetPool DICE)'
-                                : 'ROLL $targetPool DICE WITH MODIFIERS ($_basePool Base${totalModifier != 0 ? (totalModifier > 0 ? " + $totalModifier" : " - ${totalModifier.abs()}") : ""})'),
+                                ? (l10n?.reRollDiceCount(targetPool) ?? 'RE-ROLL ($targetPool DICE)')
+                                : (l10n?.rollDiceWithModifiers(
+                                    targetPool,
+                                    _basePool,
+                                    totalModifier != 0
+                                        ? (totalModifier > 0 ? " + $totalModifier" : " - ${totalModifier.abs()}")
+                                        : "",
+                                  ) ??
+                                  'ROLL $targetPool DICE WITH MODIFIERS ($_basePool Base${totalModifier != 0 ? (totalModifier > 0 ? " + $totalModifier" : " - ${totalModifier.abs()}") : ""})')),
                         style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -365,7 +377,7 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                         child: ElevatedButton.icon(
                           onPressed: () => setState(() => _isChoosingPushCondition = true),
                           icon: const Icon(Icons.replay, color: AppColors.crimsonLight, size: 15),
-                          label: const Text('PUSH THE ROLL (+1 Condition)', style: TextStyle(fontSize: 11)),
+                          label: Text(l10n?.pushRollWithCondition ?? 'PUSH THE ROLL (+1 Condition)', style: const TextStyle(fontSize: 11)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.surfaceLight,
                             foregroundColor: AppColors.crimsonLight,
@@ -388,9 +400,9 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'CHOOSE CONDITION TO SUFFER:',
-                                  style: TextStyle(color: AppColors.crimsonLight, fontSize: 10, fontWeight: FontWeight.bold),
+                                Text(
+                                  l10n?.chooseConditionToSuffer ?? 'CHOOSE CONDITION TO SUFFER:',
+                                  style: const TextStyle(color: AppColors.crimsonLight, fontSize: 10, fontWeight: FontWeight.bold),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.close, size: 14, color: AppColors.textMuted),
@@ -407,9 +419,9 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                               runSpacing: 4,
                               alignment: WrapAlignment.center,
                               children: [
-                                _pushConditionChip('Exhausted', character?.conditions.exhausted ?? false, isPhysical: true),
-                                _pushConditionChip('Battered', character?.conditions.battered ?? false, isPhysical: true),
-                                _pushConditionChip('Wounded', character?.conditions.wounded ?? false, isPhysical: true),
+                                _pushConditionChip(PhysicalCondition.exhausted.localizedName(context), character?.conditions.exhausted ?? false, isPhysical: true),
+                                _pushConditionChip(PhysicalCondition.battered.localizedName(context), character?.conditions.battered ?? false, isPhysical: true),
+                                _pushConditionChip(PhysicalCondition.wounded.localizedName(context), character?.conditions.wounded ?? false, isPhysical: true),
                               ],
                             ),
                             const SizedBox(height: 4),
@@ -419,9 +431,9 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                               runSpacing: 4,
                               alignment: WrapAlignment.center,
                               children: [
-                                _pushConditionChip('Angry', character?.conditions.angry ?? false, isPhysical: false),
-                                _pushConditionChip('Frightened', character?.conditions.frightened ?? false, isPhysical: false),
-                                _pushConditionChip('Hopeless', character?.conditions.hopeless ?? false, isPhysical: false),
+                                _pushConditionChip(MentalCondition.angry.localizedName(context), character?.conditions.angry ?? false, isPhysical: false),
+                                _pushConditionChip(MentalCondition.frightened.localizedName(context), character?.conditions.frightened ?? false, isPhysical: false),
+                                _pushConditionChip(MentalCondition.hopeless.localizedName(context), character?.conditions.hopeless ?? false, isPhysical: false),
                               ],
                             ),
                           ],
@@ -435,7 +447,8 @@ class _DiceTrayDialogState extends State<DiceTrayDialog> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        'ROLL PUSHED • Suffered ${roll.pushCondition ?? "Trauma"}',
+                        l10n?.rollPushedSuffered(roll.pushCondition ?? "Trauma") ??
+                            'ROLL PUSHED • Suffered ${roll.pushCondition ?? "Trauma"}',
                         style: AppTypography.bodySmall.copyWith(
                           fontSize: 10,
                           color: AppColors.gold,

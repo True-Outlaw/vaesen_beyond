@@ -6,6 +6,7 @@ import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/pip_counter.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/dice_roller_view_model.dart';
 import 'package:vaesen_beyond/ui/features/play/view_models/play_view_model.dart';
+import 'package:vaesen_beyond/ui/core/utils/l10n_extensions.dart';
 import 'package:vaesen_beyond/ui/features/play/views/widgets/dice_tray_dialog.dart';
 
 class AttributesSkillsGrid extends StatelessWidget {
@@ -28,7 +29,7 @@ class AttributesSkillsGrid extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 10),
           child: Text(
-            'ATTRIBUTES & SKILLS',
+            context.l10n?.attributesAndSkills ?? 'ATTRIBUTES & SKILLS',
             style: AppTypography.label.copyWith(
               color: AppColors.textMuted,
               letterSpacing: 1.0,
@@ -118,14 +119,16 @@ class AttributesSkillsGrid extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        attr.label.toUpperCase(),
+                        attr.localizedName(context).toUpperCase(),
                         style: AppTypography.titleMedium.copyWith(
                           fontSize: 15,
                           color: AppColors.goldBright,
                         ),
                       ),
                       Text(
-                        attr.isPhysical ? 'Physical Attribute' : 'Mental Attribute',
+                        attr.isPhysical
+                            ? (context.l10n?.physicalAttribute ?? 'Physical Attribute')
+                            : (context.l10n?.mentalAttribute ?? 'Mental Attribute'),
                         style: AppTypography.label.copyWith(
                           color: AppColors.textMuted,
                           fontSize: 10,
@@ -195,7 +198,7 @@ class AttributesSkillsGrid extends StatelessWidget {
                       Expanded(
                         flex: 4,
                         child: Text(
-                          skill.label,
+                          skill.localizedName(context),
                           style: AppTypography.label.copyWith(
                             color: AppColors.textPrimary,
                             fontSize: 12,

@@ -252,14 +252,14 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                       await widget.viewModel.loadPregenCharacters();
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Standard pregenerated investigators restored.')),
+                          SnackBar(content: Text(l10n?.pregensRestoredSnackbar ?? 'Standard pregenerated investigators restored.')),
                         );
                       }
                     },
                     icon: const Icon(Icons.restart_alt, size: 16, color: AppColors.textMuted),
-                    label: const Text(
-                      'RESTORE SAMPLE INVESTIGATORS',
-                      style: TextStyle(color: AppColors.textMuted, fontSize: 11),
+                    label: Text(
+                      l10n?.restoreSampleInvestigators ?? 'RESTORE SAMPLE INVESTIGATORS',
+                      style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
                     ),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -445,6 +445,7 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildDossierHeader(Character character) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
       decoration: const BoxDecoration(
@@ -506,7 +507,7 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'AGE ${character.actualAge}',
+                      l10n?.ageLabel(character.actualAge) ?? 'AGE ${character.actualAge}',
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMuted,
                         fontSize: 10,
@@ -520,9 +521,9 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _financePill('RES', character.resources),
+              _financePill(l10n?.resLabel ?? 'RES', character.resources),
               const SizedBox(width: 6),
-              _financePill('CAP', character.capital),
+              _financePill(l10n?.capLabel ?? 'CAP', character.capital),
             ],
           ),
         ],
