@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_card.dart';
@@ -46,7 +47,7 @@ class ConditionsCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'INVESTIGATOR IS BROKEN!',
+                            AppLocalizations.of(context)?.investigatorBroken ?? 'INVESTIGATOR IS BROKEN!',
                             style: AppTypography.titleMedium.copyWith(
                               color: AppColors.lethal,
                               fontWeight: FontWeight.bold,
@@ -75,7 +76,7 @@ class ConditionsCard extends StatelessWidget {
                         backgroundColor: AppColors.crimson,
                         foregroundColor: Colors.white,
                       ),
-                      child: const Text('ROLL INJURY'),
+                      child: Text(AppLocalizations.of(context)?.rollInjury ?? 'ROLL INJURY'),
                     ),
                   ],
                 ),
@@ -92,7 +93,7 @@ class ConditionsCard extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          'CONDITIONS',
+                          AppLocalizations.of(context)?.conditions ?? 'CONDITIONS',
                           style: AppTypography.titleMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -104,7 +105,7 @@ class ConditionsCard extends StatelessWidget {
                           builder: (_) => FearTestDialog(character: activeChar, viewModel: viewModel),
                         ),
                         icon: const Icon(Icons.visibility, size: 14, color: AppColors.goldBright),
-                        label: const Text('FEAR TEST'),
+                        label: Text(AppLocalizations.of(context)?.fearTest ?? 'FEAR TEST'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.surfaceLight,
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -136,7 +137,7 @@ class ConditionsCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'PHYSICAL',
+                                AppLocalizations.of(context)?.physical ?? 'PHYSICAL',
                                 style: AppTypography.titleSmall.copyWith(
                                   color: AppColors.physicalCondition,
                                   fontSize: 12,
@@ -210,7 +211,7 @@ class ConditionsCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'MENTAL',
+                                AppLocalizations.of(context)?.mental ?? 'MENTAL',
                                 style: AppTypography.titleSmall.copyWith(
                                   color: AppColors.mentalCondition,
                                   fontSize: 12,

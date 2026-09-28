@@ -1,0 +1,59 @@
+{
+  "@@locale": "en",
+  "appTitle": "VAESEN BEYOND",
+  "@appTitle": {
+    "description": "App bar title"
+  },
+  "castleTitle": "CASTLE GYLLENCREUTZ",
+  "@castleTitle": {
+    "description": "Castle title"
+  },
+  "castleTooltip": "Castle Gyllencreutz Headquarters",
+  "compendiumTooltip": "The Society Compendium",
+  "startNewMysteryTooltip": "Start New Mystery (Reset Solace)",
+  "newMysteryStarted": "A new mystery begins. Memento solace has been restored.",
+
+  "rosterAndParty": "Society Roster & Party",
+  "createNewInvestigator": "Create New Investigator",
+  "exportActiveJson": "Export Active (JSON)",
+  "importInvestigatorJson": "Import Investigator (JSON)",
+  "gmBestiary": "GM Bestiary: {status}",
+  "@gmBestiary": {
+    "description": "GM Bestiary menu label",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "unlocked": "Unlocked",
+  "locked": "Locked",
+  "legalNotice": "Legal & Copyright Notice",
+  "language": "Language",
+
+  "tabTable": "TABLE",
+  "tabAct": "ACT",
+  "tabSheet": "SHEET",
+
+  "sheetInventory": "INVENTORY",
+  "sheetAdvancement": "ADVANCEMENT",
+  "sheetPrepAndLore": "PREP & LORE",
+
+  "societyArchives": "SOCIETY ARCHIVES",
+  "noInvestigatorsRegistered": "NO INVESTIGATORS REGISTERED",
+  "emptyStateMessage": "The halls of Castle Gyllencreutz stand silent. Enroll your first investigator into the order, import an existing dossier, or restore the standard pregenerated roster to begin.",
+  "btnCreateNewInvestigator": "CREATE NEW INVESTIGATOR",
+  "btnImportDossier": "IMPORT DOSSIER (JSON)",
+  "btnRestorePregens": "RESTORE PREGENERATED ROSTER",
+
+  "conditions": "CONDITIONS",
+  "fearTest": "FEAR TEST",
+  "investigatorBroken": "INVESTIGATOR IS BROKEN!",
+  "rollInjury": "ROLL INJURY",
+  "physical": "PHYSICAL",
+  "mental": "MENTAL",
+
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "swedish": "Svenska (Swedish)"
+}

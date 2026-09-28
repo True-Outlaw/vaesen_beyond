@@ -1,0 +1,40 @@
+MIT License
+
+Copyright (c) 2026 True Outlaw
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+THIRD-PARTY INTELLECTUAL PROPERTY & GAME ASSETS EXCLUSION
+================================================================================
+This MIT License applies strictly and solely to the original software source code,
+architecture, custom renderers, and tools contained within this repository.
+
+This license does NOT grant any ownership, trademark, or commercial rights to:
+1. "Vaesen – Nordic Horror Roleplaying", its game mechanics, logos, trademarks,
+   lore, and setting, which are copyright © Fria Ligan AB (Free League Publishing).
+2. The artwork, lore, and character concepts from the illustrated book "Vaesen:
+   Spirits and Monsters of Scandinavian Folklore", which are copyright © Johan Egerkrans.
+3. The Year Zero Engine (YZE) mechanics, which are the intellectual property of
+   Fria Ligan AB.
+
+Vaesen Beyond is an unofficial, non-commercial fan creation made for personal
+tabletop gameplay in accordance with Free League's community and workshop guidelines.
+All third-party trademarks and copyrights remain the exclusive property of their
+respective owners.

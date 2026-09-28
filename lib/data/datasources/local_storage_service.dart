@@ -126,4 +126,17 @@ class LocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kRevealedSectionsKey, jsonStr);
   }
+
+  // ── Localization ────────────────────────────────────────────────────────
+  static const _kLocaleKey = 'vaesen_selected_locale_v1';
+
+  Future<String?> getSavedLocaleCode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kLocaleKey);
+  }
+
+  Future<void> saveLocaleCode(String languageCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kLocaleKey, languageCode);
+  }
 }

@@ -74,11 +74,34 @@
 
 ---
 
-## 🚀 Getting Started Locally
+## 🌐 Localization & Translation (i18n / l10n)
 
-### Prerequisites
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.19.0 or higher)
-- Dart SDK (v3.3.0 or higher)
+Vaesen Beyond supports internationalization using official Flutter ARB (Application Resource Bundle) localizations.
+
+### Architecture
+- **Configuration**: [l10n.yaml](file:///e:/Flutter/Projects/vaesen_beyond/l10n.yaml) defines the ARB folder (`lib/l10n/`) and generated file name.
+- **Template File**: [lib/l10n/app_en.arb](file:///e:/Flutter/Projects/vaesen_beyond/lib/l10n/app_en.arb) contains the canonical English strings and descriptions/placeholders.
+- **In-App Language Switching**: Language preference is managed by `SettingsViewModel`, persisted in `SharedPreferences`, and can be toggled via the app menu (⋮) -> **Language**.
+
+### How to Add a New Language Translation
+1. **Create an ARB file** for the target language in `lib/l10n/` named `app_<locale>.arb` (e.g., `lib/l10n/app_sv.arb` for Swedish, `lib/l10n/app_de.arb` for German).
+2. **Copy keys** from [lib/l10n/app_en.arb](file:///e:/Flutter/Projects/vaesen_beyond/lib/l10n/app_en.arb) and translate their values:
+   ```json
+   {
+     "@@locale": "sv",
+     "appTitle": "VÄSEN BEYOND",
+     "castleTitle": "SLOTTET GYLLENCREUTZ",
+     "tabTable": "BORD",
+     "tabAct": "HANDLA",
+     "tabSheet": "FORMULÄR"
+   }
+   ```
+3. **Run code generation**:
+   ```bash
+   flutter pub get
+   ```
+   Flutter will automatically compile the new locale into `AppLocalizations`.
+4. **Register the option in the language picker**: Add the new language item to `_showLanguageDialog` in [lib/main.dart](file:///e:/Flutter/Projects/vaesen_beyond/lib/main.dart).
 
 ---
 
@@ -89,3 +112,10 @@
 * **Vaesen Beyond** is an unofficial, non-commercial fan-made companion application created for personal tabletop play in accordance with Free League's community and workshop guidelines.
 * This project is not affiliated with, endorsed, sponsored, or specifically approved by Fria Ligan AB or Johan Egerkrans.
 * All game mechanics, skill structures, and rules references are based on the Year Zero Engine by Free League Publishing.
+
+---
+
+## 📄 License
+
+The source code and tooling of this application are licensed under the [MIT License](file:///e:/Flutter/Projects/vaesen_beyond/LICENSE) with explicit exclusions for all third-party intellectual property, lore, trademarks, and assets belonging to Free League Publishing (*Fria Ligan AB*) and Johan Egerkrans. See [LICENSE](file:///e:/Flutter/Projects/vaesen_beyond/LICENSE) for complete details.
+

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vaesen_beyond/domain/models/character.dart';
+import 'package:vaesen_beyond/l10n/app_localizations.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_colors.dart';
 import 'package:vaesen_beyond/ui/core/theme/app_typography.dart';
 import 'package:vaesen_beyond/ui/core/widgets/gothic_portrait.dart';
@@ -105,21 +106,21 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                     backgroundColor: AppColors.surface,
                     indicatorColor: AppColors.gold.withAlpha(50),
                     height: 60,
-                    destinations: const [
+                    destinations: [
                       NavigationDestination(
-                        icon: Icon(Icons.castle_outlined, color: AppColors.textSecondary),
-                        selectedIcon: Icon(Icons.castle, color: AppColors.goldBright),
-                        label: 'TABLE',
+                        icon: const Icon(Icons.castle_outlined, color: AppColors.textSecondary),
+                        selectedIcon: const Icon(Icons.castle, color: AppColors.goldBright),
+                        label: AppLocalizations.of(context)?.tabTable ?? 'TABLE',
                       ),
                       NavigationDestination(
-                        icon: Icon(Icons.diamond_outlined, color: AppColors.textSecondary),
-                        selectedIcon: Icon(Icons.diamond, color: AppColors.goldBright),
-                        label: 'ACT',
+                        icon: const Icon(Icons.diamond_outlined, color: AppColors.textSecondary),
+                        selectedIcon: const Icon(Icons.diamond, color: AppColors.goldBright),
+                        label: AppLocalizations.of(context)?.tabAct ?? 'ACT',
                       ),
                       NavigationDestination(
-                        icon: Icon(Icons.badge_outlined, color: AppColors.textSecondary),
-                        selectedIcon: Icon(Icons.badge, color: AppColors.goldBright),
-                        label: 'SHEET',
+                        icon: const Icon(Icons.badge_outlined, color: AppColors.textSecondary),
+                        selectedIcon: const Icon(Icons.badge, color: AppColors.goldBright),
+                        label: AppLocalizations.of(context)?.tabSheet ?? 'SHEET',
                       ),
                     ],
                   ),
@@ -130,6 +131,7 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildEmptyStateView(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -172,7 +174,7 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'SOCIETY ARCHIVES',
+                  l10n?.societyArchives ?? 'SOCIETY ARCHIVES',
                   style: AppTypography.displayMedium.copyWith(
                     fontSize: 18,
                     color: AppColors.goldBright,
@@ -181,7 +183,7 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'NO INVESTIGATORS REGISTERED',
+                  l10n?.noInvestigatorsRegistered ?? 'NO INVESTIGATORS REGISTERED',
                   style: AppTypography.labelSmall.copyWith(
                     color: AppColors.goldDim,
                     letterSpacing: 1.0,
@@ -190,7 +192,8 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'The halls of Castle Gyllencreutz stand silent. Enroll your first investigator into the order, import an existing dossier, or restore the standard pregenerated roster to begin.',
+                  l10n?.emptyStateMessage ??
+                      'The halls of Castle Gyllencreutz stand silent. Enroll your first investigator into the order, import an existing dossier, or restore the standard pregenerated roster to begin.',
                   style: AppTypography.bodySmall.copyWith(
                     color: AppColors.textMuted,
                     height: 1.5,
@@ -213,9 +216,9 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                       );
                     },
                     icon: const Icon(Icons.person_add, size: 16, color: Colors.black),
-                    label: const Text(
-                      'CREATE NEW INVESTIGATOR',
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
+                    label: Text(
+                      l10n?.btnCreateNewInvestigator ?? 'CREATE NEW INVESTIGATOR',
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.goldBright,
@@ -230,9 +233,9 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                   child: OutlinedButton.icon(
                     onPressed: () => showPartyManagementDialog(context, widget.viewModel),
                     icon: const Icon(Icons.file_download_outlined, size: 16, color: AppColors.gold),
-                    label: const Text(
-                      'IMPORT DOSSIER (JSON)',
-                      style: TextStyle(color: AppColors.gold, fontSize: 12),
+                    label: Text(
+                      l10n?.btnImportDossier ?? 'IMPORT DOSSIER (JSON)',
+                      style: const TextStyle(color: AppColors.gold, fontSize: 12),
                     ),
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: AppColors.gold),
@@ -350,14 +353,20 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
       child: Row(
         children: List.generate(_sheetTabs.length, (index) {
           final isSelected = _sheetTabController.index == index;
-          final label = _sheetTabs[index];
+          final tabKey = _sheetTabs[index];
+          final l10n = AppLocalizations.of(context);
+          final label = tabKey == 'INVENTORY'
+              ? (l10n?.sheetInventory ?? 'INVENTORY')
+              : tabKey == 'ADVANCEMENT'
+                  ? (l10n?.sheetAdvancement ?? 'ADVANCEMENT')
+                  : (l10n?.sheetPrepAndLore ?? 'PREP & LORE');
           String badgeText = '';
-          if (label == 'INVENTORY') {
+          if (tabKey == 'INVENTORY') {
             final total = character.equipment.length + character.weapons.length + character.armor.length;
             badgeText = '$total';
-          } else if (label == 'ADVANCEMENT') {
+          } else if (tabKey == 'ADVANCEMENT') {
             badgeText = '${character.experiencePoints} XP';
-          } else if (label == 'PREP & LORE' && character.hasActiveAdvantage) {
+          } else if (tabKey == 'PREP & LORE' && character.hasActiveAdvantage) {
             badgeText = '+2';
           }
 
