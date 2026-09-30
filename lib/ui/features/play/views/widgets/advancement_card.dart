@@ -106,7 +106,7 @@ class AdvancementCard extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: () => _openSessionDebriefDialog(context),
                   icon: const Icon(Icons.quiz_outlined, size: 14),
-                  label: Text(l10n?.debriefButton ?? 'SESSION DEBRIEF (+XP)', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                  label: Text(l10n?.debriefButton ?? 'DEBRIEF (+XP)', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surfaceOverlay,
                     foregroundColor: AppColors.goldBright,
@@ -127,7 +127,7 @@ class AdvancementCard extends StatelessWidget {
                       : null,
                   icon: const Icon(Icons.upgrade, size: 16),
                   label: Text(
-                    AppLocalizations.of(context)?.raiseSkillXp ?? 'RAISE SKILL  (5 XP)',
+                    AppLocalizations.of(context)?.raiseSkillXp ?? 'RAISE SKILL (5 XP)',
                     style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -151,7 +151,7 @@ class AdvancementCard extends StatelessWidget {
                       : null,
                   icon: const Icon(Icons.auto_awesome, size: 16),
                   label: Text(
-                    AppLocalizations.of(context)?.learnTalentXp ?? 'LEARN TALENT  (5 XP)',
+                    AppLocalizations.of(context)?.learnTalentXp ?? 'LEARN TALENT (5 XP)',
                     style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
