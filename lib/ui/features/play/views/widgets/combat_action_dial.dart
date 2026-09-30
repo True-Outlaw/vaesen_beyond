@@ -373,8 +373,6 @@ class _CombatActionDialState extends State<CombatActionDial> with TickerProvider
                             Text(
                               skill.description,
                               style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textSecondary),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),

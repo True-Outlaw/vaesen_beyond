@@ -230,7 +230,10 @@ class DialPainter extends CustomPainter {
       poolText = '$pool D6';
     }
 
-    final double fontScale = (outerRadius / 157.0).clamp(0.85, 1.45);
+    final double fontScale = (outerRadius / 157.0).clamp(0.75, 1.45);
+
+    // Wedge chord width at the midpoint radius — text must fit inside this
+    final double wedgeChordWidth = (innerRadius + outerRadius) / 2 * 0.95;
 
     // Measure and draw title
     final TextSpan titleSpan = TextSpan(
@@ -239,7 +242,7 @@ class DialPainter extends CustomPainter {
         fontFamily: 'Cinzel',
         fontSize: (10 * fontScale).roundToDouble(),
         fontWeight: FontWeight.w700,
-        letterSpacing: 0.8,
+        letterSpacing: 0.5,
         color: isSelected ? AppColors.goldBright : Colors.white.withAlpha(230),
       ),
     );
@@ -247,7 +250,7 @@ class DialPainter extends CustomPainter {
       text: titleSpan,
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
-    )..layout();
+    )..layout(maxWidth: wedgeChordWidth);
 
     tpTitle.paint(
       canvas,

@@ -35,154 +35,136 @@ class AdvancementCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Header: title only ─────────────────────────────────────────
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.military_tech_outlined, color: AppColors.gold, size: 18),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            l10n?.experience ?? 'EXPERIENCE',
-                            style: AppTypography.titleMedium.copyWith(fontSize: 13),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: () => _openSessionDebriefDialog(context),
-                    icon: const Icon(Icons.quiz_outlined, size: 13, color: AppColors.goldBright),
-                    label: Text(l10n?.debriefButton ?? 'DEBRIEF (+XP)', style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.surfaceOverlay,
-                      foregroundColor: AppColors.goldBright,
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                      visualDensity: VisualDensity.compact,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                        side: const BorderSide(color: AppColors.gold, width: 0.8),
-                      ),
-                    ),
+                  const Icon(Icons.military_tech_outlined, color: AppColors.gold, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n?.experience ?? 'EXPERIENCE',
+                    style: AppTypography.titleMedium.copyWith(fontSize: 13),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
 
-              // XP Bar & Level Up Buttons
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.gold, width: 1),
+              // ── XP Counter (centred, full width) ───────────────────────────
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.gold, width: 1),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      l10n?.currentXp ?? 'CURRENT XP',
+                      style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 9),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(l10n?.currentXp ?? 'CURRENT XP', style: AppTypography.labelSmall.copyWith(color: AppColors.goldDim, fontSize: 9)),
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove, size: 14, color: AppColors.textMuted),
-                              constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
-                              padding: EdgeInsets.zero,
-                              onPressed: character.experiencePoints > 0
-                                  ? () => playViewModel.addExperience(-1)
-                                  : null,
-                            ),
-                            Container(
-                              constraints: const BoxConstraints(minWidth: 26),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '${character.experiencePoints}',
-                                style: AppTypography.titleLarge.copyWith(
-                                  color: AppColors.goldBright,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add, size: 14, color: AppColors.gold),
-                              constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
-                              padding: EdgeInsets.zero,
-                              onPressed: () => playViewModel.addExperience(1),
-                            ),
-                          ],
+                        IconButton(
+                          icon: const Icon(Icons.remove, size: 14, color: AppColors.textMuted),
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          padding: EdgeInsets.zero,
+                          onPressed: character.experiencePoints > 0
+                              ? () => playViewModel.addExperience(-1)
+                              : null,
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        // Raise Skill Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: character.experiencePoints >= 5
-                                ? () => _openRaiseSkillDialog(context)
-                                : null,
-                            icon: const Icon(Icons.upgrade, size: 16),
-                            label: Text(
-                              AppLocalizations.of(context)?.raiseSkillXp ?? 'RAISE SKILL (5 XP)',
-                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.gold.withAlpha(40),
-                              foregroundColor: AppColors.goldBright,
-                              disabledBackgroundColor: AppColors.surfaceLight,
-                              disabledForegroundColor: AppColors.textMuted,
-                              side: BorderSide(
-                                color: character.experiencePoints >= 5 ? AppColors.gold : AppColors.border,
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                        Container(
+                          constraints: const BoxConstraints(minWidth: 36),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '${character.experiencePoints}',
+                            style: AppTypography.titleLarge.copyWith(
+                              color: AppColors.goldBright,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        // Learn Talent Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: character.experiencePoints >= 5
-                                ? () => _openLearnTalentDialog(context)
-                                : null,
-                            icon: const Icon(Icons.auto_awesome, size: 16),
-                            label: Text(
-                              AppLocalizations.of(context)?.learnTalentXp ?? 'LEARN TALENT (5 XP)',
-                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.surfaceLight,
-                              foregroundColor: AppColors.goldBright,
-                              disabledBackgroundColor: AppColors.surfaceLight,
-                              disabledForegroundColor: AppColors.textMuted,
-                              side: BorderSide(
-                                color: character.experiencePoints >= 5 ? AppColors.gold : AppColors.border,
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                            ),
-                          ),
+                        IconButton(
+                          icon: const Icon(Icons.add, size: 14, color: AppColors.gold),
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          padding: EdgeInsets.zero,
+                          onPressed: () => playViewModel.addExperience(1),
                         ),
                       ],
                     ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // ── Action Buttons (full width, stacked) ───────────────────────
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _openSessionDebriefDialog(context),
+                  icon: const Icon(Icons.quiz_outlined, size: 14),
+                  label: Text(l10n?.debriefButton ?? 'SESSION DEBRIEF (+XP)', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.surfaceOverlay,
+                    foregroundColor: AppColors.goldBright,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      side: const BorderSide(color: AppColors.gold, width: 0.8),
+                    ),
                   ),
-                ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: character.experiencePoints >= 5
+                      ? () => _openRaiseSkillDialog(context)
+                      : null,
+                  icon: const Icon(Icons.upgrade, size: 16),
+                  label: Text(
+                    AppLocalizations.of(context)?.raiseSkillXp ?? 'RAISE SKILL  (5 XP)',
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.gold.withAlpha(40),
+                    foregroundColor: AppColors.goldBright,
+                    disabledBackgroundColor: AppColors.surfaceLight,
+                    disabledForegroundColor: AppColors.textMuted,
+                    side: BorderSide(
+                      color: character.experiencePoints >= 5 ? AppColors.gold : AppColors.border,
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: character.experiencePoints >= 5
+                      ? () => _openLearnTalentDialog(context)
+                      : null,
+                  icon: const Icon(Icons.auto_awesome, size: 16),
+                  label: Text(
+                    AppLocalizations.of(context)?.learnTalentXp ?? 'LEARN TALENT  (5 XP)',
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.surfaceLight,
+                    foregroundColor: AppColors.goldBright,
+                    disabledBackgroundColor: AppColors.surfaceLight,
+                    disabledForegroundColor: AppColors.textMuted,
+                    side: BorderSide(
+                      color: character.experiencePoints >= 5 ? AppColors.gold : AppColors.border,
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
               Text(

@@ -101,8 +101,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             Flexible(
               child: Text(
                 l10n?.appTitle ?? 'VAESEN BEYOND',
-                style: AppTypography.titleLarge,
-                overflow: TextOverflow.ellipsis,
+                style: AppTypography.titleLarge.copyWith(fontSize: 14),
               ),
             ),
           ],

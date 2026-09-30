@@ -1136,19 +1136,25 @@ class _CastleScreenState extends State<CastleScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.menu_book, color: AppColors.goldBright, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  l10n?.expeditionChronicles ?? 'EXPEDITION CHRONICLES',
-                  style: AppTypography.titleMedium.copyWith(
-                    color: AppColors.goldBright,
-                    letterSpacing: 1.0,
+            Expanded(
+              child: Row(
+                children: [
+                  const Icon(Icons.menu_book, color: AppColors.goldBright, size: 20),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      l10n?.expeditionChronicles ?? 'EXPEDITION CHRONICLES',
+                      style: AppTypography.titleMedium.copyWith(
+                        color: AppColors.goldBright,
+                        letterSpacing: 1.0,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
             ElevatedButton.icon(
               onPressed: () => _showAddMysteryDialog(context),
               style: ElevatedButton.styleFrom(
