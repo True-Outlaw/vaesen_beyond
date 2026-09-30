@@ -333,7 +333,7 @@ class InventoryCard extends StatelessWidget {
                 ...character.weapons.map((w) {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 6),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.fromLTRB(10, 8, 6, 4),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceLight,
                       borderRadius: BorderRadius.circular(6),
@@ -342,85 +342,91 @@ class InventoryCard extends StatelessWidget {
                         width: 0.8,
                       ),
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      w.name,
-                                      style: AppTypography.titleSmall.copyWith(
-                                        color: w.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
-                                        fontSize: 13,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  if (w.isEquipped) ...[
-                                    const SizedBox(width: 6),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.gold.withAlpha(40),
-                                        borderRadius: BorderRadius.circular(3),
-                                      ),
-                                      child: Text(
-                                        AppLocalizations.of(context)?.ready ?? 'READY',
-                                        style: const TextStyle(color: AppColors.gold, fontSize: 8, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ],
+                        // ── Row 1: Name + READY badge (full width) ──────────
+                        Row(
+                          children: [
+                            Text(
+                              w.name,
+                              style: AppTypography.titleSmall.copyWith(
+                                color: w.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
+                                fontSize: 13,
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Dmg: ${w.damage}  •  Bonus: +${w.bonus}  •  Range: ${w.range.label}',
-                                style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
+                            ),
+                            if (w.isEquipped) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                decoration: BoxDecoration(
+                                  color: AppColors.gold.withAlpha(40),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)?.ready ?? 'READY',
+                                  style: const TextStyle(color: AppColors.gold, fontSize: 8, fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ],
-                          ),
+                          ],
                         ),
-                        // Equip toggle
-                        IconButton(
-                          icon: Icon(
-                            w.isEquipped ? Icons.check_circle : Icons.radio_button_unchecked,
-                            size: 18,
-                            color: w.isEquipped ? AppColors.gold : AppColors.textMuted,
-                          ),
-                          tooltip: w.isEquipped ? 'Equipped' : 'Stowed',
-                          onPressed: () => playViewModel.toggleEquipWeapon(w.id),
-                        ),
-                        // Roll attack
-                        IconButton(
-                          icon: const Icon(Icons.casino, size: 18, color: AppColors.goldBright),
-                          tooltip: 'Attack Roll',
-                          onPressed: () {
-                            diceViewModel.rollWeapon(character: character, weapon: w);
-                            showDialog(
-                              context: context,
-                              builder: (_) => DiceTrayDialog(
-                                diceViewModel: diceViewModel,
-                                playViewModel: playViewModel,
+                        // ── Row 2: Stats + action buttons ───────────────────
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Dmg: ${w.damage}  •  Bonus: +${w.bonus}  •  Range: ${w.range.label}',
+                                style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            );
-                          },
-                        ),
-                        // Edit weapon
-                        IconButton(
-                          icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),
-                          tooltip: 'Edit Weapon',
-                          onPressed: () => showEditWeaponSheet(context, w, playViewModel),
-                        ),
-                        // Drop
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),
-                          tooltip: 'Drop Weapon',
-                          onPressed: () => playViewModel.removeWeapon(w.id),
+                            ),
+                            // Equip toggle
+                            IconButton(
+                              icon: Icon(
+                                w.isEquipped ? Icons.check_circle : Icons.radio_button_unchecked,
+                                size: 18,
+                                color: w.isEquipped ? AppColors.gold : AppColors.textMuted,
+                              ),
+                              tooltip: w.isEquipped ? 'Equipped' : 'Stowed',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () => playViewModel.toggleEquipWeapon(w.id),
+                            ),
+                            // Roll attack
+                            IconButton(
+                              icon: const Icon(Icons.casino, size: 18, color: AppColors.goldBright),
+                              tooltip: 'Attack Roll',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                diceViewModel.rollWeapon(character: character, weapon: w);
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => DiceTrayDialog(
+                                    diceViewModel: diceViewModel,
+                                    playViewModel: playViewModel,
+                                  ),
+                                );
+                              },
+                            ),
+                            // Edit weapon
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),
+                              tooltip: 'Edit Weapon',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () => showEditWeaponSheet(context, w, playViewModel),
+                            ),
+                            // Drop
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),
+                              tooltip: 'Drop Weapon',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () => playViewModel.removeWeapon(w.id),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -506,7 +512,7 @@ class InventoryCard extends StatelessWidget {
                 ...character.armor.map((a) {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 6),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.fromLTRB(10, 8, 6, 4),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceLight,
                       borderRadius: BorderRadius.circular(6),
@@ -515,58 +521,64 @@ class InventoryCard extends StatelessWidget {
                         width: 0.8,
                       ),
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                a.name,
-                                style: AppTypography.titleSmall.copyWith(
-                                  color: a.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
-                                  fontSize: 13,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
+                        // ── Row 1: Name (full width, never truncated) ────────
+                        Text(
+                          a.name,
+                          style: AppTypography.titleSmall.copyWith(
+                            color: a.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
+                            fontSize: 13,
+                          ),
+                        ),
+                        // ── Row 2: Stats + action buttons ───────────────────
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
                                 'Protection: +${a.protection}  •  Agility Penalty: ${a.agilityPenalty}',
                                 style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
-                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            a.isEquipped ? Icons.check_circle : Icons.radio_button_unchecked,
-                            size: 18,
-                            color: a.isEquipped ? AppColors.gold : AppColors.textMuted,
-                          ),
-                          tooltip: a.isEquipped ? 'Worn' : 'Carried',
-                          onPressed: () => playViewModel.toggleEquipArmor(a.id),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.casino, size: 18, color: AppColors.goldBright),
-                          tooltip: 'Roll Protection (+${a.protection} D6)',
-                          onPressed: () => _rollArmorProtection(
-                            context,
-                            a.protection,
-                            title: '${a.name} Protection Roll',
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),
-                          tooltip: 'Edit Armor',
-                          onPressed: () => showEditArmorSheet(context, a, playViewModel),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),
-                          tooltip: 'Drop Armor',
-                          onPressed: () => playViewModel.removeArmor(a.id),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                a.isEquipped ? Icons.check_circle : Icons.radio_button_unchecked,
+                                size: 18,
+                                color: a.isEquipped ? AppColors.gold : AppColors.textMuted,
+                              ),
+                              tooltip: a.isEquipped ? 'Worn' : 'Carried',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () => playViewModel.toggleEquipArmor(a.id),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.casino, size: 18, color: AppColors.goldBright),
+                              tooltip: 'Roll Protection (+${a.protection} D6)',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () => _rollArmorProtection(
+                                context,
+                                a.protection,
+                                title: '${a.name} Protection Roll',
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.goldDim),
+                              tooltip: 'Edit Armor',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () => showEditArmorSheet(context, a, playViewModel),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, size: 16, color: AppColors.crimsonLight),
+                              tooltip: 'Drop Armor',
+                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              padding: EdgeInsets.zero,
+                              onPressed: () => playViewModel.removeArmor(a.id),
+                            ),
+                          ],
                         ),
                       ],
                     ),

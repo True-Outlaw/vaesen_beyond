@@ -136,7 +136,11 @@ class AdvancementCard extends StatelessWidget {
                                 ? () => _openRaiseSkillDialog(context)
                                 : null,
                             icon: const Icon(Icons.upgrade, size: 16),
-                            label: Text(AppLocalizations.of(context)?.raiseSkillXp ?? 'RAISE SKILL (5 XP)', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            label: Text(
+                              AppLocalizations.of(context)?.raiseSkillXp ?? 'RAISE SKILL (5 XP)',
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.gold.withAlpha(40),
                               foregroundColor: AppColors.goldBright,
@@ -145,7 +149,7 @@ class AdvancementCard extends StatelessWidget {
                               side: BorderSide(
                                 color: character.experiencePoints >= 5 ? AppColors.gold : AppColors.border,
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                             ),
                           ),
                         ),
@@ -158,7 +162,11 @@ class AdvancementCard extends StatelessWidget {
                                 ? () => _openLearnTalentDialog(context)
                                 : null,
                             icon: const Icon(Icons.auto_awesome, size: 16),
-                            label: Text(AppLocalizations.of(context)?.learnTalentXp ?? 'LEARN TALENT (5 XP)', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            label: Text(
+                              AppLocalizations.of(context)?.learnTalentXp ?? 'LEARN TALENT (5 XP)',
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.surfaceLight,
                               foregroundColor: AppColors.goldBright,
@@ -167,7 +175,7 @@ class AdvancementCard extends StatelessWidget {
                               side: BorderSide(
                                 color: character.experiencePoints >= 5 ? AppColors.gold : AppColors.border,
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                             ),
                           ),
                         ),
@@ -251,47 +259,38 @@ class AdvancementCard extends StatelessWidget {
 
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.fromLTRB(10, 8, 6, 6),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceLight,
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(color: AppColors.border, width: 0.6),
                       ),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Skill Name
-                          Expanded(
-                            flex: 3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  skill.label,
-                                  style: AppTypography.titleSmall.copyWith(fontSize: 13, color: AppColors.textPrimary),
-                                ),
-                                const SizedBox(height: 2),
-                                // 5 Diamond Pips
-                                Row(
-                                  children: List.generate(5, (index) {
-                                    final isFilled = index < rank;
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 3),
-                                      child: Icon(
-                                        isFilled ? Icons.diamond : Icons.diamond_outlined,
-                                        size: 10,
-                                        color: isFilled ? AppColors.gold : AppColors.textMuted.withAlpha(80),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ],
-                            ),
+                          // ── Row 1: Skill name (full width, never truncated) ──
+                          Text(
+                            skill.label,
+                            style: AppTypography.titleSmall.copyWith(fontSize: 13, color: AppColors.textPrimary),
                           ),
-
-                          // Rank Badge & Upgrade Button (Locked to 5 XP per Vaesen rules)
+                          const SizedBox(height: 4),
+                          // ── Row 2: Pips + controls ───────────────────────────
                           Row(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              // 5 Diamond Pips
+                              ...List.generate(5, (index) {
+                                final isFilled = index < rank;
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 3),
+                                  child: Icon(
+                                    isFilled ? Icons.diamond : Icons.diamond_outlined,
+                                    size: 10,
+                                    color: isFilled ? AppColors.gold : AppColors.textMuted.withAlpha(80),
+                                  ),
+                                );
+                              }),
+                              const Spacer(),
+                              // Rank badge
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                                 decoration: BoxDecoration(
@@ -304,7 +303,7 @@ class AdvancementCard extends StatelessWidget {
                                   style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.bold, fontSize: 10),
                                 ),
                               ),
-                              const SizedBox(width: 4),
+                              // Upgrade button
                               IconButton(
                                 icon: const Icon(Icons.add_circle_outline, size: 16),
                                 color: (rank < 5 && character.experiencePoints >= 5)
@@ -315,49 +314,48 @@ class AdvancementCard extends StatelessWidget {
                                     : character.experiencePoints < 5
                                         ? 'Requires 5 XP (Current: ${character.experiencePoints})'
                                         : 'Spend 5 XP to raise ${skill.label} to Rank ${rank + 1}',
-                                constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                                 padding: EdgeInsets.zero,
                                 onPressed: (rank < 5 && character.experiencePoints >= 5)
                                     ? () => _confirmRaiseSingleSkill(context, skill, rank)
                                     : null,
                               ),
-                            ],
-                          ),
-                          const SizedBox(width: 8),
-
-                          // Total Dice Pool Badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.background,
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: AppColors.gold.withAlpha(100)),
-                            ),
-                            child: Text(
-                              '$pool D',
-                              style: const TextStyle(
-                                color: AppColors.goldBright,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 11,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-
-                          // Roll Button
-                          IconButton(
-                            icon: const Icon(Icons.casino, size: 18, color: AppColors.gold),
-                            tooltip: 'Roll ${skill.label}',
-                            onPressed: () {
-                              diceViewModel.rollSkill(character: character, skill: skill);
-                              showDialog(
-                                context: context,
-                                builder: (_) => DiceTrayDialog(
-                                  diceViewModel: diceViewModel,
-                                  playViewModel: playViewModel,
+                              // Dice pool badge
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.background,
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: AppColors.gold.withAlpha(100)),
                                 ),
-                              );
-                            },
+                                child: Text(
+                                  '$pool D',
+                                  style: const TextStyle(
+                                    color: AppColors.goldBright,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              // Roll button
+                              IconButton(
+                                icon: const Icon(Icons.casino, size: 18, color: AppColors.gold),
+                                tooltip: 'Roll ${skill.label}',
+                                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  diceViewModel.rollSkill(character: character, skill: skill);
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => DiceTrayDialog(
+                                      diceViewModel: diceViewModel,
+                                      playViewModel: playViewModel,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),

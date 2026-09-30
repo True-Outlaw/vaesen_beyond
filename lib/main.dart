@@ -98,7 +98,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           children: [
             const Icon(Icons.shield, color: AppColors.goldBright, size: 20),
             const SizedBox(width: 8),
-            Text(l10n?.appTitle ?? 'VAESEN BEYOND', style: AppTypography.titleLarge),
+            Flexible(
+              child: Text(
+                l10n?.appTitle ?? 'VAESEN BEYOND',
+                style: AppTypography.titleLarge,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         actions: [

@@ -405,17 +405,17 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                         label,
                         style: TextStyle(
                           color: isSelected ? AppColors.goldBright : AppColors.textMuted,
-                          fontSize: 10,
+                          fontSize: 9,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                          letterSpacing: 0.6,
+                          letterSpacing: 0.4,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (badgeText.isNotEmpty) ...[
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 3),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
                           color: isSelected ? AppColors.gold.withAlpha(40) : AppColors.surfaceLight,
                           borderRadius: BorderRadius.circular(10),
@@ -428,7 +428,7 @@ class _PlayScreenState extends State<PlayScreen> with TickerProviderStateMixin {
                           badgeText,
                           style: TextStyle(
                             color: isSelected ? AppColors.goldBright : AppColors.goldDim,
-                            fontSize: 8,
+                            fontSize: 7,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
