@@ -547,7 +547,7 @@ class _CastleScreenState extends State<CastleScreen> {
 
               final expeditionsPod = _buildStatPod(
                 icon: Icons.menu_book,
-                label: l10n?.expeditionChronicles ?? 'EXPEDITIONS',
+                label: l10n?.expeditions ?? 'EXPEDITIONS',
                 value: '${castle.mysteryLogs.length}',
                 subtext: l10n?.totalXpRewarded(totalXp) ?? '+$totalXp total XP rewarded',
                 valueColor: castle.mysteryLogs.isNotEmpty ? AppColors.goldBright : AppColors.textPrimary,
@@ -614,15 +614,20 @@ class _CastleScreenState extends State<CastleScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                label,
-                style: AppTypography.labelSmall.copyWith(
-                  color: AppColors.gold,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.8,
+              Expanded(
+                child: Text(
+                  label,
+                  style: AppTypography.labelSmall.copyWith(
+                    color: AppColors.gold,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 4),
               Icon(icon, size: 14, color: AppColors.gold.withAlpha(140)),
             ],
           ),
@@ -1148,7 +1153,6 @@ class _CastleScreenState extends State<CastleScreen> {
                         color: AppColors.goldBright,
                         letterSpacing: 1.0,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

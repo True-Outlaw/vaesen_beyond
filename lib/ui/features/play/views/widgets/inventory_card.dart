@@ -348,11 +348,13 @@ class InventoryCard extends StatelessWidget {
                         // ── Row 1: Name + READY badge (full width) ──────────
                         Row(
                           children: [
-                            Text(
-                              w.name,
-                              style: AppTypography.titleSmall.copyWith(
-                                color: w.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
-                                fontSize: 13,
+                            Flexible(
+                              child: Text(
+                                w.name,
+                                style: AppTypography.titleSmall.copyWith(
+                                  color: w.isEquipped ? AppColors.goldBright : AppColors.textPrimary,
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
                             if (w.isEquipped) ...[
@@ -378,7 +380,6 @@ class InventoryCard extends StatelessWidget {
                               child: Text(
                                 'Dmg: ${w.damage}  •  Bonus: +${w.bonus}  •  Range: ${w.range.label}',
                                 style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             // Equip toggle
@@ -539,7 +540,6 @@ class InventoryCard extends StatelessWidget {
                               child: Text(
                                 'Protection: +${a.protection}  •  Agility Penalty: ${a.agilityPenalty}',
                                 style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             IconButton(
